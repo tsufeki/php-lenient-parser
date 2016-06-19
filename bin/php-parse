@@ -57,8 +57,8 @@ foreach ($files as $file) {
             $startLine = $e->getStartLine();
             $endLine = $e->getEndLine();
             $startColumn = $e->getStartColumn($code);
-            $endColumn   = $e->getEndColumn($code);
-            $message .= $e->getRawMessage() . " from $startLine:$startColumn to $endLine:$endColumn";
+            $endColumn = $e->getEndColumn($code);
+            $message = $e->getRawMessage() . " from $startLine:$startColumn to $endLine:$endColumn";
         } else {
             $message = $e->getMessage();
         }
