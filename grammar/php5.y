@@ -665,7 +665,7 @@ lexical_var:
 function_call:
       name argument_list                                    { $$ = Expr\FuncCall[$1, $2]; }
     | class_name_or_var T_PAAMAYIM_NEKUDOTAYIM identifier argument_list
-          { $$ = Expr\StaticCall[$1, $3, $4]; }
+          { $$ = Expr\StaticCall[$1, Identifier[$3], $4]; }
     | class_name_or_var T_PAAMAYIM_NEKUDOTAYIM '{' expr '}' argument_list
           { $$ = Expr\StaticCall[$1, $4, $6]; }
     | static_property argument_list {
@@ -766,7 +766,7 @@ common_scalar:
 
 static_scalar:
       common_scalar                                         { $$ = $1; }
-    | class_name T_PAAMAYIM_NEKUDOTAYIM identifier          { $$ = Expr\ClassConstFetch[$1, $3]; }
+    | class_name T_PAAMAYIM_NEKUDOTAYIM identifier          { $$ = Expr\ClassConstFetch[$1, Identifier[$3]]; }
     | name                                                  { $$ = Expr\ConstFetch[$1]; }
     | T_ARRAY '(' static_array_pair_list ')'                { $$ = Expr\Array_[$3]; }
     | '[' static_array_pair_list ']'                        { $$ = Expr\Array_[$2]; }
@@ -812,7 +812,7 @@ static_operation:
 constant:
       name                                                  { $$ = Expr\ConstFetch[$1]; }
     | class_name_or_var T_PAAMAYIM_NEKUDOTAYIM identifier
-          { $$ = Expr\ClassConstFetch[$1, $3]; }
+          { $$ = Expr\ClassConstFetch[$1, Identifier[$3]]; }
 ;
 
 scalar:
@@ -912,7 +912,7 @@ dim_offset:
 ;
 
 object_property:
-      T_STRING                                              { $$ = $1; }
+      T_STRING                                              { $$ = Identifier[$1]; }
     | '{' expr '}'                                          { $$ = $2; }
     | variable_without_objects                              { $$ = $1; }
 ;
@@ -963,7 +963,8 @@ encaps_string_part:
 encaps_var:
       T_VARIABLE                                            { $$ = Expr\Variable[parseVar($1)]; }
     | T_VARIABLE '[' encaps_var_offset ']'                  { $$ = Expr\ArrayDimFetch[Expr\Variable[parseVar($1)], $3]; }
-    | T_VARIABLE T_OBJECT_OPERATOR T_STRING                 { $$ = Expr\PropertyFetch[Expr\Variable[parseVar($1)], $3]; }
+    | T_VARIABLE T_OBJECT_OPERATOR T_STRING
+          { $$ = Expr\PropertyFetch[Expr\Variable[parseVar($1)], Identifier[$3]]; }
     | T_DOLLAR_OPEN_CURLY_BRACES expr '}'                   { $$ = Expr\Variable[$2]; }
     | T_DOLLAR_OPEN_CURLY_BRACES T_STRING_VARNAME '}'       { $$ = Expr\Variable[$2]; }
     | T_DOLLAR_OPEN_CURLY_BRACES T_STRING_VARNAME '[' expr ']' '}'

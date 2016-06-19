@@ -672,7 +672,7 @@ ctor_arguments:
 constant:
       name                                                  { $$ = Expr\ConstFetch[$1]; }
     | class_name_or_var T_PAAMAYIM_NEKUDOTAYIM identifier
-          { $$ = Expr\ClassConstFetch[$1, $3]; }
+          { $$ = Expr\ClassConstFetch[$1, Identifier[$3]]; }
 ;
 
 dereferencable_scalar:
@@ -773,13 +773,13 @@ new_variable:
 ;
 
 member_name:
-      identifier                                            { $$ = $1; }
+      identifier                                            { $$ = Identifier[$1]; }
     | '{' expr '}'	                                        { $$ = $2; }
     | simple_variable	                                    { $$ = Expr\Variable[$1]; }
 ;
 
 property_name:
-      T_STRING                                              { $$ = $1; }
+      T_STRING                                              { $$ = Identifier[$1]; }
     | '{' expr '}'	                                        { $$ = $2; }
     | simple_variable	                                    { $$ = Expr\Variable[$1]; }
 ;
@@ -830,7 +830,8 @@ encaps_string_part:
 encaps_var:
       T_VARIABLE                                            { $$ = Expr\Variable[parseVar($1)]; }
     | T_VARIABLE '[' encaps_var_offset ']'                  { $$ = Expr\ArrayDimFetch[Expr\Variable[parseVar($1)], $3]; }
-    | T_VARIABLE T_OBJECT_OPERATOR T_STRING                 { $$ = Expr\PropertyFetch[Expr\Variable[parseVar($1)], $3]; }
+    | T_VARIABLE T_OBJECT_OPERATOR T_STRING
+          { $$ = Expr\PropertyFetch[Expr\Variable[parseVar($1)], Identifier[$3]]; }
     | T_DOLLAR_OPEN_CURLY_BRACES expr '}'                   { $$ = Expr\Variable[$2]; }
     | T_DOLLAR_OPEN_CURLY_BRACES T_STRING_VARNAME '}'       { $$ = Expr\Variable[$2]; }
     | T_DOLLAR_OPEN_CURLY_BRACES T_STRING_VARNAME '[' expr ']' '}'

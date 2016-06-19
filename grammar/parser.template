@@ -13,6 +13,7 @@ use PhpLenientParser\Node\Expr;
 use PhpLenientParser\Node\Name;
 use PhpLenientParser\Node\Scalar;
 use PhpLenientParser\Node\Stmt;
+use PhpLenientParser\Node\Identifier;
 #include;
 
 /* This is an automatically GENERATED file, which should not be manually edited.
