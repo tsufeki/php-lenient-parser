@@ -195,6 +195,12 @@ function resolveMacros($code) {
                      . $args[0] . '[\'docLabel\'] = $matches[1];';
             }
 
+            if ('resetError' == $name) {
+                assertArgs(0, $args, $name);
+
+                return '$this->errorState = 0';
+            }
+
             return $matches[0];
         },
         $code
