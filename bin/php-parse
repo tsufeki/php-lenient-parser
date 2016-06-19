@@ -29,7 +29,8 @@ if (empty($files)) {
 $lexer = new PhpLenientParser\Lexer\Emulative(array('usedAttributes' => array(
     'startLine', 'endLine', 'startFilePos', 'endFilePos', 'comments'
 )));
-$parser = (new PhpLenientParser\ParserFactory)->create(PhpLenientParser\ParserFactory::PREFER_PHP7, $lexer);
+$parser = (new PhpLenientParser\ParserFactory)->create(PhpLenientParser\ParserFactory::PREFER_PHP7,
+    $lexer, array('throwOnError' => false));
 $dumper = new PhpLenientParser\NodeDumper(['dumpComments' => true]);
 $prettyPrinter = new PhpLenientParser\PrettyPrinter\Standard;
 $serializer = new PhpLenientParser\Serializer\XML;
@@ -50,9 +51,8 @@ foreach ($files as $file) {
         echo "====> File $file:\n";
     }
 
-    try {
-        $stmts = $parser->parse($code);
-    } catch (PhpLenientParser\Error $e) {
+    $stmts = $parser->parse($code);
+    foreach ($parser->getErrors() as $e) {
         if ($attributes['with-column-info'] && $e->hasColumnInfo()) {
             $startLine = $e->getStartLine();
             $endLine = $e->getEndLine();
@@ -63,7 +63,7 @@ foreach ($files as $file) {
             $message = $e->getMessage();
         }
 
-        die($message . "\n");
+        echo($message . "\n");
     }
 
     foreach ($operations as $operation) {
