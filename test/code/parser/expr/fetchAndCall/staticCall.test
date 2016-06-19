@@ -29,7 +29,12 @@ array(
                 0: // method name variations
             )
         )
-        name: b
+        name: Identifier(
+            name: b
+            comments: array(
+                0: // method name variations
+            )
+        )
         args: array(
         )
         comments: array(
@@ -109,7 +114,12 @@ array(
                     0: // array dereferencing
                 )
             )
-            name: b
+            name: Identifier(
+                name: b
+                comments: array(
+                    0: // array dereferencing
+                )
+            )
             args: array(
             )
             comments: array(
@@ -132,7 +142,12 @@ array(
                 0: // class name variations
             )
         )
-        name: b
+        name: Identifier(
+            name: b
+            comments: array(
+                0: // class name variations
+            )
+        )
         args: array(
         )
         comments: array(
@@ -143,7 +158,9 @@ array(
         class: Expr_Variable(
             name: a
         )
-        name: b
+        name: Identifier(
+            name: b
+        )
         args: array(
         )
     )
@@ -153,7 +170,9 @@ array(
                 value: a
             )
         )
-        name: b
+        name: Identifier(
+            name: b
+        )
         args: array(
         )
     )
@@ -166,7 +185,9 @@ array(
                 value: b
             )
         )
-        name: c
+        name: Identifier(
+            name: c
+        )
         args: array(
         )
     )

@@ -18,7 +18,9 @@ array(
             args: array(
             )
         )
-        name: b
+        name: Identifier(
+            name: b
+        )
     )
     1: Expr_MethodCall(
         var: Expr_New(
@@ -30,7 +32,9 @@ array(
             args: array(
             )
         )
-        name: b
+        name: Identifier(
+            name: b
+        )
         args: array(
         )
     )

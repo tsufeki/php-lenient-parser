@@ -83,7 +83,9 @@ array(
             var: Expr_Variable(
                 name: a
             )
-            name: b
+            name: Identifier(
+                name: b
+            )
         )
         args: array(
         )
@@ -97,9 +99,13 @@ array(
                 var: Expr_Variable(
                     name: a
                 )
-                name: b
+                name: Identifier(
+                    name: b
+                )
             )
-            name: c
+            name: Identifier(
+                name: c
+            )
         )
         args: array(
         )
@@ -110,7 +116,9 @@ array(
                 var: Expr_Variable(
                     name: a
                 )
-                name: b
+                name: Identifier(
+                    name: b
+                )
             )
             dim: Scalar_String(
                 value: c
@@ -125,7 +133,9 @@ array(
                 var: Expr_Variable(
                     name: a
                 )
-                name: b
+                name: Identifier(
+                    name: b
+                )
             )
             dim: Scalar_String(
                 value: c

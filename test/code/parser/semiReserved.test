@@ -206,7 +206,9 @@ array(
         var: Expr_Variable(
             name: t
         )
-        name: array
+        name: Identifier(
+            name: array
+        )
         args: array(
         )
     )
@@ -214,7 +216,9 @@ array(
         var: Expr_Variable(
             name: t
         )
-        name: public
+        name: Identifier(
+            name: public
+        )
         args: array(
         )
     )
@@ -224,7 +228,9 @@ array(
                 0: Test
             )
         )
-        name: list
+        name: Identifier(
+            name: list
+        )
         args: array(
         )
     )
@@ -234,7 +240,9 @@ array(
                 0: Test
             )
         )
-        name: protected
+        name: Identifier(
+            name: protected
+        )
         args: array(
         )
     )
@@ -242,13 +250,17 @@ array(
         var: Expr_Variable(
             name: t
         )
-        name: class
+        name: Identifier(
+            name: class
+        )
     )
     7: Expr_PropertyFetch(
         var: Expr_Variable(
             name: t
         )
-        name: private
+        name: Identifier(
+            name: private
+        )
     )
     8: Expr_ClassConstFetch(
         class: Name(
@@ -256,7 +268,9 @@ array(
                 0: Test
             )
         )
-        name: TRAIT
+        name: Identifier(
+            name: TRAIT
+        )
     )
     9: Expr_ClassConstFetch(
         class: Name(
@@ -264,7 +278,9 @@ array(
                 0: Test
             )
         )
-        name: FINAL
+        name: Identifier(
+            name: FINAL
+        )
     )
     10: Stmt_Class(
         type: 0

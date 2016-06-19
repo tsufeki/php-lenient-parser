@@ -20,7 +20,9 @@ array(
                 0: A
             )
         )
-        name: B
+        name: Identifier(
+            name: B
+        )
     )
     2: Expr_ClassConstFetch(
         class: Name(
@@ -28,6 +30,8 @@ array(
                 0: A
             )
         )
-        name: class
+        name: Identifier(
+            name: class
+        )
     )
 )

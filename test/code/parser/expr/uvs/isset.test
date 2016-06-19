@@ -57,7 +57,9 @@ array(
                         )
                     )
                 )
-                name: a
+                name: Identifier(
+                    name: a
+                )
             )
         )
     )
@@ -67,7 +69,9 @@ array(
                 var: Scalar_String(
                     value: str
                 )
-                name: a
+                name: Identifier(
+                    name: a
+                )
             )
         )
     )
