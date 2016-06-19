@@ -5,14 +5,14 @@ $meta #
 #semval(%n) $this->stackPos-(%l-%n)
 #semval(%n,%t) $this->stackPos-(%l-%n)
 
-namespace PhpParser\Parser;
+namespace PhpLenientParser\Parser;
 
-use PhpParser\Error;
-use PhpParser\Node;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Name;
-use PhpParser\Node\Scalar;
-use PhpParser\Node\Stmt;
+use PhpLenientParser\Error;
+use PhpLenientParser\Node;
+use PhpLenientParser\Node\Expr;
+use PhpLenientParser\Node\Name;
+use PhpLenientParser\Node\Scalar;
+use PhpLenientParser\Node\Stmt;
 #include;
 
 /* This is an automatically GENERATED file, which should not be manually edited.
@@ -21,7 +21,7 @@ use PhpParser\Node\Stmt;
  *  * the skeleton file grammar/parser.template
  *  * the preprocessing script grammar/rebuildParsers.php
  */
-class #(-p) extends \PhpParser\ParserAbstract
+class #(-p) extends \PhpLenientParser\ParserAbstract
 {
     protected $tokenToSymbolMapSize = #(YYMAXLEX);
     protected $actionTableSize = #(YYLAST);

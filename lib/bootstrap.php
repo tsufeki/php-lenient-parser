@@ -1,6 +1,6 @@
 <?php
 
-if (!class_exists('PhpParser\Autoloader')) {
-    require __DIR__ . '/PhpParser/Autoloader.php';
+if (!class_exists('PhpLenientParser\Autoloader')) {
+    require __DIR__ . '/PhpLenientParser/Autoloader.php';
 }
-PhpParser\Autoloader::register();
+PhpLenientParser\Autoloader::register();

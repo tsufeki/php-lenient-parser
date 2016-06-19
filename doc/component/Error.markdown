@@ -1,7 +1,7 @@
 Error handling
 ==============
 
-Errors during parsing or analysis are represented using the `PhpParser\Error` exception class. In addition to an error
+Errors during parsing or analysis are represented using the `PhpLenientParser\Error` exception class. In addition to an error
 message, an error can also store additional information about the location the error occurred at.
 
 How much location information is available depends on the origin of the error and how many lexer attributes have been
@@ -14,15 +14,15 @@ In order to receive information about not only the line, but also the column spa
 position attributes in the lexer need to be enabled:
 
 ```php
-$lexer = new PhpParser\Lexer(array(
+$lexer = new PhpLenientParser\Lexer(array(
     'usedAttributes' => array('comments', 'startLine', 'endLine', 'startFilePos', 'endFilePos'),
 ));
-$parser = (new PhpParser\ParserFactory)->create(PhpParser\ParserFactory::PREFER_PHP7, $lexer);
+$parser = (new PhpLenientParser\ParserFactory)->create(PhpLenientParser\ParserFactory::PREFER_PHP7, $lexer);
 
 try {
     $stmts = $parser->parse($code);
     // ...
-} catch (PhpParser\Error $e) {
+} catch (PhpLenientParser\Error $e) {
     // ...
 }
 ```
@@ -58,7 +58,7 @@ or `null` if recovery fails.
 A usage example:
 
 ```php
-$parser = (new PhpParser\ParserFactory)->create(PhpParser\ParserFactory::PREFER_PHP7, null, array(
+$parser = (new PhpLenientParser\ParserFactory)->create(PhpLenientParser\ParserFactory::PREFER_PHP7, null, array(
     'throwOnError' => false,
 ));
 
@@ -66,7 +66,7 @@ $stmts = $parser->parse($code);
 $errors = $parser->getErrors();
 
 foreach ($errors as $error) {
-    // $error is an ordinary PhpParser\Error
+    // $error is an ordinary PhpLenientParser\Error
 }
 
 if (null !== $stmts) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpParser;
+namespace PhpLenientParser;
 
 require __DIR__ . '/../vendor/autoload.php';
 

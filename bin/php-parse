@@ -26,16 +26,16 @@ if (empty($files)) {
     showHelp("Must specify at least one file.");
 }
 
-$lexer = new PhpParser\Lexer\Emulative(array('usedAttributes' => array(
+$lexer = new PhpLenientParser\Lexer\Emulative(array('usedAttributes' => array(
     'startLine', 'endLine', 'startFilePos', 'endFilePos', 'comments'
 )));
-$parser = (new PhpParser\ParserFactory)->create(PhpParser\ParserFactory::PREFER_PHP7, $lexer);
-$dumper = new PhpParser\NodeDumper(['dumpComments' => true]);
-$prettyPrinter = new PhpParser\PrettyPrinter\Standard;
-$serializer = new PhpParser\Serializer\XML;
+$parser = (new PhpLenientParser\ParserFactory)->create(PhpLenientParser\ParserFactory::PREFER_PHP7, $lexer);
+$dumper = new PhpLenientParser\NodeDumper(['dumpComments' => true]);
+$prettyPrinter = new PhpLenientParser\PrettyPrinter\Standard;
+$serializer = new PhpLenientParser\Serializer\XML;
 
-$traverser = new PhpParser\NodeTraverser();
-$traverser->addVisitor(new PhpParser\NodeVisitor\NameResolver);
+$traverser = new PhpLenientParser\NodeTraverser();
+$traverser->addVisitor(new PhpLenientParser\NodeVisitor\NameResolver);
 
 foreach ($files as $file) {
     if (strpos($file, '<?php') === 0) {
@@ -52,7 +52,7 @@ foreach ($files as $file) {
 
     try {
         $stmts = $parser->parse($code);
-    } catch (PhpParser\Error $e) {
+    } catch (PhpLenientParser\Error $e) {
         if ($attributes['with-column-info'] && $e->hasColumnInfo()) {
             $startLine = $e->getStartLine();
             $endLine = $e->getEndLine();

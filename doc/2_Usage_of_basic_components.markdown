@@ -28,7 +28,7 @@ Parsing
 In order to parse code, you first have to create a parser instance:
 
 ```php
-use PhpParser\ParserFactory;
+use PhpLenientParser\ParserFactory;
 $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
 ```
 
@@ -47,11 +47,11 @@ The `create()` method optionally accepts a `Lexer` instance as the second argume
 that require customized lexers are discussed in the [lexer documentation](component/Lexer.markdown).
 
 Subsequently you can pass PHP code (including the opening `<?php` tag) to the `parse` method in order to
-create a syntax tree. If a syntax error is encountered, an `PhpParser\Error` exception will be thrown:
+create a syntax tree. If a syntax error is encountered, an `PhpLenientParser\Error` exception will be thrown:
 
 ```php
-use PhpParser\Error;
-use PhpParser\ParserFactory;
+use PhpLenientParser\Error;
+use PhpLenientParser\ParserFactory;
 
 $code = '<?php // some code';
 $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
@@ -95,23 +95,23 @@ array(
 ```
 
 Thus `$stmts` will contain an array with only one node, with this node being an instance of
-`PhpParser\Node\Stmt\Echo_`.
+`PhpLenientParser\Node\Stmt\Echo_`.
 
 As PHP is a large language there are approximately 140 different nodes. In order to make work
 with them easier they are grouped into three categories:
 
- * `PhpParser\Node\Stmt`s are statement nodes, i.e. language constructs that do not return
+ * `PhpLenientParser\Node\Stmt`s are statement nodes, i.e. language constructs that do not return
    a value and can not occur in an expression. For example a class definition is a statement.
    It doesn't return a value and you can't write something like `func(class A {});`.
- * `PhpParser\Node\Expr`s are expression nodes, i.e. language constructs that return a value
+ * `PhpLenientParser\Node\Expr`s are expression nodes, i.e. language constructs that return a value
    and thus can occur in other expressions. Examples of expressions are `$var`
-   (`PhpParser\Node\Expr\Variable`) and `func()` (`PhpParser\Node\Expr\FuncCall`).
- * `PhpParser\Node\Scalar`s are nodes representing scalar values, like `'string'`
-   (`PhpParser\Node\Scalar\String_`), `0` (`PhpParser\Node\Scalar\LNumber`) or magic constants
-   like `__FILE__` (`PhpParser\Node\Scalar\MagicConst\File`). All `PhpParser\Node\Scalar`s extend
-   `PhpParser\Node\Expr`, as scalars are expressions, too.
- * There are some nodes not in either of these groups, for example names (`PhpParser\Node\Name`)
-   and call arguments (`PhpParser\Node\Arg`).
+   (`PhpLenientParser\Node\Expr\Variable`) and `func()` (`PhpLenientParser\Node\Expr\FuncCall`).
+ * `PhpLenientParser\Node\Scalar`s are nodes representing scalar values, like `'string'`
+   (`PhpLenientParser\Node\Scalar\String_`), `0` (`PhpLenientParser\Node\Scalar\LNumber`) or magic constants
+   like `__FILE__` (`PhpLenientParser\Node\Scalar\MagicConst\File`). All `PhpLenientParser\Node\Scalar`s extend
+   `PhpLenientParser\Node\Expr`, as scalars are expressions, too.
+ * There are some nodes not in either of these groups, for example names (`PhpLenientParser\Node\Name`)
+   and call arguments (`PhpLenientParser\Node\Arg`).
 
 Some node class names have a trailing `_`. This is used whenever the class name would otherwise clash
 with a PHP keyword.
@@ -122,14 +122,14 @@ in the above example you would write `$stmts[0]->exprs`. If you wanted to access
 call, you would write `$stmts[0]->exprs[1]->name`.
 
 All nodes also define a `getType()` method that returns the node type. The type is the class name
-without the `PhpParser\Node\` prefix and `\` replaced with `_`. It also does not contain a trailing
+without the `PhpLenientParser\Node\` prefix and `\` replaced with `_`. It also does not contain a trailing
 `_` for reserved-keyword class names.
 
 It is possible to associate custom metadata with a node using the `setAttribute()` method. This data
 can then be retrieved using `hasAttribute()`, `getAttribute()` and `getAttributes()`.
 
 By default the lexer adds the `startLine`, `endLine` and `comments` attributes. `comments` is an array
-of `PhpParser\Comment[\Doc]` instances.
+of `PhpLenientParser\Comment[\Doc]` instances.
 
 The start line can also be accessed using `getLine()`/`setLine()` (instead of `getAttribute('startLine')`).
 The last doc comment from the `comments` attribute can be obtained using `getDocComment()`.
@@ -139,12 +139,12 @@ Pretty printer
 
 The pretty printer component compiles the AST back to PHP code. As the parser does not retain formatting
 information the formatting is done using a specified scheme. Currently there is only one scheme available,
-namely `PhpParser\PrettyPrinter\Standard`.
+namely `PhpLenientParser\PrettyPrinter\Standard`.
 
 ```php
-use PhpParser\Error;
-use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter;
+use PhpLenientParser\Error;
+use PhpLenientParser\ParserFactory;
+use PhpLenientParser\PrettyPrinter;
 
 $code = "<?php echo 'Hi ', hi\\getTarget();";
 
@@ -175,8 +175,8 @@ The above code will output:
 
     <?php echo 'Hello ', hi\getTarget();
 
-As you can see the source code was first parsed using `PhpParser\Parser->parse()`, then changed and then
-again converted to code using `PhpParser\PrettyPrinter\Standard->prettyPrint()`.
+As you can see the source code was first parsed using `PhpLenientParser\Parser->parse()`, then changed and then
+again converted to code using `PhpLenientParser\PrettyPrinter\Standard->prettyPrint()`.
 
 The `prettyPrint()` method pretty prints a statements array. It is also possible to pretty print only a
 single expression using `prettyPrintExpr()`.
@@ -193,12 +193,12 @@ Usually you want to change / analyze code in a generic way, where you don't know
 going to look like.
 
 For this purpose the parser provides a component for traversing and visiting the node tree. The basic
-structure of a program using this `PhpParser\NodeTraverser` looks like this:
+structure of a program using this `PhpLenientParser\NodeTraverser` looks like this:
 
 ```php
-use PhpParser\NodeTraverser;
-use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter;
+use PhpLenientParser\NodeTraverser;
+use PhpLenientParser\ParserFactory;
+use PhpLenientParser\PrettyPrinter;
 
 $parser        = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
 $traverser     = new NodeTraverser;
@@ -220,7 +220,7 @@ try {
     $code = $prettyPrinter->prettyPrintFile($stmts);
 
     echo $code;
-} catch (PhpParser\Error $e) {
+} catch (PhpLenientParser\Error $e) {
     echo 'Parse Error: ', $e->getMessage();
 }
 ```
@@ -228,8 +228,8 @@ try {
 The corresponding node visitor might look like this:
 
 ```php
-use PhpParser\Node;
-use PhpParser\NodeVisitorAbstract;
+use PhpLenientParser\Node;
+use PhpLenientParser\NodeVisitorAbstract;
 
 class MyNodeVisitor extends NodeVisitorAbstract
 {
@@ -243,13 +243,13 @@ class MyNodeVisitor extends NodeVisitorAbstract
 
 The above node visitor would change all string literals in the program to `'foo'`.
 
-All visitors must implement the `PhpParser\NodeVisitor` interface, which defines the following four
+All visitors must implement the `PhpLenientParser\NodeVisitor` interface, which defines the following four
 methods:
 
 ```php
 public function beforeTraverse(array $nodes);
-public function enterNode(\PhpParser\Node $node);
-public function leaveNode(\PhpParser\Node $node);
+public function enterNode(\PhpLenientParser\Node $node);
+public function leaveNode(\PhpLenientParser\Node $node);
 public function afterTraverse(array $nodes);
 ```
 
@@ -281,7 +281,7 @@ class, which will define empty default implementations for all the above methods
 The NameResolver node visitor
 -----------------------------
 
-One visitor is already bundled with the package: `PhpParser\NodeVisitor\NameResolver`. This visitor
+One visitor is already bundled with the package: `PhpLenientParser\NodeVisitor\NameResolver`. This visitor
 helps you work with namespaced code by trying to resolve most names to fully qualified ones.
 
 For example, consider the following code:
@@ -311,10 +311,10 @@ assume that no dynamic features are used.
 We start off with the following base code:
 
 ```php
-use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter;
-use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitor\NameResolver;
+use PhpLenientParser\ParserFactory;
+use PhpLenientParser\PrettyPrinter;
+use PhpLenientParser\NodeTraverser;
+use PhpLenientParser\NodeVisitor\NameResolver;
 
 $inDir  = '/some/path';
 $outDir = '/some/other/path';
@@ -349,7 +349,7 @@ foreach ($files as $file) {
             substr_replace($file->getPathname(), $outDir, 0, strlen($inDir)),
             $code
         );
-    } catch (PhpParser\Error $e) {
+    } catch (PhpLenientParser\Error $e) {
         echo 'Parse Error: ', $e->getMessage();
     }
 }
@@ -359,9 +359,9 @@ Now lets start with the main code, the `NodeVisitor\NamespaceConverter`. One thi
 is convert `A\\B` style names to `A_B` style ones.
 
 ```php
-use PhpParser\Node;
+use PhpLenientParser\Node;
 
-class NamespaceConverter extends \PhpParser\NodeVisitorAbstract
+class NamespaceConverter extends \PhpLenientParser\NodeVisitorAbstract
 {
     public function leaveNode(Node $node) {
         if ($node instanceof Node\Name) {
@@ -382,10 +382,10 @@ only the shortname (i.e. the last part of the name), but they need to contain th
 the namespace prefix:
 
 ```php
-use PhpParser\Node;
-use PhpParser\Node\Stmt;
+use PhpLenientParser\Node;
+use PhpLenientParser\Node\Stmt;
 
-class NodeVisitor_NamespaceConverter extends \PhpParser\NodeVisitorAbstract
+class NodeVisitor_NamespaceConverter extends \PhpLenientParser\NodeVisitorAbstract
 {
     public function leaveNode(Node $node) {
         if ($node instanceof Node\Name) {
@@ -408,10 +408,10 @@ There is not much more to it than converting the namespaced name to string with 
 The last thing we need to do is remove the `namespace` and `use` statements:
 
 ```php
-use PhpParser\Node;
-use PhpParser\Node\Stmt;
+use PhpLenientParser\Node;
+use PhpLenientParser\Node\Stmt;
 
-class NodeVisitor_NamespaceConverter extends \PhpParser\NodeVisitorAbstract
+class NodeVisitor_NamespaceConverter extends \PhpLenientParser\NodeVisitorAbstract
 {
     public function leaveNode(Node $node) {
         if ($node instanceof Node\Name) {

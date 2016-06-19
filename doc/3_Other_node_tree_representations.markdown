@@ -14,7 +14,7 @@ Human readable dumping
 ----------------------
 
 Furthermore it is possible to dump nodes into a human readable format using the `dump` method of
-`PhpParser\NodeDumper`. This can be used for debugging.
+`PhpLenientParser\NodeDumper`. This can be used for debugging.
 
 ```php
 $code = <<<'CODE'
@@ -27,14 +27,14 @@ function printLine($msg) {
 printLine('Hello World!!!');
 CODE;
 
-$parser = (new PhpParser\ParserFactory)->create(PhpParser\ParserFactory::PREFER_PHP7);
-$nodeDumper = new PhpParser\NodeDumper;
+$parser = (new PhpLenientParser\ParserFactory)->create(PhpLenientParser\ParserFactory::PREFER_PHP7);
+$nodeDumper = new PhpLenientParser\NodeDumper;
 
 try {
     $stmts = $parser->parse($code);
 
     echo $nodeDumper->dump($stmts), "\n";
-} catch (PhpParser\Error $e) {
+} catch (PhpLenientParser\Error $e) {
     echo 'Parse Error: ', $e->getMessage();
 }
 ```
@@ -89,8 +89,8 @@ array(
 Serialization to XML
 --------------------
 
-It is also possible to serialize the node tree to XML using `PhpParser\Serializer\XML->serialize()`
-and to unserialize it using `PhpParser\Unserializer\XML->unserialize()`. This is useful for
+It is also possible to serialize the node tree to XML using `PhpLenientParser\Serializer\XML->serialize()`
+and to unserialize it using `PhpLenientParser\Unserializer\XML->unserialize()`. This is useful for
 interfacing with other languages and applications or for doing transformation using XSLT.
 
 ```php
@@ -105,14 +105,14 @@ function printLine($msg) {
 printLine('Hello World!!!');
 CODE;
 
-$parser = (new PhpParser\ParserFactory)->create(PhpParser\ParserFactory::PREFER_PHP7);
-$serializer = new PhpParser\Serializer\XML;
+$parser = (new PhpLenientParser\ParserFactory)->create(PhpLenientParser\ParserFactory::PREFER_PHP7);
+$serializer = new PhpLenientParser\Serializer\XML;
 
 try {
     $stmts = $parser->parse($code);
 
     echo $serializer->serialize($stmts);
-} catch (PhpParser\Error $e) {
+} catch (PhpLenientParser\Error $e) {
     echo 'Parse Error: ', $e->getMessage();
 }
 ```
