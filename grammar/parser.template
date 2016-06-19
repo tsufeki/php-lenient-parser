@@ -14,6 +14,7 @@ use PhpLenientParser\Node\Name;
 use PhpLenientParser\Node\Scalar;
 use PhpLenientParser\Node\Stmt;
 use PhpLenientParser\Node\Identifier;
+use PhpLenientParser\Node\ErrorNode;
 #include;
 
 /* This is an automatically GENERATED file, which should not be manually edited.
