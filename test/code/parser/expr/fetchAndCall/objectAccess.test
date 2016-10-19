@@ -26,9 +26,7 @@ array(
                 0: // property fetch variations
             )
         )
-        name: Identifier(
-            name: b
-        )
+        name: b
         comments: array(
             0: // property fetch variations
         )
@@ -38,9 +36,7 @@ array(
             var: Expr_Variable(
                 name: a
             )
-            name: Identifier(
-                name: b
-            )
+            name: b
         )
         dim: Scalar_String(
             value: c
@@ -51,9 +47,7 @@ array(
             var: Expr_Variable(
                 name: a
             )
-            name: Identifier(
-                name: b
-            )
+            name: b
         )
         dim: Scalar_String(
             value: c
@@ -66,9 +60,7 @@ array(
                 0: // method call variations
             )
         )
-        name: Identifier(
-            name: b
-        )
+        name: b
         args: array(
         )
         comments: array(
@@ -118,9 +110,7 @@ array(
                     0: // array dereferencing
                 )
             )
-            name: Identifier(
-                name: b
-            )
+            name: b
             args: array(
             )
             comments: array(
@@ -139,9 +129,7 @@ array(
             var: Expr_Variable(
                 name: a
             )
-            name: Identifier(
-                name: b
-            )
+            name: b
             args: array(
             )
         )

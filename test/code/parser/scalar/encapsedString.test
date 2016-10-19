@@ -37,9 +37,7 @@ array(
                 var: Expr_Variable(
                     name: A
                 )
-                name: Identifier(
-                    name: B
-                )
+                name: B
             )
         )
     )

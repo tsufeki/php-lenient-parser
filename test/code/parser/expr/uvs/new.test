@@ -47,9 +47,7 @@ array(
             var: Expr_Variable(
                 name: obj
             )
-            name: Identifier(
-                name: className
-            )
+            name: className
         )
         args: array(
         )
@@ -87,9 +85,7 @@ array(
                         value: 0
                     )
                 )
-                name: Identifier(
-                    name: foo
-                )
+                name: foo
             )
             name: className
         )

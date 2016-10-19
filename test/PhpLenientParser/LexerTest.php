@@ -3,13 +3,13 @@
 namespace PhpLenientParser;
 
 use PhpLenientParser\Parser\Tokens;
+use PhpParser\ErrorHandler;
+use PhpParser\Comment;
 
-class LexerTest extends \PHPUnit_Framework_TestCase
+abstract class LexerTest extends \PHPUnit_Framework_TestCase
 {
     /* To allow overwriting in parent class */
-    protected function getLexer(array $options = array()) {
-        return new Lexer($options);
-    }
+    abstract protected function getLexer(array $options = array());
 
     /**
      * @dataProvider provideTestError
@@ -229,7 +229,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \PhpLenientParser\Error
+     * @expectedException \PhpParser\Error
      * @expectedExceptionMessage __HALT_COMPILER must be followed by "();"
      */
     public function testHandleHaltCompilerError() {

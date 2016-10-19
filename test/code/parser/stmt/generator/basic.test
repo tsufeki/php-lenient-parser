@@ -215,9 +215,7 @@ array(
                 var: Expr_Variable(
                     name: foo
                 )
-                name: Identifier(
-                    name: func
-                )
+                name: func
                 args: array(
                     0: Arg(
                         value: Expr_Yield(

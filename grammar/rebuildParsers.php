@@ -1,8 +1,9 @@
+#!/usr/bin/env php
 <?php
 
 $grammarFileToName = [
-    __DIR__ . '/php5.y' => 'Php5',
-    __DIR__ . '/php7.y' => 'Php7',
+    __DIR__ . '/lenientphp5.y' => 'LenientPhp5',
+    __DIR__ . '/lenientphp7.y' => 'LenientPhp7',
 ];
 
 $tokensFile     = __DIR__ . '/tokens.y';

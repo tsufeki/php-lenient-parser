@@ -2,7 +2,11 @@
 
 namespace PhpLenientParser;
 
-use PhpLenientParser\Comment;
+use PhpParser\Parser as BaseParser;
+use PhpParser\Error;
+use PhpParser\ErrorHandler;
+use PhpParser\NodeDumper;
+use PhpParser\Comment;
 
 require_once __DIR__ . '/CodeTestAbstract.php';
 
@@ -12,11 +16,11 @@ class CodeParsingTest extends CodeTestAbstract
      * @dataProvider provideTestParse
      */
     public function testParse($name, $code, $expected, $mode) {
-        $lexer = new Lexer\Emulative(array('usedAttributes' => array(
+        $lexer = new Lexer\Lenient(array('usedAttributes' => array(
             'startLine', 'endLine', 'startFilePos', 'endFilePos', 'comments'
         )));
-        $parser5 = new Parser\Php5($lexer);
-        $parser7 = new Parser\Php7($lexer);
+        $parser5 = new Parser\LenientPhp5($lexer);
+        $parser7 = new Parser\LenientPhp7($lexer);
 
         $output5 = $this->getParseOutput($parser5, $code);
         $output7 = $this->getParseOutput($parser7, $code);
@@ -33,7 +37,7 @@ class CodeParsingTest extends CodeTestAbstract
         }
     }
 
-    private function getParseOutput(Parser $parser, $code) {
+    private function getParseOutput(BaseParser $parser, $code) {
         $errors = new ErrorHandler\Collecting;
         $stmts = $parser->parse($code, $errors);
 
