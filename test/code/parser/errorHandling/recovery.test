@@ -241,16 +241,42 @@ while (true) {
 -----
 Syntax error, unexpected EOF from 8:12 to 8:12
 -----
-<?php $a->
+<?php
+$foo->
+;
 -----
-Syntax error, unexpected EOF from 1:11 to 1:11
-Syntax error, unexpected EOF from 1:11 to 1:11
+Syntax error, unexpected ';' from 3:1 to 3:1
 array(
     0: Expr_PropertyFetch(
         var: Expr_Variable(
-            name: a
+            name: foo
         )
-        name: ErrorNode_Nothing(
+        name: Expr_Error(
+        )
+    )
+)
+-----
+<?php
+function foo() {
+    $bar->
+}
+-----
+Syntax error, unexpected '}' from 4:1 to 4:1
+array(
+    0: Stmt_Function(
+        byRef: false
+        name: foo
+        params: array(
+        )
+        returnType: null
+        stmts: array(
+            0: Expr_PropertyFetch(
+                var: Expr_Variable(
+                    name: bar
+                )
+                name: Expr_Error(
+                )
+            )
         )
     )
 )

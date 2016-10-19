@@ -27,52 +27,6 @@ class NameTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame('foo\bar', (string) $name);
         $this->assertSame('foo\bar', $name->toString());
-        $this->assertSame('foo_bar', $name->toString('_'));
-    }
-
-    public function testSet() {
-        $name = new Name('foo');
-
-        $name->set('foo\bar');
-        $this->assertSame('foo\bar', $name->toString());
-
-        $name->set(array('foo', 'bar'));
-        $this->assertSame('foo\bar', $name->toString());
-
-        $name->set(new Name('foo\bar'));
-        $this->assertSame('foo\bar', $name->toString());
-    }
-
-    public function testSetFirst() {
-        $name = new Name('foo');
-
-        $name->setFirst('bar');
-        $this->assertSame('bar', $name->toString());
-
-        $name->setFirst('A\B');
-        $this->assertSame('A\B', $name->toString());
-
-        $name->setFirst('C');
-        $this->assertSame('C\B', $name->toString());
-
-        $name->setFirst('D\E');
-        $this->assertSame('D\E\B', $name->toString());
-    }
-
-    public function testSetLast() {
-        $name = new Name('foo');
-
-        $name->setLast('bar');
-        $this->assertSame('bar', $name->toString());
-
-        $name->setLast('A\B');
-        $this->assertSame('A\B', $name->toString());
-
-        $name->setLast('C');
-        $this->assertSame('A\C', $name->toString());
-
-        $name->setLast('D\E');
-        $this->assertSame('A\D\E', $name->toString());
     }
 
     public function testAppend() {
@@ -96,18 +50,51 @@ class NameTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testSlice() {
-        $name = new Name('foo\bar');
-        $this->assertEquals(new Name('foo\bar'), $name->slice(0));
-        $this->assertEquals(new Name('bar'), $name->slice(1));
-        $this->assertEquals(new Name([]), $name->slice(2));
+        $name = new Name('foo\bar\baz');
+        $this->assertEquals(new Name('foo\bar\baz'), $name->slice(0));
+        $this->assertEquals(new Name('bar\baz'), $name->slice(1));
+        $this->assertEquals(new Name([]), $name->slice(3));
+        $this->assertEquals(new Name('foo\bar\baz'), $name->slice(-3));
+        $this->assertEquals(new Name('bar\baz'), $name->slice(-2));
+        $this->assertEquals(new Name('foo\bar'), $name->slice(0, -1));
+        $this->assertEquals(new Name([]), $name->slice(0, -3));
+        $this->assertEquals(new Name('bar'), $name->slice(1, -1));
+        $this->assertEquals(new Name([]), $name->slice(1, -2));
+        $this->assertEquals(new Name('bar'), $name->slice(-2, 1));
+        $this->assertEquals(new Name('bar'), $name->slice(-2, -1));
+        $this->assertEquals(new Name([]), $name->slice(-2, -2));
     }
 
     /**
      * @expectedException \OutOfBoundsException
      * @expectedExceptionMessage Offset 4 is out of bounds
      */
-    public function testSliceException() {
+    public function testSliceOffsetTooLarge() {
         (new Name('foo\bar\baz'))->slice(4);
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     * @expectedExceptionMessage Offset -4 is out of bounds
+     */
+    public function testSliceOffsetTooSmall() {
+        (new Name('foo\bar\baz'))->slice(-4);
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     * @expectedExceptionMessage Length 4 is out of bounds
+     */
+    public function testSliceLengthTooLarge() {
+        (new Name('foo\bar\baz'))->slice(0, 4);
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     * @expectedExceptionMessage Length -4 is out of bounds
+     */
+    public function testSliceLengthTooSmall() {
+        (new Name('foo\bar\baz'))->slice(0, -4);
     }
 
     public function testConcat() {
@@ -159,6 +146,6 @@ class NameTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidArg() {
         $name = new Name('foo');
-        $name->set(new \stdClass);
+        $name->append(new \stdClass);
     }
 }

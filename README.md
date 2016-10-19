@@ -4,7 +4,12 @@ PHP Parser
 This is a PHP 5.2 to PHP 7.0 parser written in PHP, a fork of [PHP-Parser](https://github.com/nikic/PHP-Parser)
 modified to handle illegal code from partially edited source files.
 
-Still a work in progress.
+This is a PHP 5.2 to PHP 7.1 parser written in PHP. Its purpose is to simplify static code analysis and
+manipulation.
+
+[**Documentation for version 2.x**][doc_master] (stable; for running on PHP >= 5.4; for parsing PHP 5.2 to PHP 7.0).
+
+[Documentation for version 1.x][doc_1_x] (unsupported; for running on PHP >= 5.3; for parsing PHP 5.2 to PHP 5.6).
 
 In a Nutshell
 -------------
@@ -88,4 +93,6 @@ Component documentation:
  1. [Error](doc/component/Error.markdown)
  2. [Lexer](doc/component/Lexer.markdown)
 
- [doc_master]: doc
+ [doc_1_x]: https://github.com/nikic/PHP-Parser/tree/1.x/doc
+ [doc_2_x]: https://github.com/nikic/PHP-Parser/tree/2.x/doc
+ [doc_master]: https://github.com/nikic/PHP-Parser/tree/master/doc

@@ -124,6 +124,12 @@ function resolveMacros($code) {
                 return '$this->startAttributeStack[#1] + $this->endAttributes';
             }
 
+            if ('stackAttributes' == $name) {
+                assertArgs(1, $args, $name);
+                return '$this->startAttributeStack[' . $args[0] . ']'
+                     . ' + $this->endAttributeStack[' . $args[0] . ']';
+            }
+
             if ('init' == $name) {
                 return '$$ = array(' . implode(', ', $args) . ')';
             }
@@ -195,10 +201,13 @@ function resolveMacros($code) {
                      . $args[0] . '[\'docLabel\'] = $matches[1];';
             }
 
-            if ('resetError' == $name) {
-                assertArgs(0, $args, $name);
+            if ('prependLeadingComments' == $name) {
+                assertArgs(1, $args, $name);
 
-                return '$this->errorState = 0';
+                return '$attrs = $this->startAttributeStack[#1]; $stmts = ' . $args[0] . '; '
+                . 'if (!empty($attrs[\'comments\']) && isset($stmts[0])) {'
+                . '$stmts[0]->setAttribute(\'comments\', '
+                . 'array_merge($attrs[\'comments\'], $stmts[0]->getAttribute(\'comments\', []))); }';
             }
 
             return $matches[0];

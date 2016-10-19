@@ -83,14 +83,13 @@ class Name extends NodeAbstract
     }
 
     /**
-     * Returns a string representation of the name by imploding the namespace parts with a separator.
-     *
-     * @param string $separator The separator to use (defaults to the namespace separator \)
+     * Returns a string representation of the name by imploding the namespace parts with the
+     * namespace separator.
      *
      * @return string String representation
      */
-    public function toString($separator = '\\') {
-        return implode($separator, $this->parts);
+    public function toString() {
+        return implode('\\', $this->parts);
     }
 
     /**
@@ -101,17 +100,6 @@ class Name extends NodeAbstract
      */
     public function __toString() {
         return implode('\\', $this->parts);
-    }
-
-    /**
-     * Sets the whole name.
-     *
-     * @deprecated Create a new Name instead, or manually modify the $parts property
-     *
-     * @param string|array|self $name The name to set the whole name to
-     */
-    public function set($name) {
-        $this->parts = self::prepareName($name);
     }
 
     /**
@@ -137,26 +125,6 @@ class Name extends NodeAbstract
     }
 
     /**
-     * Sets the first part of the name.
-     *
-     * @deprecated Use concat($first, $name->slice(1)) instead
-     *
-     * @param string|array|self $name The name to set the first part to
-     */
-    public function setFirst($name) {
-        array_splice($this->parts, 0, 1, self::prepareName($name));
-    }
-
-    /**
-     * Sets the last part of the name.
-     *
-     * @param string|array|self $name The name to set the last part to
-     */
-    public function setLast($name) {
-        array_splice($this->parts, -1, 1, self::prepareName($name));
-    }
-
-    /**
      * Gets a slice of a name (similar to array_slice).
      *
      * This method returns a new instance of the same type as the original and with the same
@@ -165,17 +133,31 @@ class Name extends NodeAbstract
      * If the slice is empty, a Name with an empty parts array is returned. While this is
      * meaningless in itself, it works correctly in conjunction with concat().
      *
-     * @param int $offset Offset to start the slice at
+     * Offset and length have the same meaning as in array_slice().
+     *
+     * @param int      $offset Offset to start the slice at (may be negative)
+     * @param int|null $length Length of the slice (may be negative)
      *
      * @return static Sliced name
      */
-    public function slice($offset) {
-        // TODO negative offset and length
-        if ($offset < 0 || $offset > count($this->parts)) {
+    public function slice($offset, $length = null) {
+        $numParts = count($this->parts);
+
+        $realOffset = $offset < 0 ? $offset + $numParts : $offset;
+        if ($realOffset < 0 || $realOffset > $numParts) {
             throw new \OutOfBoundsException(sprintf('Offset %d is out of bounds', $offset));
         }
 
-        return new static(array_slice($this->parts, $offset), $this->attributes);
+        if (null === $length) {
+            $realLength = $numParts - $realOffset;
+        } else {
+            $realLength = $length < 0 ? $length + $numParts - $realOffset : $length;
+            if ($realLength < 0 || $realLength > $numParts) {
+                throw new \OutOfBoundsException(sprintf('Length %d is out of bounds', $length));
+            }
+        }
+
+        return new static(array_slice($this->parts, $realOffset, $realLength), $this->attributes);
     }
 
     /**
