@@ -29,8 +29,8 @@ if (empty($files)) {
 $lexer = new PhpParser\Lexer\Emulative(array('usedAttributes' => array(
     'startLine', 'endLine', 'startFilePos', 'endFilePos', 'comments'
 )));
-$parser = (new PhpLenientParser\ParserFactory)->create(
-    PhpLenientParser\ParserFactory::ONLY_PHP7,
+$parser = (new PhpLenientParser\LenientParserFactory)->create(
+    PhpLenientParser\LenientParserFactory::ONLY_PHP7,
     $lexer
 );
 $dumper = new PhpParser\NodeDumper([
@@ -139,7 +139,7 @@ function parseArgs($args) {
     $files = array();
     $attributes = array(
         'with-column-info' => false,
-        'with-posititions' => false,
+        'with-positions' => false,
         'with-recovery' => false,
     );
 
