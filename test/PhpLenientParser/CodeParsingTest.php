@@ -2,11 +2,11 @@
 
 namespace PhpLenientParser;
 
-use PhpParser\Parser as BaseParser;
 use PhpParser\Error;
 use PhpParser\ErrorHandler;
+use PhpParser\Lexer;
 use PhpParser\NodeDumper;
-use PhpParser\Comment;
+use PhpParser\Parser;
 
 require_once __DIR__ . '/CodeTestAbstract.php';
 
@@ -15,29 +15,32 @@ class CodeParsingTest extends CodeTestAbstract
     /**
      * @dataProvider provideTestParse
      */
-    public function testParse($name, $code, $expected, $mode) {
-        $lexer = new Lexer\Lenient(array('usedAttributes' => array(
+    public function testParse($name, $code, $expected, $modeLine) {
+        if (null !== $modeLine) {
+            $modes = array_fill_keys(explode(',', $modeLine), true);
+        } else {
+            $modes = [];
+        }
+
+        $parserOptions = [
+            'useIdentifierNodes' => isset($modes['ident']),
+            'useConsistentVariableNodes' => isset($modes['consistentVars']),
+        ];
+
+        $lexer = new Lexer\Emulative(array('usedAttributes' => array(
             'startLine', 'endLine', 'startFilePos', 'endFilePos', 'comments'
         )));
-        $parser5 = new Parser\LenientPhp5($lexer);
-        $parser7 = new Parser\LenientPhp7($lexer);
+        $parser7 = new LenientParser($lexer, $parserOptions);
 
-        $output5 = $this->getParseOutput($parser5, $code);
-        $output7 = $this->getParseOutput($parser7, $code);
+        $dumpPositions = isset($modes['positions']);
+        $output7 = $this->getParseOutput($parser7, $code, $dumpPositions);
 
-        if ($mode === 'php5') {
-            $this->assertSame($expected, $output5, $name);
-            $this->assertNotSame($expected, $output7, $name);
-        } else if ($mode === 'php7') {
-            $this->assertNotSame($expected, $output5, $name);
-            $this->assertSame($expected, $output7, $name);
-        } else {
-            $this->assertSame($expected, $output5, $name);
+        if (!isset($modes['php5'])) {
             $this->assertSame($expected, $output7, $name);
         }
     }
 
-    private function getParseOutput(BaseParser $parser, $code) {
+    private function getParseOutput(Parser $parser, $code, $dumpPositions) {
         $errors = new ErrorHandler\Collecting;
         $stmts = $parser->parse($code, $errors);
 
@@ -47,8 +50,8 @@ class CodeParsingTest extends CodeTestAbstract
         }
 
         if (null !== $stmts) {
-            $dumper = new NodeDumper(['dumpComments' => true]);
-            $output .= $dumper->dump($stmts);
+            $dumper = new NodeDumper(['dumpComments' => true, 'dumpPositions' => $dumpPositions]);
+            $output .= $dumper->dump($stmts, $code);
         }
 
         return canonicalize($output);

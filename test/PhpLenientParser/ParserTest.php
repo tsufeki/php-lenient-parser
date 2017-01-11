@@ -2,23 +2,26 @@
 
 namespace PhpLenientParser;
 
-use PhpParser\Lexer as BaseLexer;
+use PhpParser\Lexer;
 use PhpParser\Comment;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Parser;
 
-abstract class ParserTest extends \PHPUnit_Framework_TestCase
+class ParserTest extends \PHPUnit_Framework_TestCase
 {
-    /** @returns Parser */
-    abstract protected function getParser(BaseLexer $lexer);
+    /** @return Parser */
+    protected function getParser(Lexer $lexer) {
+        return new LenientParser($lexer);
+    }
 
     /**
      * @expectedException \PhpParser\Error
      * @expectedExceptionMessage Syntax error, unexpected EOF on line 1
      */
     public function testParserThrowsSyntaxError() {
-        $parser = $this->getParser(new Lexer\Lenient());
+        $parser = $this->getParser(new Lexer());
         $parser->parse('<?php foo');
     }
 
@@ -27,7 +30,7 @@ abstract class ParserTest extends \PHPUnit_Framework_TestCase
      * @expectedExceptionMessage Cannot use foo as self because 'self' is a special class name on line 1
      */
     public function testParserThrowsSpecialError() {
-        $parser = $this->getParser(new Lexer\Lenient());
+        $parser = $this->getParser(new Lexer());
         $parser->parse('<?php use foo as self;');
     }
 
@@ -36,12 +39,12 @@ abstract class ParserTest extends \PHPUnit_Framework_TestCase
      * @expectedExceptionMessage Unterminated comment on line 1
      */
     public function testParserThrowsLexerError() {
-        $parser = $this->getParser(new Lexer\Lenient());
+        $parser = $this->getParser(new Lexer());
         $parser->parse('<?php /*');
     }
 
     public function testAttributeAssignment() {
-        $lexer = new Lexer\Lenient(array(
+        $lexer = new Lexer(array(
             'usedAttributes' => array(
                 'comments', 'startLine', 'endLine',
                 'startTokenPos', 'endTokenPos',
@@ -123,7 +126,7 @@ EOC;
      * @dataProvider provideTestExtraAttributes
      */
     public function testExtraAttributes($code, $expectedAttributes) {
-        $parser = $this->getParser(new Lexer\Lenient);
+        $parser = $this->getParser(new Lexer());
         $stmts = $parser->parse("<?php $code;");
         $attributes = $stmts[0]->getAttributes();
         foreach ($expectedAttributes as $name => $value) {
@@ -172,20 +175,9 @@ EOC;
             array("?>\nFoo", ['hasLeadingNewline' => true]),
         );
     }
-
-    public function testGroupUsePrefixFileOffsets() {
-        $parser = $this->getParser(new Lexer\Lenient(
-            ['usedAttributes' => ['startFilePos', 'endFilePos']]
-        ));
-        $stmts = $parser->parse('<?php use Foo\Bar\{Baz};');
-        /** @var Node\Stmt\GroupUse $groupUse */
-        $groupUse = $stmts[0];
-        $this->assertSame(10, $groupUse->prefix->getAttribute('startFilePos'));
-        $this->assertSame(16, $groupUse->prefix->getAttribute('endFilePos'));
-    }
 }
 
-class InvalidTokenLexer extends BaseLexer {
+class InvalidTokenLexer extends Lexer {
     public function getNextToken(&$value = null, &$startAttributes = null, &$endAttributes = null) {
         $value = 'foobar';
         return 999;
