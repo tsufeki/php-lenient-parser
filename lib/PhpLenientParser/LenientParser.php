@@ -14,6 +14,8 @@ use PhpParser\Lexer;
 use PhpParser\Node\Expr;
 use PhpParser\Parser as ParserInterface;
 use PhpParser\Parser\Tokens;
+use PhpLenientParser\Statement\StatementParser;
+use PhpLenientParser\Statement\ExpressionStatement;
 
 class LenientParser implements ParserInterface
 {
@@ -44,8 +46,19 @@ class LenientParser implements ParserInterface
         }
 
         $parserState = $this->createParserState($code, $errorHandler);
+        $statementParser = $parserState->getStatementParser();
+        $statements = [];
+        while ($parserState->lookAhead()->type !== 0) {
+            $statement = $statementParser->parse($parserState);
+            if ($statement !== null) {
+                $statements[] = $statement;
+            } else {
+                // drop the errorneous token
+                $parserState->eat(); //TODO add error
+            }
+        }
 
-        return [$parserState->getExpressionParser()->parse($parserState)]; //TODO
+        return $statements;
     }
 
     /**
@@ -62,7 +75,8 @@ class LenientParser implements ParserInterface
             $this->lexer,
             $errorHandler,
             $this->options,
-            $this->createExpressionParser()
+            $this->createExpressionParser(),
+            $this->createStatementParser()
         );
     }
 
@@ -94,5 +108,14 @@ class LenientParser implements ParserInterface
         $expressionParser->addInfix(new Postfix(Tokens::T_DEC, 210, Expr\PostInc::class));
 
         return $expressionParser;
+    }
+
+    protected function createStatementParser()
+    {
+        $statementParser = new StatementParser();
+
+        $statementParser->addStatement(new ExpressionStatement());
+
+        return $statementParser;
     }
 }

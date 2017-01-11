@@ -4,6 +4,7 @@ namespace PhpLenientParser;
 
 use PhpParser\Node;
 use PhpLenientParser\Expression\ExpressionParserInterface;
+use PhpLenientParser\Statement\StatementParserInterface;
 
 interface ParserStateInterface
 {
@@ -49,4 +50,9 @@ interface ParserStateInterface
      * @return ExpressionParserInterface
      */
     public function getExpressionParser();
+
+    /**
+     * @return StatementParserInterface
+     */
+    public function getStatementParser();
 }

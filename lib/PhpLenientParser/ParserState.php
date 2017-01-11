@@ -7,6 +7,7 @@ use PhpParser\Lexer;
 use PhpParser\ErrorHandler;
 use PhpParser\Error;
 use PhpLenientParser\Expression\ExpressionParserInterface;
+use PhpLenientParser\Statement\StatementParserInterface;
 
 class ParserState implements ParserStateInterface
 {
@@ -31,6 +32,11 @@ class ParserState implements ParserStateInterface
     private $expressionParser;
 
     /**
+     * @var StatementParserInterface
+     */
+    private $statementParser;
+
+    /**
      * @var \SplQueue
      */
     private $lookAheadQueue;
@@ -40,17 +46,20 @@ class ParserState implements ParserStateInterface
      * @param ErrorHandler $errorHandler
      * @param array $options
      * @param ExpressionParserInterface $expressionParser
+     * @param StatementParserInterface $statementParser
      */
     public function __construct(
         $lexer,
         ErrorHandler $errorHandler,
         array $options,
-        ExpressionParserInterface $expressionParser
+        ExpressionParserInterface $expressionParser,
+        StatementParserInterface $statementParser
     ) {
         $this->lexer = $lexer;
         $this->errorHandler = $errorHandler;
         $this->options = $options;
         $this->expressionParser = $expressionParser;
+        $this->statementParser = $statementParser;
         $this->lookAheadQueue = new \SplQueue();
     }
 
@@ -112,5 +121,10 @@ class ParserState implements ParserStateInterface
     public function getExpressionParser()
     {
         return $this->expressionParser;
+    }
+
+    public function getStatementParser()
+    {
+        return $this->statementParser;
     }
 }

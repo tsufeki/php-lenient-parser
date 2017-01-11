@@ -37,6 +37,8 @@ class CodeParsingTest extends CodeTestAbstract
 
         if (!isset($modes['php5'])) {
             $this->assertSame($expected, $output7, $name);
+        } else {
+            $this->markTestSkipped();
         }
     }
 
