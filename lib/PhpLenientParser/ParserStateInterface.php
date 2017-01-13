@@ -23,11 +23,20 @@ interface ParserStateInterface
     public function lookAhead($count = 0);
 
     /**
-     * @param int $tokenType If token doesn't match $tokenType, add an error.
+     * @param int $tokenType If not null and token doesn't match it, don't eat anything.
      *
      * @return Token|null
      */
     public function eat($tokenType = null);
+
+    /**
+     * If token matches type, eat it; otherwise add an error.
+     *
+     * @param int $tokenType
+     *
+     * @return Token|null
+     */
+    public function assert($tokenType);
 
     /**
      * @param string $message

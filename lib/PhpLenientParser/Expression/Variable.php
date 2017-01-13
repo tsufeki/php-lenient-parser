@@ -2,21 +2,15 @@
 
 namespace PhpLenientParser\Expression;
 
-use PhpParser\Parser\Tokens;
 use PhpParser\Node\Expr;
 use PhpLenientParser\ParserStateInterface;
 
-class Variable extends AbstractAtom
+class Variable extends AbstractPrefix
 {
-    public function __construct()
-    {
-        parent::__construct(Tokens::T_VARIABLE);
-    }
-
     public function parse(ParserStateInterface $parser)
     {
         $token = $parser->eat();
-        $name = substr($token->value, 1);
+        $name = substr($token->value, 1) ?: $parser->getExpressionParser()->makeErrorNode($token);
 
         return $parser->setAttributes(new Expr\Variable($name), $token, $token);
     }

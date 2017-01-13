@@ -85,6 +85,18 @@ class ParserState implements ParserStateInterface
         $token = $this->lookAhead();
 
         if ($tokenType !== null && $tokenType !== $token->type) {
+            return null;
+        }
+
+        $this->lookAheadQueue->dequeue();
+        return $token;
+    }
+
+    public function assert($tokenType)
+    {
+        $token = $this->lookAhead();
+
+        if ($tokenType !== $token->type) {
             $this->addError(sprintf('Expected %s, got %s', $tokenType, $token->type), $token->getAttributes());
             return null;
         }

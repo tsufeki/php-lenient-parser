@@ -9,7 +9,7 @@ class ExpressionStatement implements StatementInterface
     public function parse(ParserStateInterface $parser)
     {
         $stmt = $parser->getExpressionParser()->parse($parser);
-        $parser->eat(ord(';'));
+        $parser->assert(ord(';'));
 
         return $stmt;
     }

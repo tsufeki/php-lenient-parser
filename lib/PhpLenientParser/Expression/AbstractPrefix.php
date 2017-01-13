@@ -4,7 +4,7 @@ namespace PhpLenientParser\Expression;
 
 use PhpParser\Node;
 
-abstract class AbstractAtom implements PrefixInterface
+abstract class AbstractPrefix implements PrefixInterface
 {
     /**
      * @var int

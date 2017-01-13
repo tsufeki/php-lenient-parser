@@ -30,7 +30,7 @@ class Parens implements PrefixInterface
     {
         $open = $parser->eat();
         $expr = $parser->getExpressionParser()->parse($parser);
-        $close = $parser->eat($this->closeToken);
+        $close = $parser->assert($this->closeToken);
         if ($expr === null) {
             $expr = $parser->getExpressionParser()->makeErrorNode($open);
         }
