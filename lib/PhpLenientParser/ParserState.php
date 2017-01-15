@@ -2,12 +2,12 @@
 
 namespace PhpLenientParser;
 
-use PhpParser\Node;
-use PhpParser\Lexer;
-use PhpParser\ErrorHandler;
-use PhpParser\Error;
 use PhpLenientParser\Expression\ExpressionParserInterface;
 use PhpLenientParser\Statement\StatementParserInterface;
+use PhpParser\Error;
+use PhpParser\ErrorHandler;
+use PhpParser\Lexer;
+use PhpParser\Node;
 
 class ParserState implements ParserStateInterface
 {

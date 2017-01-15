@@ -2,9 +2,9 @@
 
 namespace PhpLenientParser;
 
-use PhpParser\Node;
 use PhpLenientParser\Expression\ExpressionParserInterface;
 use PhpLenientParser\Statement\StatementParserInterface;
+use PhpParser\Node;
 
 interface ParserStateInterface
 {

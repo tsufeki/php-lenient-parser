@@ -2,8 +2,8 @@
 
 namespace PhpLenientParser\Expression;
 
-use PhpParser\Node\Expr\Error;
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node\Expr\Error;
 
 class ExpressionParser implements ExpressionParserInterface
 {

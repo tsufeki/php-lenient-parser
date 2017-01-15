@@ -2,9 +2,9 @@
 
 namespace PhpLenientParser\Expression;
 
-use PhpParser\Node;
 use PhpLenientParser\ParserStateInterface;
 use PhpLenientParser\Token;
+use PhpParser\Node;
 
 interface ExpressionParserInterface
 {

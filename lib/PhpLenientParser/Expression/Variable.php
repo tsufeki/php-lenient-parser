@@ -2,8 +2,8 @@
 
 namespace PhpLenientParser\Expression;
 
-use PhpParser\Node\Expr;
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node\Expr;
 
 class Variable extends AbstractPrefix
 {

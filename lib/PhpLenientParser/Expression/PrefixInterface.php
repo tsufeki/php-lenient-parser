@@ -2,8 +2,8 @@
 
 namespace PhpLenientParser\Expression;
 
-use PhpParser\Node;
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node;
 
 interface PrefixInterface
 {

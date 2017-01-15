@@ -2,8 +2,8 @@
 
 namespace PhpLenientParser\Expression;
 
-use PhpParser\Node;
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node;
 
 class Postfix extends AbstractOperator implements InfixInterface
 {

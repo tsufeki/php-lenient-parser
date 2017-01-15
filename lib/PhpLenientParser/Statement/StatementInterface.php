@@ -2,8 +2,8 @@
 
 namespace PhpLenientParser\Statement;
 
-use PhpParser\Node;
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node;
 
 interface StatementInterface
 {

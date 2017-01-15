@@ -2,16 +2,21 @@
 
 namespace PhpLenientParser;
 
+use PhpLenientParser\Expression\ArgumentList;
 use PhpLenientParser\Expression\Assign;
 use PhpLenientParser\Expression\DNumber;
 use PhpLenientParser\Expression\ExpressionParser;
 use PhpLenientParser\Expression\ExpressionParserInterface;
+use PhpLenientParser\Expression\Identifier;
+use PhpLenientParser\Expression\IndirectVariable;
 use PhpLenientParser\Expression\Infix;
 use PhpLenientParser\Expression\LNumber;
+use PhpLenientParser\Expression\NameOrConst;
 use PhpLenientParser\Expression\Nullary;
 use PhpLenientParser\Expression\Parens;
 use PhpLenientParser\Expression\Postfix;
 use PhpLenientParser\Expression\Prefix;
+use PhpLenientParser\Expression\Scope;
 use PhpLenientParser\Expression\String_;
 use PhpLenientParser\Expression\Ternary;
 use PhpLenientParser\Expression\Variable;
@@ -23,7 +28,6 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar;
 use PhpParser\Parser as ParserInterface;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Expression\IndirectVariable;
 
 class LenientParser implements ParserInterface
 {
@@ -94,6 +98,14 @@ class LenientParser implements ParserInterface
     protected function createExpressionParser()
     {
         $expressionParser = new ExpressionParser();
+
+        $identifier = new Identifier();
+        $arguments = new ArgumentList();
+
+        $expressionParser->addPrefix($variable = new Variable(Tokens::T_VARIABLE));
+        $expressionParser->addPrefix($indirectVariable = new IndirectVariable(ord('$'), $variable));
+        $expressionParser->addPrefix(new NameOrConst(Tokens::T_NS_SEPARATOR));
+        $expressionParser->addPrefix(new NameOrConst(Tokens::T_STRING));
 
         $expressionParser->addInfix(new Infix(Tokens::T_LOGICAL_OR, 10, Expr\BinaryOp\LogicalOr::class));
         $expressionParser->addInfix(new Infix(Tokens::T_LOGICAL_XOR, 20, Expr\BinaryOp\LogicalXor::class));
@@ -169,11 +181,14 @@ class LenientParser implements ParserInterface
         $expressionParser->addInfix(new Postfix(Tokens::T_INC, 210, Expr\PostInc::class));
         $expressionParser->addInfix(new Postfix(Tokens::T_DEC, 210, Expr\PostInc::class));
 
-        //TODO: [] 220
-        //TODO: clone 230
-        //TODO: new 230
+        //TODO: clone 220
+        //TODO: new 220
+        //TODO: [] 230 ArrayDimFetch
         //TODO: -> 240 MethodCall PropertyFetch
-        //TODO: :: 240 ClassConstFetch StaticCall StaticPropertyFetch
+        $expressionParser->addInfix(
+            new Scope(Tokens::T_PAAMAYIM_NEKUDOTAYIM, 240,
+            $identifier, $variable, $indirectVariable, $arguments)
+        );
 
         $expressionParser->addPrefix(new LNumber(Tokens::T_LNUMBER));
         $expressionParser->addPrefix(new DNumber(Tokens::T_DNUMBER));
@@ -194,8 +209,6 @@ class LenientParser implements ParserInterface
         //TODO: () empty() eval() exit die include require isset() print FuncCall
 
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
-        $expressionParser->addPrefix($variable = new Variable(Tokens::T_VARIABLE));
-        $expressionParser->addPrefix(new IndirectVariable(ord('$'), $variable));
 
         //TODO: function
         //TODO: ShellExec

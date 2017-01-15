@@ -2,8 +2,8 @@
 
 namespace PhpLenientParser\Expression;
 
-use PhpParser\Node\Expr;
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node\Expr;
 use PhpParser\Parser\Tokens;
 
 class IndirectVariable extends AbstractPrefix
