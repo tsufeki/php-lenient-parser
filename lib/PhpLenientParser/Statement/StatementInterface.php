@@ -15,7 +15,7 @@ interface StatementInterface
     public function parse(ParserStateInterface $parser);
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getToken();
 }

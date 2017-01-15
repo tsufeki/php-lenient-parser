@@ -42,6 +42,11 @@ class ParserState implements ParserStateInterface
     private $lookAheadQueue;
 
     /**
+     * @var Token|null
+     */
+    private $last;
+
+    /**
      * @param Lexer $lexer
      * @param ErrorHandler $errorHandler
      * @param array $options
@@ -88,6 +93,7 @@ class ParserState implements ParserStateInterface
             return null;
         }
 
+        $this->last = $token;
         $this->lookAheadQueue->dequeue();
         return $token;
     }
@@ -101,8 +107,14 @@ class ParserState implements ParserStateInterface
             return null;
         }
 
+        $this->last = $token;
         $this->lookAheadQueue->dequeue();
         return $token;
+    }
+
+    public function last()
+    {
+        return $this->last;
     }
 
     public function addError($message, array $attributes = [])

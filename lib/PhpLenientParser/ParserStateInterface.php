@@ -39,6 +39,11 @@ interface ParserStateInterface
     public function assert($tokenType);
 
     /**
+     * @return Token|null
+     */
+    public function last();
+
+    /**
      * @param string $message
      * @param array $attributes
      */

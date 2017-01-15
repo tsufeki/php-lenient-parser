@@ -23,6 +23,7 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar;
 use PhpParser\Parser as ParserInterface;
 use PhpParser\Parser\Tokens;
+use PhpLenientParser\Expression\IndirectVariable;
 
 class LenientParser implements ParserInterface
 {
@@ -193,8 +194,8 @@ class LenientParser implements ParserInterface
         //TODO: () empty() eval() exit die include require isset() print FuncCall
 
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
-        //TODO: ConstFetch Variable
-        $expressionParser->addPrefix(new Variable(Tokens::T_VARIABLE));
+        $expressionParser->addPrefix($variable = new Variable(Tokens::T_VARIABLE));
+        $expressionParser->addPrefix(new IndirectVariable(ord('$'), $variable));
 
         //TODO: function
         //TODO: ShellExec
