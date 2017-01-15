@@ -30,6 +30,7 @@ use PhpParser\Parser as ParserInterface;
 use PhpParser\Parser\Tokens;
 use PhpLenientParser\Expression\ObjectAccess;
 use PhpLenientParser\Expression\FunctionCall;
+use PhpLenientParser\Expression\ArrayIndex;
 
 class LenientParser implements ParserInterface
 {
@@ -185,7 +186,10 @@ class LenientParser implements ParserInterface
 
         //TODO: clone 220
         //TODO: new 220
-        //TODO: [] {} 230 ArrayDimFetch
+
+        $expressionParser->addInfix(new ArrayIndex(ord('['), ord(']'), 230));
+        $expressionParser->addInfix(new ArrayIndex(ord('{'), ord('}'), 230));
+
         $expressionParser->addInfix(new FunctionCall(ord('('), 240, $arguments));
         $expressionParser->addInfix(
             new ObjectAccess(Tokens::T_OBJECT_OPERATOR, 240,
