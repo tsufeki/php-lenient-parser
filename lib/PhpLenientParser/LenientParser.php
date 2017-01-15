@@ -3,16 +3,20 @@
 namespace PhpLenientParser;
 
 use PhpLenientParser\Expression\ArgumentList;
+use PhpLenientParser\Expression\ArrayIndex;
+use PhpLenientParser\Expression\Array_;
 use PhpLenientParser\Expression\Assign;
 use PhpLenientParser\Expression\DNumber;
 use PhpLenientParser\Expression\ExpressionParser;
 use PhpLenientParser\Expression\ExpressionParserInterface;
+use PhpLenientParser\Expression\FunctionCall;
 use PhpLenientParser\Expression\Identifier;
 use PhpLenientParser\Expression\IndirectVariable;
 use PhpLenientParser\Expression\Infix;
 use PhpLenientParser\Expression\LNumber;
 use PhpLenientParser\Expression\NameOrConst;
 use PhpLenientParser\Expression\Nullary;
+use PhpLenientParser\Expression\ObjectAccess;
 use PhpLenientParser\Expression\Parens;
 use PhpLenientParser\Expression\Postfix;
 use PhpLenientParser\Expression\Prefix;
@@ -28,9 +32,6 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar;
 use PhpParser\Parser as ParserInterface;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Expression\ObjectAccess;
-use PhpLenientParser\Expression\FunctionCall;
-use PhpLenientParser\Expression\ArrayIndex;
 
 class LenientParser implements ParserInterface
 {
@@ -215,7 +216,11 @@ class LenientParser implements ParserInterface
         $expressionParser->addPrefix(new Nullary(Tokens::T_NS_C, Scalar\MagicConst\Namespace_::class));
         $expressionParser->addPrefix(new Nullary(Tokens::T_TRAIT_C, Scalar\MagicConst\Trait_::class));
 
-        //TODO: [] array() list()
+        $expressionParser->addPrefix(new Array_(ord('['), null, ord(']'), Expr\Array_::class, Expr\Array_::KIND_SHORT));
+        $expressionParser->addPrefix(new Array_(Tokens::T_ARRAY, ord('('), ord(')'),
+            Expr\Array_::class, Expr\Array_::KIND_LONG));
+        $expressionParser->addPrefix(new Array_(Tokens::T_LIST, ord('('), ord(')'), Expr\List_::class));
+
         //TODO: empty() eval() exit die include require isset() print
 
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
