@@ -28,6 +28,8 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar;
 use PhpParser\Parser as ParserInterface;
 use PhpParser\Parser\Tokens;
+use PhpLenientParser\Expression\ObjectAccess;
+use PhpLenientParser\Expression\FunctionCall;
 
 class LenientParser implements ParserInterface
 {
@@ -183,8 +185,12 @@ class LenientParser implements ParserInterface
 
         //TODO: clone 220
         //TODO: new 220
-        //TODO: [] 230 ArrayDimFetch
-        //TODO: -> 240 MethodCall PropertyFetch
+        //TODO: [] {} 230 ArrayDimFetch
+        $expressionParser->addInfix(new FunctionCall(ord('('), 240, $arguments));
+        $expressionParser->addInfix(
+            new ObjectAccess(Tokens::T_OBJECT_OPERATOR, 240,
+            $identifier, $variable, $indirectVariable, $arguments)
+        );
         $expressionParser->addInfix(
             new Scope(Tokens::T_PAAMAYIM_NEKUDOTAYIM, 240,
             $identifier, $variable, $indirectVariable, $arguments)
@@ -206,7 +212,7 @@ class LenientParser implements ParserInterface
         $expressionParser->addPrefix(new Nullary(Tokens::T_TRAIT_C, Scalar\MagicConst\Trait_::class));
 
         //TODO: [] array() list()
-        //TODO: () empty() eval() exit die include require isset() print FuncCall
+        //TODO: empty() eval() exit die include require isset() print
 
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
 

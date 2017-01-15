@@ -5,7 +5,7 @@ namespace PhpLenientParser\Expression;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 
-class Scope extends AbstractOperator implements InfixInterface
+class ObjectAccess extends AbstractOperator implements InfixInterface
 {
     /**
      * @var Identifier
@@ -53,47 +53,36 @@ class Scope extends AbstractOperator implements InfixInterface
     public function parse(ParserStateInterface $parser, Node $left)
     {
         $parser->eat();
-        /** @var Node\Identifier|string|null */
-        $id = null;
-        /** @var Node\Expr\Variable|null */
-        $var = null;
-        /** @var Node\Expr|null */
-        $expr = null;
+        $name = null;
 
         switch ($parser->lookAhead()->type) {
             case $this->variableParser->getToken():
-                $var = $this->variableParser->parse($parser);
+                $name = $this->variableParser->parse($parser);
                 break;
             case $this->indirectVariableParser->getToken():
-                $var = $this->indirectVariableParser->parse($parser);
+                $name = $this->indirectVariableParser->parse($parser);
                 break;
             case ord('{'):
                 $parser->eat();
-                $expr = $parser->getExpressionParser()->parse($parser);
-                if ($expr === null) {
-                    $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
+                $name = $parser->getExpressionParser()->parse($parser);
+                if ($name === null) {
+                    $name = $parser->getExpressionParser()->makeErrorNode($parser->last());
                 }
                 $parser->assert(ord('}'));
                 break;
             default:
-                $id = $this->identifierParser->parse($parser);
+                $name = $this->identifierParser->parse($parser);
+        }
+
+        if ($name === null) {
+            $name = $parser->getExpressionParser()->makeErrorNode($parser->last());
         }
 
         if ($parser->lookAhead()->type === ord('(')) {
             $args = $this->argsParser->parse($parser);
-            $name = $id ?: ($var ?: ($expr ?: $parser->getExpressionParser()->makeErrorNode($parser->last())));
-            $node = new Node\Expr\StaticCall($left, $name, $args);
-        } elseif ($expr !== null) {
-            $node = new Node\Expr\StaticCall($left, $expr, []);
-        } elseif ($var !== null) {
-            $name = $var->name;
-            if (is_string($name) && $parser->getOption('useConsistentVariableNodes')) {
-                $name = new Node\VarLikeIdentifier($name);
-            }
-            $node = new Node\Expr\StaticPropertyFetch($left, $name);
+            $node = new Node\Expr\MethodCall($left, $name, $args);
         } else {
-            $name = $id ?: $parser->getExpressionParser()->makeErrorNode($parser->last());
-            $node = new Node\Expr\ClassConstFetch($left, $name);
+            $node = new Node\Expr\PropertyFetch($left, $name);
         }
 
         return $parser->setAttributes($node, $left, $parser->last());
