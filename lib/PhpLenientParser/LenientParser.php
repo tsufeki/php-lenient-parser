@@ -13,14 +13,19 @@ use PhpLenientParser\Expression\FunctionCall;
 use PhpLenientParser\Expression\Identifier;
 use PhpLenientParser\Expression\IndirectVariable;
 use PhpLenientParser\Expression\Infix;
+use PhpLenientParser\Expression\InstanceOf_;
 use PhpLenientParser\Expression\LNumber;
+use PhpLenientParser\Expression\Name;
 use PhpLenientParser\Expression\NameOrConst;
+use PhpLenientParser\Expression\New_;
 use PhpLenientParser\Expression\Nullary;
 use PhpLenientParser\Expression\ObjectAccess;
+use PhpLenientParser\Expression\ObjectAccessNew;
 use PhpLenientParser\Expression\Parens;
 use PhpLenientParser\Expression\Postfix;
 use PhpLenientParser\Expression\Prefix;
 use PhpLenientParser\Expression\Scope;
+use PhpLenientParser\Expression\ScopeNew;
 use PhpLenientParser\Expression\String_;
 use PhpLenientParser\Expression\Ternary;
 use PhpLenientParser\Expression\Variable;
@@ -105,9 +110,30 @@ class LenientParser implements ParserInterface
 
         $identifier = new Identifier();
         $arguments = new ArgumentList();
+        $variable = new Variable(Tokens::T_VARIABLE);
+        $indirectVariable = new IndirectVariable(ord('$'), $variable);
 
-        $expressionParser->addPrefix($variable = new Variable(Tokens::T_VARIABLE));
-        $expressionParser->addPrefix($indirectVariable = new IndirectVariable(ord('$'), $variable));
+        $classRef = new ExpressionParser();
+
+        $classRef->addPrefix($variable);
+        $classRef->addPrefix($indirectVariable);
+        $classRef->addPrefix(new Name(Tokens::T_NS_SEPARATOR));
+        $classRef->addPrefix(new Name(Tokens::T_STRING));
+
+        $classRef->addInfix(new ArrayIndex(ord('['), ord(']'), 230));
+        $classRef->addInfix(new ArrayIndex(ord('{'), ord('}'), 230));
+
+        $classRef->addInfix(
+            new ObjectAccessNew(Tokens::T_OBJECT_OPERATOR, 240,
+            $identifier, $variable, $indirectVariable)
+        );
+        $classRef->addInfix(
+            new ScopeNew(Tokens::T_PAAMAYIM_NEKUDOTAYIM, 240,
+            $variable, $indirectVariable)
+        );
+
+        $expressionParser->addPrefix($variable);
+        $expressionParser->addPrefix($indirectVariable);
         $expressionParser->addPrefix(new NameOrConst(Tokens::T_NS_SEPARATOR));
         $expressionParser->addPrefix(new NameOrConst(Tokens::T_STRING));
 
@@ -163,7 +189,7 @@ class LenientParser implements ParserInterface
 
         $expressionParser->addPrefix(new Prefix(ord('!'), 170, Expr\BooleanNot::class));
 
-        //TODO: instanceof 180
+        $expressionParser->addInfix(new InstanceOf_(Tokens::T_INSTANCEOF, 180, $classRef));
 
         $expressionParser->addPrefix(new Prefix(ord('+'), 190, Expr\UnaryPlus::class));
         $expressionParser->addPrefix(new Prefix(ord('-'), 190, Expr\UnaryMinus::class));
@@ -185,8 +211,8 @@ class LenientParser implements ParserInterface
         $expressionParser->addInfix(new Postfix(Tokens::T_INC, 210, Expr\PostInc::class));
         $expressionParser->addInfix(new Postfix(Tokens::T_DEC, 210, Expr\PostInc::class));
 
-        //TODO: clone 220
-        //TODO: new 220
+        $expressionParser->addPrefix(new Prefix(Tokens::T_CLONE, 220, Expr\Clone_::class));
+        $expressionParser->addPrefix(new New_(Tokens::T_NEW, $classRef, $arguments));
 
         $expressionParser->addInfix(new ArrayIndex(ord('['), ord(']'), 230));
         $expressionParser->addInfix(new ArrayIndex(ord('{'), ord('}'), 230));

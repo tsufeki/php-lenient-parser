@@ -25,6 +25,9 @@ class ArrayIndex extends AbstractOperator implements InfixInterface
 
     public function parse(ParserStateInterface $parser, Node $left)
     {
+        if (!($left instanceof Node\Expr)) {
+            $left = $parser->getExpressionParser()->makeErrorNode($parser->last());
+        }
         $token = $parser->eat();
         $right = $parser->getExpressionParser()->parse($parser);
         $parser->assert($this->closeToken);
