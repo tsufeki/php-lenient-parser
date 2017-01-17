@@ -251,9 +251,9 @@ class LenientParser implements ParserInterface
 
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
 
-        //TODO: function
+        //TODO: Closure
         //TODO: ShellExec
-        //TODO: yield yield from
+        //TODO: Yield YieldFrom
 
         return $expressionParser;
     }

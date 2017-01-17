@@ -102,6 +102,7 @@ class Identifier
             $id = $token->value;
             if ($parser->getOption('useIdentifierNodes')) {
                 $id = new Node\Identifier($id);
+                $parser->setAttributes($node, $token, $token);
             }
 
             return $id;
