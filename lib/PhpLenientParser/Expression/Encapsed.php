@@ -62,7 +62,10 @@ class Encapsed extends AbstractPrefix
         }
 
         $class = $this->nodeClass;
-        return $parser->setAttributes(new $class($parts), $first, $parser->last());
+        return $parser->setAttributes(
+            new $class($parts, ['kind' => Node\Scalar\String_::KIND_DOUBLE_QUOTED]),
+            $first, $parser->last()
+        );
     }
 
     /**
