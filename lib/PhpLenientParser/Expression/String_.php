@@ -32,8 +32,8 @@ class String_ extends AbstractPrefix
         } else {
             $kind = Scalar\String_::KIND_DOUBLE_QUOTED;
             $value = substr($token->value, $start + 1, -1);
-            $value = self::replaceQuoteEscapes($value, '"');
             $value = self::replaceEscapes($value);
+            $value = self::replaceQuoteEscapes($value, '"');
         }
 
         return $parser->setAttributes(new Scalar\String_($value, ['kind' => $kind]), $token, $token);
@@ -58,19 +58,35 @@ class String_ extends AbstractPrefix
      *
      * @return string
      */
+    public static function replaceBackslashes($string)
+    {
+        return str_replace(
+            '\\\\',
+            '\\',
+            $string
+        );
+    }
+
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
     public static function replaceEscapes($string)
     {
         $string = preg_replace_callback(
-            '/\\\\(?:([nrtvef$])|([0-7]{1,3})|[xX]([0-9a-fA-F]{1,2})|u\\{([0-9a-fA-F]+)\\})/',
+            '/\\\\(?:(\\\\)|([nrtvef$])|([0-7]{1,3})|[xX]([0-9a-fA-F]{1,2})|u\\{([0-9a-fA-F]+)\\})/',
             function ($match) {
                 if (!empty($match[1])) {
-                    return self::ESCAPES[$match[1]];
+                    return '\\\\';
                 } elseif (!empty($match[2])) {
-                    return chr(octdec($match[2]));
+                    return self::ESCAPES[$match[2]];
                 } elseif (!empty($match[3])) {
-                    return chr(hexdec($match[3]));
+                    return chr(octdec($match[3]));
                 } elseif (!empty($match[4])) {
-                    return self::utf8chr(hexdec($match[4]));
+                    return chr(hexdec($match[4]));
+                } elseif (!empty($match[5])) {
+                    return self::utf8chr(hexdec($match[5]));
                 }
             },
             $string

@@ -37,6 +37,8 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar;
 use PhpParser\Parser as ParserInterface;
 use PhpParser\Parser\Tokens;
+use PhpLenientParser\Expression\Encapsed;
+use PhpLenientParser\Expression\HereDoc;
 
 class LenientParser implements ParserInterface
 {
@@ -230,8 +232,9 @@ class LenientParser implements ParserInterface
         $expressionParser->addPrefix(new LNumber(Tokens::T_LNUMBER));
         $expressionParser->addPrefix(new DNumber(Tokens::T_DNUMBER));
         $expressionParser->addPrefix(new String_(Tokens::T_CONSTANT_ENCAPSED_STRING));
-        //TODO: encapsed
-        //TODO: heredoc
+        $expressionParser->addPrefix(new Encapsed(ord('"'), Scalar\Encapsed::class, $identifier, $variable));
+        $expressionParser->addPrefix(new Encapsed(ord('`'), Expr\ShellExec::class, $identifier, $variable));
+        $expressionParser->addPrefix(new HereDoc($identifier, $variable));
 
         $expressionParser->addPrefix(new Nullary(Tokens::T_CLASS_C, Scalar\MagicConst\Class_::class));
         $expressionParser->addPrefix(new Nullary(Tokens::T_DIR, Scalar\MagicConst\Dir::class));
@@ -252,7 +255,6 @@ class LenientParser implements ParserInterface
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
 
         //TODO: Closure
-        //TODO: ShellExec
         //TODO: Yield YieldFrom
 
         return $expressionParser;
