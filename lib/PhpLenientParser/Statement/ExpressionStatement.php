@@ -3,13 +3,19 @@
 namespace PhpLenientParser\Statement;
 
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node;
 
 class ExpressionStatement implements StatementInterface
 {
     public function parse(ParserStateInterface $parser)
     {
-        $stmt = $parser->getExpressionParser()->parse($parser);
-        $parser->assert(ord(';'));
+        $expr = $parser->getExpressionParser()->parse($parser);
+        $stmt = null;
+        if ($expr !== null) {
+            $parser->assert(ord(';'));
+            $stmt = new Node\Stmt\Expression($expr);
+            $parser->setAttributes($stmt, $expr, $expr);
+        }
 
         return $stmt;
     }
