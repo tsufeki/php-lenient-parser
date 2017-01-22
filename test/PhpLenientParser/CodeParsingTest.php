@@ -24,7 +24,6 @@ class CodeParsingTest extends CodeTestAbstract
 
         $parserOptions = [
             'useIdentifierNodes' => isset($modes['ident']),
-            'useConsistentVariableNodes' => isset($modes['consistentVars']),
         ];
 
         $lexer = new Lexer\Emulative(array('usedAttributes' => array(
@@ -32,8 +31,7 @@ class CodeParsingTest extends CodeTestAbstract
         )));
         $parser7 = new LenientParser($lexer, $parserOptions);
 
-        $dumpPositions = isset($modes['positions']);
-        $output7 = $this->getParseOutput($parser7, $code, $dumpPositions);
+        $output7 = $this->getParseOutput($parser7, $code, $modes);
 
         if (!isset($modes['php5'])) {
             $this->assertSame($expected, $output7, $name);
@@ -42,7 +40,9 @@ class CodeParsingTest extends CodeTestAbstract
         }
     }
 
-    private function getParseOutput(Parser $parser, $code, $dumpPositions) {
+    public function getParseOutput(Parser $parser, $code, array $modes) {
+        $dumpPositions = isset($modes['positions']);
+
         $errors = new ErrorHandler\Collecting;
         $stmts = $parser->parse($code, $errors);
 
