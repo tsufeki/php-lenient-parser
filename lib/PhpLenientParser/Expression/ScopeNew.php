@@ -53,7 +53,7 @@ class ScopeNew extends AbstractOperator implements InfixInterface
                 $name = $parser->getExpressionParser()->makeErrorNode($parser->last());
         }
 
-        if (is_string($name) && $parser->getOption('useConsistentVariableNodes')) {
+        if (is_string($name) && $parser->getOption('useIdentifierNodes')) {
             $name = new Node\VarLikeIdentifier($name);
         }
         $node = new Node\Expr\StaticPropertyFetch($left, $name);
