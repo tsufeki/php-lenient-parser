@@ -44,20 +44,25 @@ final class Token
      */
     public function getName()
     {
-        if (self::$names === null) {
-            self::loadNames();
+        return self::getNameFromType($this->type);
+    }
+
+    public static function getNameFromType($type)
+    {
+        self::loadNames();
+
+        if (isset(self::$names[$type])) {
+            return self::$names[$type];
         }
 
-        if (isset(self::$names[$this->type])) {
-            return self::$names[$this->type];
-        }
-
-        return $this->type === ord("'") ? "\\'" : "'" . chr($this->type) . "'";
+        return $type === ord("'") ? "'\\''" : "'" . chr($type) . "'";
     }
 
     private static function loadNames()
     {
-        self::$names = array_flip((new \ReflectionClass(Tokens::class))->getConstants());
-        self::$names[0] = 'EOF';
+        if (self::$names === null) {
+            self::$names = array_flip((new \ReflectionClass(Tokens::class))->getConstants());
+            self::$names[0] = 'EOF';
+        }
     }
 }

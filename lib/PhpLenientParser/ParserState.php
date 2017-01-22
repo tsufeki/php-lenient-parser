@@ -103,7 +103,10 @@ class ParserState implements ParserStateInterface
         $token = $this->lookAhead();
 
         if ($tokenType !== $token->type) {
-            $this->addError(sprintf('Expected %s, got %s', $tokenType, $token->type), $token->getAttributes());
+            $this->addError(
+                sprintf('Syntax error, unexpected %s, expecting %s', $token->getName(), Token::getNameFromType($tokenType)),
+                $token->getAttributes()
+            );
             return null;
         }
 
