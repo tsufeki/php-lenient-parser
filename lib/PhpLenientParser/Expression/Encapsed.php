@@ -3,8 +3,8 @@
 namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
-use PhpParser\Parser\Tokens;
 use PhpParser\Node;
+use PhpParser\Parser\Tokens;
 
 class Encapsed extends AbstractPrefix
 {

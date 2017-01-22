@@ -7,13 +7,18 @@ use PhpLenientParser\Expression\ArrayIndex;
 use PhpLenientParser\Expression\Array_;
 use PhpLenientParser\Expression\Assign;
 use PhpLenientParser\Expression\DNumber;
+use PhpLenientParser\Expression\Encapsed;
+use PhpLenientParser\Expression\Exit_;
 use PhpLenientParser\Expression\ExpressionParser;
 use PhpLenientParser\Expression\ExpressionParserInterface;
 use PhpLenientParser\Expression\FunctionCall;
+use PhpLenientParser\Expression\HereDoc;
 use PhpLenientParser\Expression\Identifier;
+use PhpLenientParser\Expression\Include_;
 use PhpLenientParser\Expression\IndirectVariable;
 use PhpLenientParser\Expression\Infix;
 use PhpLenientParser\Expression\InstanceOf_;
+use PhpLenientParser\Expression\Isset_;
 use PhpLenientParser\Expression\LNumber;
 use PhpLenientParser\Expression\Name;
 use PhpLenientParser\Expression\NameOrConst;
@@ -26,9 +31,11 @@ use PhpLenientParser\Expression\Postfix;
 use PhpLenientParser\Expression\Prefix;
 use PhpLenientParser\Expression\Scope;
 use PhpLenientParser\Expression\ScopeNew;
+use PhpLenientParser\Expression\SpecialFunction;
 use PhpLenientParser\Expression\String_;
 use PhpLenientParser\Expression\Ternary;
 use PhpLenientParser\Expression\Variable;
+use PhpLenientParser\Expression\Yield_;
 use PhpLenientParser\Statement\ExpressionStatement;
 use PhpLenientParser\Statement\StatementParser;
 use PhpParser\ErrorHandler;
@@ -37,8 +44,6 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar;
 use PhpParser\Parser as ParserInterface;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Expression\Encapsed;
-use PhpLenientParser\Expression\HereDoc;
 
 class LenientParser implements ParserInterface
 {
@@ -250,12 +255,23 @@ class LenientParser implements ParserInterface
             Expr\Array_::class, Expr\Array_::KIND_LONG));
         $expressionParser->addPrefix(new Array_(Tokens::T_LIST, ord('('), ord(')'), Expr\List_::class));
 
-        //TODO: empty() eval() exit die include require isset() print
+        $expressionParser->addPrefix(new Yield_());
+        $expressionParser->addPrefix(new SpecialFunction(Tokens::T_YIELD_FROM, Expr\YieldFrom::class));
+        $expressionParser->addPrefix(new SpecialFunction(Tokens::T_PRINT, Expr\Print_::class));
+        $expressionParser->addPrefix(new SpecialFunction(Tokens::T_EMPTY, Expr\Empty_::class, true));
+        $expressionParser->addPrefix(new SpecialFunction(Tokens::T_EVAL, Expr\Eval_::class, true));
+
+        $expressionParser->addPrefix(new Include_(Tokens::T_INCLUDE));
+        $expressionParser->addPrefix(new Include_(Tokens::T_INCLUDE_ONCE));
+        $expressionParser->addPrefix(new Include_(Tokens::T_REQUIRE));
+        $expressionParser->addPrefix(new Include_(Tokens::T_REQUIRE_ONCE));
+
+        $expressionParser->addPrefix(new Exit_());
+        $expressionParser->addPrefix(new Isset_());
 
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
 
         //TODO: Closure
-        //TODO: Yield YieldFrom
 
         return $expressionParser;
     }
