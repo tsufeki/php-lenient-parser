@@ -23,6 +23,20 @@ class StatementParser implements StatementParserInterface
         return $stmt;
     }
 
+    public function parseList(ParserStateInterface $parser)
+    {
+        $stmts = [];
+        while (null !== ($stmt = $this->parse($parser))) {
+            if (is_array($stmt)) {
+                $stmts = array_merge($stmts, $stmt);
+            } else {
+                $stmts[] = $stmt;
+            }
+        }
+
+        return $stmts;
+    }
+
     /**
      * @param StatementInterface $statement
      */

@@ -13,4 +13,11 @@ interface StatementParserInterface
      * @return Node\Stmt|null
      */
     public function parse(ParserStateInterface $parser);
+
+    /**
+     * @param ParserStateInterface $parser
+     *
+     * @return Node\Stmt[]
+     */
+    public function parseList(ParserStateInterface $parser);
 }

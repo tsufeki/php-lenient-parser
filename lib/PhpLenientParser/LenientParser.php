@@ -36,7 +36,10 @@ use PhpLenientParser\Expression\String_;
 use PhpLenientParser\Expression\Ternary;
 use PhpLenientParser\Expression\Variable;
 use PhpLenientParser\Expression\Yield_;
+use PhpLenientParser\Statement\Block;
 use PhpLenientParser\Statement\ExpressionStatement;
+use PhpLenientParser\Statement\If_;
+use PhpLenientParser\Statement\Nop;
 use PhpLenientParser\Statement\StatementParser;
 use PhpParser\ErrorHandler;
 use PhpParser\Lexer;
@@ -77,9 +80,9 @@ class LenientParser implements ParserInterface
         $statementParser = $parserState->getStatementParser();
         $statements = [];
         while ($parserState->lookAhead()->type !== 0) {
-            $statement = $statementParser->parse($parserState);
-            if ($statement !== null) {
-                $statements[] = $statement;
+            $stmts = $statementParser->parseList($parserState);
+            if (!empty($stmts)) {
+                $statements = array_merge($statements, $stmts);
             } else {
                 // drop the errorneous token
                 $parserState->eat(); //TODO add error
@@ -282,6 +285,9 @@ class LenientParser implements ParserInterface
         $statementParser = new StatementParser();
 
         $statementParser->addStatement(new ExpressionStatement());
+        $statementParser->addStatement(new Nop());
+        $statementParser->addStatement(new Block());
+        $statementParser->addStatement(new If_());
 
         return $statementParser;
     }
