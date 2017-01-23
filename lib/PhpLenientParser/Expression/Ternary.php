@@ -38,13 +38,10 @@ class Ternary extends AbstractOperator implements InfixInterface
 
         $secondToken = $parser->assert($this->secondToken);
         if ($secondToken !== null) {
-            $right = $parser->getExpressionParser()->parse(
+            $right = $parser->getExpressionParser()->parseOrError(
                 $parser,
                 $this->getPrecedence() - ($this->rightAssociative ? 1 : 0)
             );
-            if ($right === null) {
-                $right = $parser->getExpressionParser()->makeErrorNode($secondToken);
-            }
         } else {
             $right = $parser->getExpressionParser()->makeErrorNode($middle ?: $token);
         }

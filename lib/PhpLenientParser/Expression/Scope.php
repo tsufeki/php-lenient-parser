@@ -69,10 +69,7 @@ class Scope extends AbstractOperator implements InfixInterface
                 break;
             case ord('{'):
                 $parser->eat();
-                $expr = $parser->getExpressionParser()->parse($parser);
-                if ($expr === null) {
-                    $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
-                }
+                $expr = $parser->getExpressionParser()->parseOrError($parser);
                 $parser->assert(ord('}'));
                 break;
             default:

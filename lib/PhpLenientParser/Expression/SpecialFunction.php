@@ -35,11 +35,7 @@ class SpecialFunction extends AbstractPrefix
             $parser->assert(ord('('));
         }
 
-        $expr = $parser->getExpressionParser()->parse($parser);
-        if ($expr === null) {
-            $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
-        }
-
+        $expr = $parser->getExpressionParser()->parseOrError($parser);
         if ($this->parensRequired) {
             $parser->assert(ord(')'));
         }

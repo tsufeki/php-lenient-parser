@@ -21,10 +21,7 @@ class Yield_ extends AbstractPrefix
 
         if ($parser->eat(Tokens::T_DOUBLE_ARROW) !== null) {
             $key = $expr;
-            $expr = $parser->getExpressionParser()->parse($parser);
-            if ($expr === null) {
-                $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
-            }
+            $expr = $parser->getExpressionParser()->parseOrError($parser);
         }
 
         return $parser->setAttributes(new Node\Expr\Yield_($expr, $key), $token, $parser->last());

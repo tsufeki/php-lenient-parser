@@ -272,6 +272,7 @@ class LenientParser implements ParserInterface
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
 
         //TODO: Closure
+        //TODO: prefix operators with assignment: !$a = 7
 
         return $expressionParser;
     }

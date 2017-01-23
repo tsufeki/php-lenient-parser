@@ -58,6 +58,16 @@ class ExpressionParser implements ExpressionParserInterface
         return new Error($attrs);
     }
 
+    public function parseOrError(ParserStateInterface $parser, $precedence = 0)
+    {
+        $expr = $this->parse($parser, $precedence);
+        if ($expr === null) {
+            $expr = $this->makeErrorNode($parser->last());
+        }
+
+        return $expr;
+    }
+
     public function addPrefix(PrefixInterface $prefix)
     {
         $this->prefix[$prefix->getToken()] = $prefix;

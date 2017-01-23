@@ -29,11 +29,8 @@ class Parens implements PrefixInterface
     public function parse(ParserStateInterface $parser)
     {
         $open = $parser->eat();
-        $expr = $parser->getExpressionParser()->parse($parser);
+        $expr = $parser->getExpressionParser()->parseOrError($parser);
         $close = $parser->assert($this->closeToken);
-        if ($expr === null) {
-            $expr = $parser->getExpressionParser()->makeErrorNode($open);
-        }
         if ($close === null) {
             $close = $expr;
         }

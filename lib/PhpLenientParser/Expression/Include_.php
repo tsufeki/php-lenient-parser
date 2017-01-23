@@ -28,10 +28,7 @@ class Include_ extends AbstractPrefix
                 break;
         }
 
-        $expr = $parser->getExpressionParser()->parse($parser);
-        if ($expr === null) {
-            $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
-        }
+        $expr = $parser->getExpressionParser()->parseOrError($parser);
 
         return $parser->setAttributes(new Node\Expr\Include_($expr, $kind), $token, $parser->last());
     }

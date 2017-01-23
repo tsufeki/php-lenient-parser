@@ -67,10 +67,7 @@ class Array_ extends AbstractPrefix
             if ($parser->eat(Tokens::T_DOUBLE_ARROW) !== null) {
                 $key = $expr;
                 $ref = $parser->eat(ord('&')) !== null;
-                $expr = $parser->getExpressionParser()->parse($parser);
-                if ($expr === null) {
-                    $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
-                }
+                $expr = $parser->getExpressionParser()->parseOrError($parser);
             }
 
             if ($key === null && $expr === null) {

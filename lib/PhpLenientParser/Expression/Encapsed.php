@@ -173,10 +173,7 @@ class Encapsed extends AbstractPrefix
     protected function parseCurly(ParserStateInterface $parser)
     {
         $token = $parser->eat();
-        $expr = $parser->getExpressionParser()->parse($parser);
-        if ($expr === null) {
-            $expr = $parser->getExpressionParser()->makeErrorNode($token);
-        }
+        $expr = $parser->getExpressionParser()->parseOrError($parser);
         $parser->assert(ord('}'));
 
         return $expr;
@@ -202,10 +199,7 @@ class Encapsed extends AbstractPrefix
                 $expr = new Node\Expr\ArrayDimFetch($expr, $index);
             }
         } else {
-            $innerExpr = $parser->getExpressionParser()->parse($parser);
-            if ($innerExpr === null) {
-                $innerExpr = $parser->getExpressionParser()->makeErrorNode($parser->last());
-            }
+            $innerExpr = $parser->getExpressionParser()->parseOrError($parser);
             $expr = new Node\Expr\Variable($innerExpr);
         }
 

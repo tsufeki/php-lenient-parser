@@ -33,10 +33,7 @@ class New_ extends AbstractPrefix
     {
         //TODO: anonymous class
         $token = $parser->eat();
-        $class = $this->classRefParser->parse($parser);
-        if ($class === null) {
-            $class = $this->classRefParser->makeErrorNode($parser->last());
-        }
+        $class = $this->classRefParser->parseOrError($parser);
 
         $args = [];
         if ($parser->lookAhead()->type === ord('(')) {

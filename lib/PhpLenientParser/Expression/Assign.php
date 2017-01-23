@@ -34,10 +34,7 @@ class Assign extends AbstractOperator implements InfixInterface
     {
         $token = $parser->eat();
         $isRef = $parser->eat($this->refToken) !== null;
-        $right = $parser->getExpressionParser()->parse($parser, $this->getPrecedence() - 1);
-        if ($right === null) {
-            $right = $parser->getExpressionParser()->makeErrorNode($token);
-        }
+        $right = $parser->getExpressionParser()->parseOrError($parser, $this->getPrecedence() - 1);
 
         $class = $isRef ? $this->refNodeClass : $this->getNodeClass();
         return $parser->setAttributes(new $class($left, $right), $left, $right);

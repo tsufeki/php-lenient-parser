@@ -29,10 +29,7 @@ class IndirectVariable extends AbstractPrefix
         switch ($parser->lookAhead()->type) {
             case ord('{'):
                 $parser->eat();
-                $name = $parser->getExpressionParser()->parse($parser);
-                if ($name === null) {
-                    $name = $parser->getExpressionParser()->makeErrorNode($parser->last());
-                }
+                $name = $parser->getExpressionParser()->parseOrError($parser);
                 $parser->assert(ord('}'));
                 break;
             case $this->variableParser->getToken():

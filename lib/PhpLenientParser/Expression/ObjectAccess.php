@@ -64,10 +64,7 @@ class ObjectAccess extends AbstractOperator implements InfixInterface
                 break;
             case ord('{'):
                 $parser->eat();
-                $name = $parser->getExpressionParser()->parse($parser);
-                if ($name === null) {
-                    $name = $parser->getExpressionParser()->makeErrorNode($parser->last());
-                }
+                $name = $parser->getExpressionParser()->parseOrError($parser);
                 $parser->assert(ord('}'));
                 break;
             default:

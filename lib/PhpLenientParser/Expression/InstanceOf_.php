@@ -26,10 +26,7 @@ class InstanceOf_ extends AbstractOperator implements InfixInterface
     public function parse(ParserStateInterface $parser, Node $left)
     {
         $token = $parser->eat();
-        $right = $this->classRefParser->parse($parser);
-        if ($right === null) {
-            $right = $this->classRefParser->makeErrorNode($parser->last());
-        }
+        $right = $this->classRefParser->parseOrError($parser);
 
         $class = $this->getNodeClass();
         return $parser->setAttributes(new $class($left, $right), $left, $right);
