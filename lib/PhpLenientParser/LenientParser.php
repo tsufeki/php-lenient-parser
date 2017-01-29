@@ -39,6 +39,7 @@ use PhpLenientParser\Expression\Yield_;
 use PhpLenientParser\Statement\Block;
 use PhpLenientParser\Statement\DoWhile;
 use PhpLenientParser\Statement\ExpressionStatement;
+use PhpLenientParser\Statement\For_;
 use PhpLenientParser\Statement\If_;
 use PhpLenientParser\Statement\Nop;
 use PhpLenientParser\Statement\StatementParser;
@@ -292,6 +293,7 @@ class LenientParser implements ParserInterface
         $statementParser->addStatement(new If_());
         $statementParser->addStatement(new While_());
         $statementParser->addStatement(new DoWhile());
+        $statementParser->addStatement(new For_());
 
         return $statementParser;
     }
