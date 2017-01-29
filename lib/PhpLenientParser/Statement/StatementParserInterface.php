@@ -10,7 +10,7 @@ interface StatementParserInterface
     /**
      * @param ParserStateInterface $parser
      *
-     * @return Node\Stmt|null
+     * @return Node\Stmt[]|null
      */
     public function parse(ParserStateInterface $parser);
 

@@ -53,8 +53,7 @@ class If_ implements StatementInterface
             $stmts = $parser->getStatementParser()->parseList($parser);
             $colon = true;
         } else {
-            $stmt = $parser->getStatementParser()->parse($parser);
-            $stmts = $stmt === null ? [] : [$stmt];
+            $stmts = $parser->getStatementParser()->parse($parser) ?: [];
         }
 
         return [$stmts, $colon];

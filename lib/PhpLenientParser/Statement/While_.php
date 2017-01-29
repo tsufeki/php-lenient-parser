@@ -22,8 +22,7 @@ class While_ implements StatementInterface
             $parser->assert(Tokens::T_ENDWHILE);
             $parser->assert(ord(';'));
         } else {
-            $stmt = $parser->getStatementParser()->parse($parser);
-            $stmts = $stmt === null ? [] : [$stmt];
+            $stmts = $parser->getStatementParser()->parse($parser) ?: [];
         }
 
         return $parser->setAttributes(new Node\Stmt\While_(

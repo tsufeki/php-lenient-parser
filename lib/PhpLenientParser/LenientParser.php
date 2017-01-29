@@ -40,6 +40,7 @@ use PhpLenientParser\Statement\Block;
 use PhpLenientParser\Statement\DoWhile;
 use PhpLenientParser\Statement\ExpressionStatement;
 use PhpLenientParser\Statement\For_;
+use PhpLenientParser\Statement\Foreach_;
 use PhpLenientParser\Statement\If_;
 use PhpLenientParser\Statement\Nop;
 use PhpLenientParser\Statement\Simple;
@@ -297,6 +298,7 @@ class LenientParser implements ParserInterface
         $statementParser->addStatement(new While_());
         $statementParser->addStatement(new DoWhile());
         $statementParser->addStatement(new For_());
+        $statementParser->addStatement(new Foreach_());
         $statementParser->addStatement(new Switch_());
 
         $statementParser->addStatement(new Simple(Tokens::T_BREAK, Stmt\Break_::class));

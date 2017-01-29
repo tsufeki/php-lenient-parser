@@ -19,6 +19,9 @@ class StatementParser implements StatementParserInterface
         if (isset($this->statements[$tokenType])) {
             $stmt = $this->statements[$tokenType]->parse($parser);
         }
+        if ($stmt !== null && !is_array($stmt)) {
+            $stmt = [$stmt];
+        }
 
         return $stmt;
     }
@@ -27,11 +30,7 @@ class StatementParser implements StatementParserInterface
     {
         $stmts = [];
         while (null !== ($stmt = $this->parse($parser))) {
-            if (is_array($stmt)) {
-                $stmts = array_merge($stmts, $stmt);
-            } else {
-                $stmts[] = $stmt;
-            }
+            $stmts = array_merge($stmts, $stmt);
         }
 
         return $stmts;

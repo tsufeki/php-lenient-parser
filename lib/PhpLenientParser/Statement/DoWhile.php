@@ -12,9 +12,7 @@ class DoWhile implements StatementInterface
     {
         $token = $parser->eat();
 
-        $stmts = [];
-        $stmt = $parser->getStatementParser()->parse($parser);
-        $stmts = $stmt === null ? [] : [$stmt];
+        $stmts = $parser->getStatementParser()->parse($parser) ?: [];
 
         $condition = null;
         if ($parser->assert(Tokens::T_WHILE) !== null) {
