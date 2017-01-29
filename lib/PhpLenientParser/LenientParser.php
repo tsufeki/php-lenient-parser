@@ -42,6 +42,7 @@ use PhpLenientParser\Statement\ExpressionStatement;
 use PhpLenientParser\Statement\For_;
 use PhpLenientParser\Statement\If_;
 use PhpLenientParser\Statement\Nop;
+use PhpLenientParser\Statement\Simple;
 use PhpLenientParser\Statement\StatementParser;
 use PhpLenientParser\Statement\Switch_;
 use PhpLenientParser\Statement\While_;
@@ -49,6 +50,7 @@ use PhpParser\ErrorHandler;
 use PhpParser\Lexer;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar;
+use PhpParser\Node\Stmt;
 use PhpParser\Parser as ParserInterface;
 use PhpParser\Parser\Tokens;
 
@@ -296,6 +298,11 @@ class LenientParser implements ParserInterface
         $statementParser->addStatement(new DoWhile());
         $statementParser->addStatement(new For_());
         $statementParser->addStatement(new Switch_());
+
+        $statementParser->addStatement(new Simple(Tokens::T_BREAK, Stmt\Break_::class));
+        $statementParser->addStatement(new Simple(Tokens::T_CONTINUE, Stmt\Continue_::class));
+        $statementParser->addStatement(new Simple(Tokens::T_RETURN, Stmt\Return_::class));
+        $statementParser->addStatement(new Simple(Tokens::T_THROW, Stmt\Throw_::class, true));
 
         return $statementParser;
     }
