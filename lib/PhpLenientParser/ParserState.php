@@ -115,6 +115,14 @@ class ParserState implements ParserStateInterface
         return $token;
     }
 
+    public function unexpected(Token $token)
+    {
+        $this->addError(
+            sprintf('Syntax error, unexpected %s', $token->getName()),
+            $token->getAttributes()
+        );
+    }
+
     public function last()
     {
         return $this->last;

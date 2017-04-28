@@ -39,6 +39,13 @@ interface ParserStateInterface
     public function assert($tokenType);
 
     /**
+     * Add an error for token.
+     *
+     * @param Token $token
+     */
+    public function unexpected(Token $token);
+
+    /**
      * @return Token|null
      */
     public function last();

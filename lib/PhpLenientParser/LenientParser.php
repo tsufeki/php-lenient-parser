@@ -94,7 +94,7 @@ class LenientParser implements ParserInterface
                 $statements = array_merge($statements, $stmts);
             } else {
                 // drop the errorneous token
-                $parserState->eat(); //TODO add error
+                $parserState->unexpected($parserState->eat());
             }
         }
 
