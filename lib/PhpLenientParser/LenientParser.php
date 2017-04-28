@@ -54,6 +54,7 @@ use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
 use PhpParser\Parser as ParserInterface;
 use PhpParser\Parser\Tokens;
+use PhpLenientParser\Statement\Echo_;
 
 class LenientParser implements ParserInterface
 {
@@ -292,6 +293,7 @@ class LenientParser implements ParserInterface
         $statementParser = new StatementParser();
 
         $statementParser->addStatement(new ExpressionStatement());
+        $statementParser->addStatement(new Echo_());
         $statementParser->addStatement(new Nop());
         $statementParser->addStatement(new Block());
         $statementParser->addStatement(new If_());

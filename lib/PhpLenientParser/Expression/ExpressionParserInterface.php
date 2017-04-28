@@ -25,6 +25,13 @@ interface ExpressionParserInterface
     public function parseOrError(ParserStateInterface $parser, $precedence = 0);
 
     /**
+     * @param ParserStateInterface $parser
+     *
+     * @return Node\Expr[]
+     */
+    public function parseList(ParserStateInterface $parser);
+
+    /**
      * @param Node|Token $last Node/token preceeding error.
      *
      * @return Node\Expr

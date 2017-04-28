@@ -13,11 +13,11 @@ class For_ implements StatementInterface
         $token = $parser->eat();
 
         $parser->assert(ord('('));
-        $init = $this->parseExpressionList($parser);
+        $init = $parser->getExpressionParser()->parseList($parser);
         $parser->assert(ord(';'));
-        $cond = $this->parseExpressionList($parser);
+        $cond = $parser->getExpressionParser()->parseList($parser);
         $parser->assert(ord(';'));
-        $loop = $this->parseExpressionList($parser);
+        $loop = $parser->getExpressionParser()->parseList($parser);
         $parser->assert(ord(')'));
 
         $stmts = [];
@@ -35,27 +35,6 @@ class For_ implements StatementInterface
             'loop' => $loop,
             'stmts' => $stmts,
         ]), $token, $parser->last());
-    }
-
-    /**
-     * @param ParserStateInterface $parser
-     *
-     * @return Node\Expr[]
-     */
-    private function parseExpressionList(ParserStateInterface $parser)
-    {
-        $expressions = [];
-        while (true) {
-            $expr = $parser->getExpressionParser()->parse($parser);
-            if ($expr !== null) {
-                $expressions[] = $expr;
-            }
-            if ($parser->eat(ord(',')) === null) {
-                break;
-            }
-        }
-
-        return $expressions;
     }
 
     public function getToken()

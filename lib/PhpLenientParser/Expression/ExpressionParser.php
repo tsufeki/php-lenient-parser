@@ -68,6 +68,22 @@ class ExpressionParser implements ExpressionParserInterface
         return $expr;
     }
 
+    public function parseList(ParserStateInterface $parser)
+    {
+        $expressions = [];
+        while (true) {
+            $expr = $this->parse($parser);
+            if ($expr !== null) {
+                $expressions[] = $expr;
+            }
+            if ($parser->eat(ord(',')) === null) {
+                break;
+            }
+        }
+
+        return $expressions;
+    }
+
     public function addPrefix(PrefixInterface $prefix)
     {
         $this->prefix[$prefix->getToken()] = $prefix;
