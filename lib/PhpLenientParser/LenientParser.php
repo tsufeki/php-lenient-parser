@@ -48,6 +48,7 @@ use PhpLenientParser\Statement\Nop;
 use PhpLenientParser\Statement\Simple;
 use PhpLenientParser\Statement\StatementParser;
 use PhpLenientParser\Statement\Switch_;
+use PhpLenientParser\Statement\Unset_;
 use PhpLenientParser\Statement\While_;
 use PhpParser\ErrorHandler;
 use PhpParser\Lexer;
@@ -296,6 +297,7 @@ class LenientParser implements ParserInterface
         $statementParser->addStatement(new ExpressionStatement());
         $statementParser->addStatement(new Echo_());
         $statementParser->addStatement(new InlineHtml());
+        $statementParser->addStatement(new Unset_());
         $statementParser->addStatement(new Nop());
         $statementParser->addStatement(new Block());
         $statementParser->addStatement(new If_());
