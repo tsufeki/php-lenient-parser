@@ -38,10 +38,12 @@ use PhpLenientParser\Expression\Variable;
 use PhpLenientParser\Expression\Yield_;
 use PhpLenientParser\Statement\Block;
 use PhpLenientParser\Statement\DoWhile;
+use PhpLenientParser\Statement\Echo_;
 use PhpLenientParser\Statement\ExpressionStatement;
 use PhpLenientParser\Statement\For_;
 use PhpLenientParser\Statement\Foreach_;
 use PhpLenientParser\Statement\If_;
+use PhpLenientParser\Statement\InlineHtml;
 use PhpLenientParser\Statement\Nop;
 use PhpLenientParser\Statement\Simple;
 use PhpLenientParser\Statement\StatementParser;
@@ -54,7 +56,6 @@ use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
 use PhpParser\Parser as ParserInterface;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Statement\Echo_;
 
 class LenientParser implements ParserInterface
 {
@@ -294,6 +295,7 @@ class LenientParser implements ParserInterface
 
         $statementParser->addStatement(new ExpressionStatement());
         $statementParser->addStatement(new Echo_());
+        $statementParser->addStatement(new InlineHtml());
         $statementParser->addStatement(new Nop());
         $statementParser->addStatement(new Block());
         $statementParser->addStatement(new If_());
