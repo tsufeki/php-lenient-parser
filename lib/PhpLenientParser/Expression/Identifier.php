@@ -99,11 +99,8 @@ class Identifier
 
         if (isset(self::TOKENS[$token->type])) {
             $parser->eat();
-            $id = $token->value;
-            if ($parser->getOption('useIdentifierNodes')) {
-                $id = new Node\Identifier($id);
-                $parser->setAttributes($id, $token, $token);
-            }
+            $id = new Node\Identifier($token->value);
+            $parser->setAttributes($id, $token, $token);
 
             return $id;
         }

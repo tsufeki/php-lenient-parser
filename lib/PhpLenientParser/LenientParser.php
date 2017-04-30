@@ -80,7 +80,7 @@ class LenientParser implements ParserInterface
         $this->options = $options;
     }
 
-    public function parse($code, ErrorHandler $errorHandler = null)
+    public function parse(string $code, ErrorHandler $errorHandler = null)
     {
         if ($errorHandler === null) {
             $errorHandler = new ErrorHandler\Throwing();
