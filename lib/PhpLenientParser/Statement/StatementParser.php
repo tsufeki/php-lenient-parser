@@ -14,10 +14,12 @@ class StatementParser implements StatementParserInterface
     public function parse(ParserStateInterface $parser)
     {
         $token = $parser->lookAhead();
-        $tokenType = isset($this->statements[$token->type]) ? $token->type : null;
         $stmt = null;
-        if (isset($this->statements[$tokenType])) {
-            $stmt = $this->statements[$tokenType]->parse($parser);
+        if (isset($this->statements[$token->type])) {
+            $stmt = $this->statements[$token->type]->parse($parser);
+        }
+        if ($stmt === null && isset($this->statements[null])) {
+            $stmt = $this->statements[null]->parse($parser);
         }
         if ($stmt !== null && !is_array($stmt)) {
             $stmt = [$stmt];
