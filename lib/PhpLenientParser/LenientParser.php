@@ -52,6 +52,7 @@ use PhpLenientParser\Statement\Simple;
 use PhpLenientParser\Statement\StatementParser;
 use PhpLenientParser\Statement\Static_;
 use PhpLenientParser\Statement\Switch_;
+use PhpLenientParser\Statement\Try_;
 use PhpLenientParser\Statement\Unset_;
 use PhpLenientParser\Statement\While_;
 use PhpParser\ErrorHandler;
@@ -301,6 +302,7 @@ class LenientParser implements ParserInterface
         $identifier = new Identifier();
         $variable = new Variable(Tokens::T_VARIABLE);
         $indirectVariable = new IndirectVariable(ord('$'), $variable);
+        $name = new Name(Tokens::T_STRING);
 
         $statementParser->addStatement(new ExpressionStatement());
         $statementParser->addStatement(new Echo_());
@@ -319,6 +321,7 @@ class LenientParser implements ParserInterface
         $statementParser->addStatement(new For_());
         $statementParser->addStatement(new Foreach_());
         $statementParser->addStatement(new Switch_());
+        $statementParser->addStatement(new Try_($variable, $name));
 
         $statementParser->addStatement(new Simple(Tokens::T_BREAK, Stmt\Break_::class));
         $statementParser->addStatement(new Simple(Tokens::T_CONTINUE, Stmt\Continue_::class));
