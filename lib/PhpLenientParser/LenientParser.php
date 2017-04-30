@@ -6,6 +6,7 @@ use PhpLenientParser\Expression\ArgumentList;
 use PhpLenientParser\Expression\ArrayIndex;
 use PhpLenientParser\Expression\Array_;
 use PhpLenientParser\Expression\Assign;
+use PhpLenientParser\Expression\Closure;
 use PhpLenientParser\Expression\DNumber;
 use PhpLenientParser\Expression\Encapsed;
 use PhpLenientParser\Expression\Exit_;
@@ -141,6 +142,10 @@ class LenientParser implements ParserInterface
         $arguments = new ArgumentList();
         $variable = new Variable(Tokens::T_VARIABLE);
         $indirectVariable = new IndirectVariable(ord('$'), $variable);
+
+        $name = new Name(Tokens::T_STRING);
+        $type = new Type($name, $identifier);
+        $parameters = new ParameterList($type, $variable);
 
         $classRef = new ExpressionParser();
 
@@ -291,9 +296,11 @@ class LenientParser implements ParserInterface
         $expressionParser->addPrefix(new Exit_());
         $expressionParser->addPrefix(new Isset_());
 
+        $expressionParser->addPrefix(new Closure(Tokens::T_FUNCTION, $type, $parameters, $variable));
+        $expressionParser->addPrefix(new Closure(Tokens::T_STATIC, $type, $parameters, $variable));
+
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
 
-        //TODO: Closure
         //TODO: prefix operators with assignment: !$a = 7
 
         return $expressionParser;
