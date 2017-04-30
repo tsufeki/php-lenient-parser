@@ -43,6 +43,7 @@ use PhpLenientParser\Statement\ExpressionStatement;
 use PhpLenientParser\Statement\For_;
 use PhpLenientParser\Statement\Foreach_;
 use PhpLenientParser\Statement\Global_;
+use PhpLenientParser\Statement\GoTo_;
 use PhpLenientParser\Statement\If_;
 use PhpLenientParser\Statement\InlineHtml;
 use PhpLenientParser\Statement\Label;
@@ -309,6 +310,7 @@ class LenientParser implements ParserInterface
         $statementParser->addStatement(new Static_($variable));
         $statementParser->addStatement(new Global_($variable, $indirectVariable));
         $statementParser->addStatement(new Label($identifier));
+        $statementParser->addStatement(new GoTo_($identifier));
 
         $statementParser->addStatement(new Block());
         $statementParser->addStatement(new If_());
