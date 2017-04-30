@@ -37,6 +37,7 @@ use PhpLenientParser\Expression\Ternary;
 use PhpLenientParser\Expression\Variable;
 use PhpLenientParser\Expression\Yield_;
 use PhpLenientParser\Statement\Block;
+use PhpLenientParser\Statement\Declare_;
 use PhpLenientParser\Statement\DoWhile;
 use PhpLenientParser\Statement\Echo_;
 use PhpLenientParser\Statement\ExpressionStatement;
@@ -322,6 +323,7 @@ class LenientParser implements ParserInterface
         $statementParser->addStatement(new Foreach_());
         $statementParser->addStatement(new Switch_());
         $statementParser->addStatement(new Try_($variable, $name));
+        $statementParser->addStatement(new Declare_($identifier));
 
         $statementParser->addStatement(new Simple(Tokens::T_BREAK, Stmt\Break_::class));
         $statementParser->addStatement(new Simple(Tokens::T_CONTINUE, Stmt\Continue_::class));
