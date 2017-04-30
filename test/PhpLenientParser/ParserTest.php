@@ -2,15 +2,16 @@
 
 namespace PhpLenientParser;
 
-use PhpParser\Lexer;
+use PHPUnit\Framework\TestCase;
 use PhpParser\Comment;
+use PhpParser\Lexer;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt;
 use PhpParser\Parser;
 
-class ParserTest extends \PHPUnit_Framework_TestCase
+class ParserTest extends TestCase
 {
     /** @return Parser */
     protected function getParser(Lexer $lexer) {
@@ -181,7 +182,7 @@ EOC;
 }
 
 class InvalidTokenLexer extends Lexer {
-    public function getNextToken(&$value = null, &$startAttributes = null, &$endAttributes = null) {
+    public function getNextToken(&$value = null, &$startAttributes = null, &$endAttributes = null): int {
         $value = 'foobar';
         return 999;
     }

@@ -22,9 +22,7 @@ class CodeParsingTest extends CodeTestAbstract
             $modes = [];
         }
 
-        $parserOptions = [
-            'useIdentifierNodes' => isset($modes['ident']),
-        ];
+        $parserOptions = [];
 
         $lexer = new Lexer\Emulative(array('usedAttributes' => array(
             'startLine', 'endLine', 'startFilePos', 'endFilePos', 'comments'
