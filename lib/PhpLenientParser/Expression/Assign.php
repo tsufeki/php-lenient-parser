@@ -23,7 +23,7 @@ class Assign extends AbstractOperator implements InfixInterface
      * @param int $refToken
      * @param int $precedence
      */
-    public function __construct($token, $refToken, $precedence)
+    public function __construct(int $token, int $refToken, int $precedence)
     {
         parent::__construct($token, $precedence, Expr\Assign::class);
         $this->refToken = $refToken;

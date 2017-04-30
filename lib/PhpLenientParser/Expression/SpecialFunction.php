@@ -21,7 +21,7 @@ class SpecialFunction extends AbstractPrefix
      * @param string $nodeClass
      * @param bool $parensRequired
      */
-    public function __construct($token, $nodeClass, $parensRequired = false)
+    public function __construct(int $token, string $nodeClass, bool $parensRequired = false)
     {
         parent::__construct($token);
         $this->nodeClass = $nodeClass;

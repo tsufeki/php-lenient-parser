@@ -24,7 +24,7 @@ abstract class AbstractOperator
      * @param int $precedence
      * @param string $nodeClass
      */
-    public function __construct($token, $precedence, $nodeClass)
+    public function __construct(int $token, int $precedence, $nodeClass)
     {
         $this->token = $token;
         $this->precedence = $precedence;
@@ -34,7 +34,7 @@ abstract class AbstractOperator
     /**
      * @return int
      */
-    public function getToken()
+    public function getToken(): int
     {
         return $this->token;
     }
@@ -42,7 +42,7 @@ abstract class AbstractOperator
     /**
      * @return int
      */
-    public function getPrecedence()
+    public function getPrecedence(): int
     {
         return $this->precedence;
     }

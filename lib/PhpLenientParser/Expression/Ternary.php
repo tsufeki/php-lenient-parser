@@ -24,8 +24,13 @@ class Ternary extends AbstractOperator implements InfixInterface
      * @param string $nodeClass
      * @param bool $rightAssociative
      */
-    public function __construct($token, $secondToken, $precedence, $nodeClass, $rightAssociative = false)
-    {
+    public function __construct(
+        int $token,
+        int $secondToken,
+        int $precedence,
+        string $nodeClass,
+        bool $rightAssociative = false
+    ) {
         parent::__construct($token, $precedence, $nodeClass);
         $this->secondToken = $secondToken;
         $this->rightAssociative = $rightAssociative;

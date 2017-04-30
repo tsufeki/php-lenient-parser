@@ -14,6 +14,9 @@ class Label implements StatementInterface
      */
     private $identifierParser;
 
+    /**
+     * @param Identifier $identifierParser
+     */
     public function __construct(Identifier $identifierParser)
     {
         $this->identifierParser = $identifierParser;

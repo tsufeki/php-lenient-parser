@@ -17,5 +17,5 @@ interface PrefixInterface
     /**
      * @return int
      */
-    public function getToken();
+    public function getToken(): int;
 }

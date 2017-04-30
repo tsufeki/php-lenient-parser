@@ -35,7 +35,7 @@ class Array_ extends AbstractPrefix
      * @param string $nodeClass
      * @param int|null $kind
      */
-    public function __construct($token, $secondToken, $endToken, $nodeClass, $kind = null)
+    public function __construct(int $token, int $secondToken = null, int $endToken, string $nodeClass, int $kind = null)
     {
         parent::__construct($token);
         $this->secondToken = $secondToken;

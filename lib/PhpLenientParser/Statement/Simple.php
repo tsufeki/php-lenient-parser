@@ -28,7 +28,7 @@ class Simple implements StatementInterface
      * @param string $nodeClass
      * @param bool $expressionRequired
      */
-    public function __construct($token, $nodeClass, $expressionRequired = false)
+    public function __construct(int $token, string $nodeClass, bool $expressionRequired = false)
     {
         $this->token = $token;
         $this->nodeClass = $nodeClass;

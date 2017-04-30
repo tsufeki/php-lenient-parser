@@ -17,7 +17,7 @@ class IndirectVariable extends AbstractPrefix
      * @param int $token
      * @param Variable $variableParser
      */
-    public function __construct($token, $variableParser)
+    public function __construct(int $token, Variable $variableParser)
     {
         parent::__construct($token);
         $this->variableParser = $variableParser;

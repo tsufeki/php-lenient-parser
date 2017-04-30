@@ -22,7 +22,7 @@ class New_ extends AbstractPrefix
      * @param ExpressionParserInterface $classRefParser
      * @param ArgumentList $argsParser
      */
-    public function __construct($token, $classRefParser, $argsParser)
+    public function __construct(int $token, ExpressionParserInterface $classRefParser, ArgumentList $argsParser)
     {
         parent::__construct($token);
         $this->classRefParser = $classRefParser;

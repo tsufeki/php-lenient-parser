@@ -25,7 +25,7 @@ class Closure extends AbstractPrefix
      */
     private $variableParser;
 
-    public function __construct($token, Type $typeParser, ParameterList $parametersParser, Variable $variableParser)
+    public function __construct(int $token, Type $typeParser, ParameterList $parametersParser, Variable $variableParser)
     {
         parent::__construct($token);
         $this->typeParser = $typeParser;
@@ -81,7 +81,7 @@ class Closure extends AbstractPrefix
      *
      * @return bool
      */
-    private function isClosure(ParserStateInterface $parser)
+    private function isClosure(ParserStateInterface $parser): bool
     {
         $i = 0;
         if ($parser->lookAhead($i)->type === Tokens::T_STATIC) {
@@ -106,7 +106,7 @@ class Closure extends AbstractPrefix
      *
      * @return Node\Expr\ClosureUse[]
      */
-    private function parseUses(ParserStateInterface $parser)
+    private function parseUses(ParserStateInterface $parser): array
     {
         $parser->eat();
         $parser->assert(ord('('));

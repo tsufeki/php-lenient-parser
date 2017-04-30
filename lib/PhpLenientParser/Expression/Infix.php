@@ -18,7 +18,7 @@ class Infix extends AbstractOperator implements InfixInterface
      * @param string $nodeClass
      * @param bool $rightAssociative
      */
-    public function __construct($token, $precedence, $nodeClass, $rightAssociative = false)
+    public function __construct(int $token, int $precedence, string $nodeClass, bool $rightAssociative = false)
     {
         parent::__construct($token, $precedence, $nodeClass);
         $this->rightAssociative = $rightAssociative;

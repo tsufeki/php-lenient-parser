@@ -17,7 +17,7 @@ class HereDoc extends Encapsed
      * @param Identifier $identifierParser
      * @param Variable $variableParser
      */
-    public function __construct($identifierParser, $variableParser)
+    public function __construct(Identifier $identifierParser, Variable $variableParser)
     {
         parent::__construct(Tokens::T_START_HEREDOC, Node\Scalar\Encapsed::class, $identifierParser, $variableParser);
     }
@@ -57,12 +57,12 @@ class HereDoc extends Encapsed
         return $node;
     }
 
-    protected function getEndToken()
+    protected function getEndToken(): int
     {
         return Tokens::T_END_HEREDOC;
     }
 
-    protected function parseStringPart(ParserStateInterface $parser)
+    protected function parseStringPart(ParserStateInterface $parser): Node\Scalar\EncapsedStringPart
     {
         $token = $parser->eat();
         $value = $token->value;

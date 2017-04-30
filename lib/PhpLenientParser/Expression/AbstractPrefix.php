@@ -14,12 +14,12 @@ abstract class AbstractPrefix implements PrefixInterface
     /**
      * @param int $token
      */
-    public function __construct($token)
+    public function __construct(int $token)
     {
         $this->token = $token;
     }
 
-    public function getToken()
+    public function getToken(): int
     {
         return $this->token;
     }

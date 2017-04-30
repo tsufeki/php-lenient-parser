@@ -20,6 +20,10 @@ class Global_ implements StatementInterface
      */
     private $indirectVariableParser;
 
+    /**
+     * @param Variable $variableParser
+     * @param IndirectVariable $indirectVariableParser
+     */
     public function __construct(Variable $variableParser, IndirectVariable $indirectVariableParser)
     {
         $this->variableParser = $variableParser;

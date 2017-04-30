@@ -54,6 +54,7 @@ use PhpLenientParser\Statement\Nop;
 use PhpLenientParser\Statement\ParameterList;
 use PhpLenientParser\Statement\Simple;
 use PhpLenientParser\Statement\StatementParser;
+use PhpLenientParser\Statement\StatementParserInterface;
 use PhpLenientParser\Statement\Static_;
 use PhpLenientParser\Statement\Switch_;
 use PhpLenientParser\Statement\Try_;
@@ -118,7 +119,7 @@ class LenientParser implements ParserInterface
      *
      * @return ParserStateInterface
      */
-    protected function createParserState($code, ErrorHandler $errorHandler)
+    protected function createParserState(string $code, ErrorHandler $errorHandler): ParserStateInterface
     {
         $this->lexer->startLexing($code, $errorHandler);
 
@@ -134,7 +135,7 @@ class LenientParser implements ParserInterface
     /**
      * @return ExpressionParserInterface
      */
-    protected function createExpressionParser()
+    protected function createExpressionParser(): ExpressionParserInterface
     {
         $expressionParser = new ExpressionParser();
 
@@ -306,7 +307,10 @@ class LenientParser implements ParserInterface
         return $expressionParser;
     }
 
-    protected function createStatementParser()
+    /**
+     * @return StatementParserInterface
+     */
+    protected function createStatementParser(): StatementParserInterface
     {
         $statementParser = new StatementParser();
 

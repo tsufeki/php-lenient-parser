@@ -15,7 +15,7 @@ class Nullary extends AbstractPrefix
      * @param int $token
      * @param string $nodeClass
      */
-    public function __construct($token, $nodeClass)
+    public function __construct(int $token, string $nodeClass)
     {
         parent::__construct($token);
         $this->nodeClass = $nodeClass;

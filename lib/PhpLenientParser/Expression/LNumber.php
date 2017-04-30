@@ -18,9 +18,9 @@ class LNumber extends AbstractPrefix
     /**
      * @param string $string
      *
-     * @return int
+     * @return array
      */
-    private function parseLNumber($string)
+    private function parseLNumber(string $string): array
     {
         $kind = null;
         $value = 0;

@@ -13,21 +13,21 @@ interface ParserStateInterface
      *
      * @return mixed
      */
-    public function getOption($option);
+    public function getOption(string $option);
 
     /**
      * @param int $count
      *
      * @return Token
      */
-    public function lookAhead($count = 0);
+    public function lookAhead(int $count = 0): Token;
 
     /**
      * @param int $tokenType If not null and token doesn't match it, don't eat anything.
      *
      * @return Token|null
      */
-    public function eat($tokenType = null);
+    public function eat(int $tokenType = null);
 
     /**
      * If token matches type, eat it; otherwise add an error.
@@ -36,7 +36,7 @@ interface ParserStateInterface
      *
      * @return Token|null
      */
-    public function assert($tokenType);
+    public function assert(int $tokenType);
 
     /**
      * Add an error for token.
@@ -54,7 +54,7 @@ interface ParserStateInterface
      * @param string $message
      * @param array $attributes
      */
-    public function addError($message, array $attributes = []);
+    public function addError(string $message, array $attributes = []);
 
     /**
      * Set set location-related attributes on node so it encompases $start and $end.
@@ -65,15 +65,15 @@ interface ParserStateInterface
      *
      * @return Node $node itself.
      */
-    public function setAttributes(Node $node, $start, $end);
+    public function setAttributes(Node $node, $start, $end): Node;
 
     /**
      * @return ExpressionParserInterface
      */
-    public function getExpressionParser();
+    public function getExpressionParser(): ExpressionParserInterface;
 
     /**
      * @return StatementParserInterface
      */
-    public function getStatementParser();
+    public function getStatementParser(): StatementParserInterface;
 }

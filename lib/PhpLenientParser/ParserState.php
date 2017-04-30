@@ -68,12 +68,12 @@ class ParserState implements ParserStateInterface
         $this->lookAheadQueue = new \SplQueue();
     }
 
-    public function getOption($option)
+    public function getOption(string $option)
     {
         return isset($this->options[$option]) ? $this->options[$option] : false;
     }
 
-    public function lookAhead($count = 0)
+    public function lookAhead(int $count = 0): Token
     {
         $toRead = $count + 1 - $this->lookAheadQueue->count();
         for ($i = 0; $i < $toRead; $i++) {
@@ -85,7 +85,7 @@ class ParserState implements ParserStateInterface
         return $this->lookAheadQueue[$count];
     }
 
-    public function eat($tokenType = null)
+    public function eat(int $tokenType = null)
     {
         $token = $this->lookAhead();
 
@@ -98,7 +98,7 @@ class ParserState implements ParserStateInterface
         return $token;
     }
 
-    public function assert($tokenType)
+    public function assert(int $tokenType)
     {
         $token = $this->lookAhead();
 
@@ -128,12 +128,12 @@ class ParserState implements ParserStateInterface
         return $this->last;
     }
 
-    public function addError($message, array $attributes = [])
+    public function addError(string $message, array $attributes = [])
     {
         $this->errorHandler->handleError(new Error($message, $attributes));
     }
 
-    public function setAttributes(Node $node, $start, $end)
+    public function setAttributes(Node $node, $start, $end): Node
     {
         $startAttrs = $start->getAttributes();
         $endAttrs = $end->getAttributes();
@@ -153,12 +153,12 @@ class ParserState implements ParserStateInterface
         return $node;
     }
 
-    public function getExpressionParser()
+    public function getExpressionParser(): ExpressionParserInterface
     {
         return $this->expressionParser;
     }
 
-    public function getStatementParser()
+    public function getStatementParser(): StatementParserInterface
     {
         return $this->statementParser;
     }

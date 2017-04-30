@@ -17,7 +17,7 @@ class ArrayIndex extends AbstractOperator implements InfixInterface
      * @param int $closeToken
      * @param int $precedence
      */
-    public function __construct($token, $closeToken, $precedence)
+    public function __construct(int $token, int $closeToken, int $precedence)
     {
         parent::__construct($token, $precedence, Node\Expr\ArrayDimFetch::class);
         $this->closeToken = $closeToken;

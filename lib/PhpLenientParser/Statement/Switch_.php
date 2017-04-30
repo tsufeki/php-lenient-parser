@@ -37,7 +37,7 @@ class Switch_ implements StatementInterface
      *
      * @return Node\Stmt\Case_[]
      */
-    public function parseCases(ParserStateInterface $parser)
+    public function parseCases(ParserStateInterface $parser): array
     {
         $parser->eat(ord(';'));
         $cases = [];

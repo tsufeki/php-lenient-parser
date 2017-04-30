@@ -24,10 +24,10 @@ class ScopeNew extends AbstractOperator implements InfixInterface
      * @param IndirectVariable $indirectVariableParser
      */
     public function __construct(
-        $token,
-        $precedence,
-        $variableParser,
-        $indirectVariableParser
+        int $token,
+        int $precedence,
+        Variable $variableParser,
+        IndirectVariable $indirectVariableParser
     ) {
         parent::__construct($token, $precedence, null);
         $this->variableParser = $variableParser;

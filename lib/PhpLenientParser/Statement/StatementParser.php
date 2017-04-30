@@ -28,7 +28,7 @@ class StatementParser implements StatementParserInterface
         return $stmt;
     }
 
-    public function parseList(ParserStateInterface $parser)
+    public function parseList(ParserStateInterface $parser): array
     {
         $stmts = [];
         while (null !== ($stmt = $this->parse($parser))) {

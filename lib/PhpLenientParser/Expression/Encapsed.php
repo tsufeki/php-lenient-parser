@@ -29,7 +29,7 @@ class Encapsed extends AbstractPrefix
      * @param Identifier $identifierParser
      * @param Variable $variableParser
      */
-    public function __construct($token, $nodeClass, $identifierParser, $variableParser)
+    public function __construct(int $token, string $nodeClass, Identifier $identifierParser, Variable $variableParser)
     {
         parent::__construct($token);
         $this->nodeClass = $nodeClass;
@@ -71,7 +71,7 @@ class Encapsed extends AbstractPrefix
     /**
      * @return int
      */
-    protected function getEndToken()
+    protected function getEndToken(): int
     {
         return $this->getToken();
     }
@@ -81,7 +81,7 @@ class Encapsed extends AbstractPrefix
      *
      * @return Node\Scalar\EncapsedStringPart
      */
-    protected function parseStringPart(ParserStateInterface $parser)
+    protected function parseStringPart(ParserStateInterface $parser): Node\Scalar\EncapsedStringPart
     {
         $token = $parser->eat();
         $value = $token->value;
@@ -96,7 +96,7 @@ class Encapsed extends AbstractPrefix
      *
      * @return Node\Expr
      */
-    protected function parseVariable(ParserStateInterface $parser)
+    protected function parseVariable(ParserStateInterface $parser): Node\Expr
     {
         $var = $this->variableParser->parse($parser);
 
@@ -170,7 +170,7 @@ class Encapsed extends AbstractPrefix
      *
      * @return Node\Expr
      */
-    protected function parseCurly(ParserStateInterface $parser)
+    protected function parseCurly(ParserStateInterface $parser): Node\Expr
     {
         $token = $parser->eat();
         $expr = $parser->getExpressionParser()->parseOrError($parser);
@@ -184,7 +184,7 @@ class Encapsed extends AbstractPrefix
      *
      * @return Node\Expr
      */
-    protected function parseDollarCurly(ParserStateInterface $parser)
+    protected function parseDollarCurly(ParserStateInterface $parser): Node\Expr
     {
         $token = $parser->eat();
         $expr = null;

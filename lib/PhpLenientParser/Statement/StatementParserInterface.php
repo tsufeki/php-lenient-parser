@@ -19,5 +19,5 @@ interface StatementParserInterface
      *
      * @return Node\Stmt[]
      */
-    public function parseList(ParserStateInterface $parser);
+    public function parseList(ParserStateInterface $parser): array;
 }

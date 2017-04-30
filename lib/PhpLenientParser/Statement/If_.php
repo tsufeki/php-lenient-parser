@@ -45,7 +45,7 @@ class If_ implements StatementInterface
      *
      * @return array
      */
-    private function parseBlock(ParserStateInterface $parser)
+    private function parseBlock(ParserStateInterface $parser): array
     {
         $stmts = [];
         $colon = false;
@@ -64,7 +64,7 @@ class If_ implements StatementInterface
      *
      * @return array
      */
-    private function parseConditionBlock(ParserStateInterface $parser)
+    private function parseConditionBlock(ParserStateInterface $parser): array
     {
         $parser->assert(ord('('));
         $condition = $parser->getExpressionParser()->parseOrError($parser);

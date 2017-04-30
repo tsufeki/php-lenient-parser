@@ -18,10 +18,10 @@ interface InfixInterface
     /**
      * @return int
      */
-    public function getToken();
+    public function getToken(): int;
 
     /**
      * @return int
      */
-    public function getPrecedence();
+    public function getPrecedence(): int;
 }

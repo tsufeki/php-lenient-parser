@@ -3,6 +3,7 @@
 namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Error;
 
 class ExpressionParser implements ExpressionParserInterface
@@ -17,7 +18,7 @@ class ExpressionParser implements ExpressionParserInterface
      */
     private $infix = [];
 
-    public function parse(ParserStateInterface $parser, $precedence = 0)
+    public function parse(ParserStateInterface $parser, int $precedence = 0)
     {
         $token = $parser->lookAhead();
         if (!isset($this->prefix[$token->type])) {
@@ -41,7 +42,7 @@ class ExpressionParser implements ExpressionParserInterface
         return $left;
     }
 
-    public function makeErrorNode($last)
+    public function makeErrorNode($last): Expr
     {
         $lastAttrs = $last->getAttributes();
         $attrs = [];
@@ -61,7 +62,7 @@ class ExpressionParser implements ExpressionParserInterface
         return new Error($attrs);
     }
 
-    public function parseOrError(ParserStateInterface $parser, $precedence = 0)
+    public function parseOrError(ParserStateInterface $parser, int $precedence = 0)
     {
         $expr = $this->parse($parser, $precedence);
         if ($expr === null) {
@@ -71,7 +72,7 @@ class ExpressionParser implements ExpressionParserInterface
         return $expr;
     }
 
-    public function parseList(ParserStateInterface $parser)
+    public function parseList(ParserStateInterface $parser): array
     {
         $expressions = [];
         while (true) {

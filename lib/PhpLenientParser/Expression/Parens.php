@@ -20,7 +20,7 @@ class Parens implements PrefixInterface
      * @param int $openToken
      * @param int $closeToken
      */
-    public function __construct($openToken, $closeToken)
+    public function __construct(int $openToken, int $closeToken)
     {
         $this->openToken = $openToken;
         $this->closeToken = $closeToken;
@@ -39,7 +39,7 @@ class Parens implements PrefixInterface
         return $expr;
     }
 
-    public function getToken()
+    public function getToken(): int
     {
         return $this->openToken;
     }

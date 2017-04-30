@@ -44,7 +44,7 @@ class String_ extends AbstractPrefix
      *
      * @return string
      */
-    public static function replaceQuoteEscapes($string, $quote)
+    public static function replaceQuoteEscapes(string $string, string $quote): string
     {
         return str_replace(
             ['\\\\', '\\' . $quote],
@@ -58,7 +58,7 @@ class String_ extends AbstractPrefix
      *
      * @return string
      */
-    public static function replaceBackslashes($string)
+    public static function replaceBackslashes(string $string): string
     {
         return str_replace(
             '\\\\',
@@ -72,7 +72,7 @@ class String_ extends AbstractPrefix
      *
      * @return string
      */
-    public static function replaceEscapes($string)
+    public static function replaceEscapes(string $string): string
     {
         $string = preg_replace_callback(
             '/\\\\(?:(\\\\)|([nrtvef$])|([0-7]{1,3})|[xX]([0-9a-fA-F]{1,2})|u\\{([0-9a-fA-F]+)\\})/',
@@ -100,7 +100,7 @@ class String_ extends AbstractPrefix
      *
      * @return string
      */
-    public static function utf8chr($cp)
+    public static function utf8chr(int $cp): string
     {
         if ($cp <= 0x7f) {
             return chr($cp);

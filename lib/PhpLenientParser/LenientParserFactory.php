@@ -17,7 +17,7 @@ class LenientParserFactory {
      *
      * @return Parser The parser instance
      */
-    public function create($kind = self::ONLY_PHP7, $lexer = null, array $parserOptions = array()) {
+    public function create(int $kind = self::ONLY_PHP7, $lexer = null, array $parserOptions = array()): Parser {
         if (null === $lexer) {
             $lexer = new Lexer\Emulative();
         }

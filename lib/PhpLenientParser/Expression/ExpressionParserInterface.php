@@ -14,7 +14,7 @@ interface ExpressionParserInterface
      *
      * @return Node\Expr|null
      */
-    public function parse(ParserStateInterface $parser, $precedence = 0);
+    public function parse(ParserStateInterface $parser, int $precedence = 0);
 
     /**
      * @param ParserStateInterface $parser
@@ -22,19 +22,19 @@ interface ExpressionParserInterface
      *
      * @return Node\Expr
      */
-    public function parseOrError(ParserStateInterface $parser, $precedence = 0);
+    public function parseOrError(ParserStateInterface $parser, int $precedence = 0);
 
     /**
      * @param ParserStateInterface $parser
      *
      * @return Node\Expr[]
      */
-    public function parseList(ParserStateInterface $parser);
+    public function parseList(ParserStateInterface $parser): array;
 
     /**
      * @param Node|Token $last Node/token preceeding error.
      *
      * @return Node\Expr
      */
-    public function makeErrorNode($last);
+    public function makeErrorNode($last): Node\Expr;
 }

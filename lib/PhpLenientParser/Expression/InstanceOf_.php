@@ -17,7 +17,7 @@ class InstanceOf_ extends AbstractOperator implements InfixInterface
      * @param int $precedence
      * @param ExpressionParserInterface $classRefParser
      */
-    public function __construct($token, $precedence, $classRefParser)
+    public function __construct(int $token, int $precedence, ExpressionParserInterface $classRefParser)
     {
         parent::__construct($token, $precedence, Node\Expr\Instanceof_::class);
         $this->classRefParser = $classRefParser;

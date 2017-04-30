@@ -36,12 +36,12 @@ class ObjectAccess extends AbstractOperator implements InfixInterface
      * @param ArgumentList $argsParser
      */
     public function __construct(
-        $token,
-        $precedence,
-        $identifierParser,
-        $variableParser,
-        $indirectVariableParser,
-        $argsParser
+        int $token,
+        int $precedence,
+        Identifier $identifierParser,
+        Variable $variableParser,
+        IndirectVariable $indirectVariableParser,
+        ArgumentList $argsParser
     ) {
         parent::__construct($token, $precedence, null);
         $this->identifierParser = $identifierParser;

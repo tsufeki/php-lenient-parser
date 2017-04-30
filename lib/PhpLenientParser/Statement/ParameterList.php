@@ -36,7 +36,7 @@ class ParameterList
      *
      * @return Node\Param[]
      */
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): array
     {
         $parser->eat();
         $params = [];

@@ -17,7 +17,7 @@ class FunctionCall extends AbstractOperator implements InfixInterface
      * @param int $precedence
      * @param ArgumentList $argsParser
      */
-    public function __construct($token, $precedence, $argsParser)
+    public function __construct(int $token, int $precedence, ArgumentList $argsParser)
     {
         parent::__construct($token, $precedence, null);
         $this->argsParser = $argsParser;

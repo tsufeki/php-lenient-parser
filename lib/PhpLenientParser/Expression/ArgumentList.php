@@ -13,7 +13,7 @@ class ArgumentList
      *
      * @return Node\Arg[]
      */
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): array
     {
         $parser->eat();
         $args = [];

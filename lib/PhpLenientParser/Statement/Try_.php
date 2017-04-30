@@ -63,7 +63,7 @@ class Try_ implements StatementInterface
      *
      * @return Node\Stmt[]
      */
-    private function parseBlock(ParserStateInterface $parser)
+    private function parseBlock(ParserStateInterface $parser): array
     {
         $stmts = [];
         if ($parser->lookAhead()->type === ord('{')) {

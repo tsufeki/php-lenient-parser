@@ -14,6 +14,9 @@ class Static_ implements StatementInterface
      */
     private $variableParser;
 
+    /**
+     * @param Variable $variableParser
+     */
     public function __construct(Variable $variableParser)
     {
         $this->variableParser = $variableParser;
