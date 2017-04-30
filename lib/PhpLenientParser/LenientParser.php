@@ -43,17 +43,20 @@ use PhpLenientParser\Statement\Echo_;
 use PhpLenientParser\Statement\ExpressionStatement;
 use PhpLenientParser\Statement\For_;
 use PhpLenientParser\Statement\Foreach_;
+use PhpLenientParser\Statement\Function_;
 use PhpLenientParser\Statement\Global_;
 use PhpLenientParser\Statement\GoTo_;
 use PhpLenientParser\Statement\If_;
 use PhpLenientParser\Statement\InlineHtml;
 use PhpLenientParser\Statement\Label;
 use PhpLenientParser\Statement\Nop;
+use PhpLenientParser\Statement\ParameterList;
 use PhpLenientParser\Statement\Simple;
 use PhpLenientParser\Statement\StatementParser;
 use PhpLenientParser\Statement\Static_;
 use PhpLenientParser\Statement\Switch_;
 use PhpLenientParser\Statement\Try_;
+use PhpLenientParser\Statement\Type;
 use PhpLenientParser\Statement\Unset_;
 use PhpLenientParser\Statement\While_;
 use PhpParser\ErrorHandler;
@@ -304,6 +307,8 @@ class LenientParser implements ParserInterface
         $variable = new Variable(Tokens::T_VARIABLE);
         $indirectVariable = new IndirectVariable(ord('$'), $variable);
         $name = new Name(Tokens::T_STRING);
+        $type = new Type($name, $identifier);
+        $parameters = new ParameterList($type, $variable);
 
         $statementParser->addStatement(new ExpressionStatement());
         $statementParser->addStatement(new Echo_());
@@ -329,6 +334,8 @@ class LenientParser implements ParserInterface
         $statementParser->addStatement(new Simple(Tokens::T_CONTINUE, Stmt\Continue_::class));
         $statementParser->addStatement(new Simple(Tokens::T_RETURN, Stmt\Return_::class));
         $statementParser->addStatement(new Simple(Tokens::T_THROW, Stmt\Throw_::class, true));
+
+        $statementParser->addStatement(new Function_($parameters, $type, $identifier));
 
         return $statementParser;
     }
