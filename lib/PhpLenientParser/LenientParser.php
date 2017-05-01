@@ -180,7 +180,7 @@ class LenientParser implements ParserInterface
         $expressionParser->addInfix(new Infix(Tokens::T_AND_EQUAL, 40, Expr\AssignOp\BitwiseAnd::class, true));
         $expressionParser->addInfix(new Infix(Tokens::T_OR_EQUAL, 40, Expr\AssignOp\BitwiseOr::class, true));
         $expressionParser->addInfix(new Infix(Tokens::T_XOR_EQUAL, 40, Expr\AssignOp\BitwiseXor::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_CONCAT_EQUAL, 40, Expr\AssignOp\BitwiseXor::class, true));
+        $expressionParser->addInfix(new Infix(Tokens::T_CONCAT_EQUAL, 40, Expr\AssignOp\Concat::class, true));
         $expressionParser->addInfix(new Infix(Tokens::T_DIV_EQUAL, 40, Expr\AssignOp\Div::class, true));
         $expressionParser->addInfix(new Infix(Tokens::T_MINUS_EQUAL, 40, Expr\AssignOp\Minus::class, true));
         $expressionParser->addInfix(new Infix(Tokens::T_MOD_EQUAL, 40, Expr\AssignOp\Mod::class, true));
@@ -244,7 +244,7 @@ class LenientParser implements ParserInterface
         $expressionParser->addPrefix(new Prefix(Tokens::T_INC, 210, Expr\PreInc::class));
         $expressionParser->addPrefix(new Prefix(Tokens::T_DEC, 210, Expr\PreDec::class));
         $expressionParser->addInfix(new Postfix(Tokens::T_INC, 210, Expr\PostInc::class));
-        $expressionParser->addInfix(new Postfix(Tokens::T_DEC, 210, Expr\PostInc::class));
+        $expressionParser->addInfix(new Postfix(Tokens::T_DEC, 210, Expr\PostDec::class));
 
         $expressionParser->addPrefix(new Prefix(Tokens::T_CLONE, 220, Expr\Clone_::class));
         $expressionParser->addPrefix(new New_(Tokens::T_NEW, $classRef, $arguments));
@@ -283,8 +283,8 @@ class LenientParser implements ParserInterface
             Expr\Array_::class, Expr\Array_::KIND_LONG));
         $expressionParser->addPrefix(new Array_(Tokens::T_LIST, ord('('), ord(')'), Expr\List_::class));
 
-        $expressionParser->addPrefix(new Yield_());
-        $expressionParser->addPrefix(new SpecialFunction(Tokens::T_YIELD_FROM, Expr\YieldFrom::class));
+        $expressionParser->addPrefix(new Yield_(30));
+        $expressionParser->addPrefix(new SpecialFunction(Tokens::T_YIELD_FROM, Expr\YieldFrom::class, false, 30));
         $expressionParser->addPrefix(new SpecialFunction(Tokens::T_PRINT, Expr\Print_::class));
         $expressionParser->addPrefix(new SpecialFunction(Tokens::T_EMPTY, Expr\Empty_::class, true));
         $expressionParser->addPrefix(new SpecialFunction(Tokens::T_EVAL, Expr\Eval_::class, true));

@@ -17,15 +17,22 @@ class SpecialFunction extends AbstractPrefix
     private $parensRequired;
 
     /**
+     * @var int
+     */
+    private $precedence;
+
+    /**
      * @param int $token
      * @param string $nodeClass
      * @param bool $parensRequired
+     * @param int $precedence
      */
-    public function __construct(int $token, string $nodeClass, bool $parensRequired = false)
+    public function __construct(int $token, string $nodeClass, bool $parensRequired = false, int $precedence = 0)
     {
         parent::__construct($token);
         $this->nodeClass = $nodeClass;
         $this->parensRequired = $parensRequired;
+        $this->precedence = $precedence;
     }
 
     public function parse(ParserStateInterface $parser)
@@ -35,7 +42,7 @@ class SpecialFunction extends AbstractPrefix
             $parser->assert(ord('('));
         }
 
-        $expr = $parser->getExpressionParser()->parseOrError($parser);
+        $expr = $parser->getExpressionParser()->parseOrError($parser, $this->precedence);
         if ($this->parensRequired) {
             $parser->assert(ord(')'));
         }

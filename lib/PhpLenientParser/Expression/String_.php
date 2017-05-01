@@ -77,15 +77,15 @@ class String_ extends AbstractPrefix
         $string = preg_replace_callback(
             '/\\\\(?:(\\\\)|([nrtvef$])|([0-7]{1,3})|[xX]([0-9a-fA-F]{1,2})|u\\{([0-9a-fA-F]+)\\})/',
             function ($match) {
-                if (!empty($match[1])) {
+                if (isset($match[1][0])) {
                     return '\\\\';
-                } elseif (!empty($match[2])) {
+                } elseif (isset($match[2][0])) {
                     return self::ESCAPES[$match[2]];
-                } elseif (!empty($match[3])) {
+                } elseif (isset($match[3][0])) {
                     return chr(octdec($match[3]));
-                } elseif (!empty($match[4])) {
+                } elseif (isset($match[4][0])) {
                     return chr(hexdec($match[4]));
-                } elseif (!empty($match[5])) {
+                } elseif (isset($match[5][0])) {
                     return self::utf8chr(hexdec($match[5]));
                 }
             },

@@ -24,6 +24,10 @@ class Static_ implements StatementInterface
 
     public function parse(ParserStateInterface $parser)
     {
+        if ($parser->lookAhead(1)->type === Tokens::T_FUNCTION) {
+            return null;
+        }
+
         $token = $parser->eat();
         $vars = [];
 
