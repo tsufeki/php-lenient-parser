@@ -18,11 +18,11 @@ class Switch_ implements StatementInterface
 
         $cases = [];
         if ($parser->eat(ord(':')) !== null) {
-            $cases = $this->parseCases($parser);
+            $cases = $this->parseCases($parser, Tokens::T_ENDSWITCH);
             $parser->assert(Tokens::T_ENDSWITCH);
             $parser->assert(ord(';'));
         } elseif ($parser->eat(ord('{')) !== null) {
-            $cases = $this->parseCases($parser);
+            $cases = $this->parseCases($parser, ord('{'));
             $parser->assert(ord('}'));
         }
 
@@ -34,10 +34,11 @@ class Switch_ implements StatementInterface
 
     /**
      * @param ParserStateInterface $parser
+     * @param int $delimiter
      *
      * @return Node\Stmt\Case_[]
      */
-    public function parseCases(ParserStateInterface $parser): array
+    public function parseCases(ParserStateInterface $parser, int $delimiter): array
     {
         $parser->eat(ord(';'));
         $cases = [];
@@ -58,7 +59,7 @@ class Switch_ implements StatementInterface
                 $parser->eat(ord(';'));
             }
 
-            $stmts = $parser->getStatementParser()->parseList($parser);
+            $stmts = $parser->getStatementParser()->parseList($parser, $delimiter);
             $cases[] = $parser->setAttributes(new Node\Stmt\Case_(
                 $condition,
                 $stmts

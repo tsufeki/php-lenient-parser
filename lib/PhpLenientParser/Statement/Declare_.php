@@ -48,7 +48,7 @@ class Declare_ implements StatementInterface
         if ($parser->eat(ord(';')) !== null) {
             $stmts = null;
         } elseif ($parser->eat(ord(':')) !== null) {
-            $stmts = $parser->getStatementParser()->parseList($parser);
+            $stmts = $parser->getStatementParser()->parseList($parser, Tokens::T_ENDDECLARE);
             $parser->assert(Tokens::T_ENDDECLARE);
             $parser->assert(ord(';'));
         } else {

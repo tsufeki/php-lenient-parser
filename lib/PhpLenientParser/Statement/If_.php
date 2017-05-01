@@ -50,7 +50,7 @@ class If_ implements StatementInterface
         $stmts = [];
         $colon = false;
         if ($parser->eat(ord(':')) !== null) {
-            $stmts = $parser->getStatementParser()->parseList($parser);
+            $stmts = $parser->getStatementParser()->parseList($parser, Tokens::T_ENDIF);
             $colon = true;
         } else {
             $stmts = $parser->getStatementParser()->parse($parser) ?: [];

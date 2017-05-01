@@ -22,7 +22,7 @@ class For_ implements StatementInterface
 
         $stmts = [];
         if ($parser->eat(ord(':')) !== null) {
-            $stmts = $parser->getStatementParser()->parseList($parser);
+            $stmts = $parser->getStatementParser()->parseList($parser, Tokens::T_ENDFOR);
             $parser->assert(Tokens::T_ENDFOR);
             $parser->assert(ord(';'));
         } else {

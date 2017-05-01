@@ -150,6 +150,10 @@ class ParserState implements ParserStateInterface
             }
         }
 
+        if (/*$start instanceof Token && */isset($startAttrs['comments'])) {
+            $node->setAttribute('comments', $startAttrs['comments']);
+        }
+
         return $node;
     }
 

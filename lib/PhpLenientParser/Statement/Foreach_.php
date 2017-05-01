@@ -37,7 +37,7 @@ class Foreach_ implements StatementInterface
 
         $stmts = [];
         if ($parser->eat(ord(':')) !== null) {
-            $stmts = $parser->getStatementParser()->parseList($parser);
+            $stmts = $parser->getStatementParser()->parseList($parser, Tokens::T_ENDFOREACH);
             $parser->assert(Tokens::T_ENDFOREACH);
             $parser->assert(ord(';'));
         } else {
