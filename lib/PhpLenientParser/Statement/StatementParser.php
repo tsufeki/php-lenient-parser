@@ -12,6 +12,13 @@ class StatementParser implements StatementParserInterface
      */
     private $statements = [];
 
+    public function __construct(StatementInterface ...$statements)
+    {
+        foreach ($statements as $statement) {
+            $this->addStatement($statement);
+        }
+    }
+
     public function parse(ParserStateInterface $parser)
     {
         $token = $parser->lookAhead();

@@ -37,6 +37,7 @@ use PhpLenientParser\Expression\String_;
 use PhpLenientParser\Expression\Ternary;
 use PhpLenientParser\Expression\Variable;
 use PhpLenientParser\Expression\Yield_;
+use PhpLenientParser\Statement\AggregateStatementParser;
 use PhpLenientParser\Statement\Block;
 use PhpLenientParser\Statement\ClassConst;
 use PhpLenientParser\Statement\Class_;
@@ -55,6 +56,7 @@ use PhpLenientParser\Statement\Interface_;
 use PhpLenientParser\Statement\Label;
 use PhpLenientParser\Statement\MemberModifier;
 use PhpLenientParser\Statement\Method;
+use PhpLenientParser\Statement\Namespace_;
 use PhpLenientParser\Statement\Nop;
 use PhpLenientParser\Statement\ParameterList;
 use PhpLenientParser\Statement\Property;
@@ -323,11 +325,17 @@ class LenientParserFactory
         $statementParser->addStatement(new Class_(Tokens::T_ABSTRACT, $identifier, $name, $classStatements));
         $statementParser->addStatement(new Class_(Tokens::T_FINAL, $identifier, $name, $classStatements));
 
+        $insideNamespaceParser = new AggregateStatementParser($statementParser, new StatementParser());
+        $topLevelParser = new AggregateStatementParser($insideNamespaceParser, new StatementParser(
+            new Namespace_($name, $insideNamespaceParser)
+        ));
+
         return new LenientParser(
             $parserOptions,
             $lexer,
             $expressionParser,
-            $statementParser
+            $statementParser,
+            $topLevelParser
         );
     }
 }

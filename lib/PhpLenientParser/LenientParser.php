@@ -32,21 +32,29 @@ class LenientParser implements ParserInterface
     private $statementParser;
 
     /**
+     * @var StatementParserInterface
+     */
+    private $topLevelParser;
+
+    /**
      * @param array $options
      * @param Lexer $lexer
      * @param ExpressionParserInterface $expressionParser
      * @param StatementParserInterface $statementParser
+     * @param StatementParserInterface $topLevelParser
      */
     public function __construct(
         array $options,
         $lexer,
         ExpressionParserInterface $expressionParser,
-        StatementParserInterface $statementParser
+        StatementParserInterface $statementParser,
+        StatementParserInterface $topLevelParser
     ) {
         $this->options = $options;
         $this->lexer = $lexer;
         $this->expressionParser = $expressionParser;
         $this->statementParser = $statementParser;
+        $this->topLevelParser = $topLevelParser;
     }
 
     public function parse(string $code, ErrorHandler $errorHandler = null)
@@ -56,10 +64,9 @@ class LenientParser implements ParserInterface
         }
 
         $parserState = $this->createParserState($code, $errorHandler);
-        $statementParser = $parserState->getStatementParser();
         $statements = [];
         while ($parserState->lookAhead()->type !== 0) {
-            $stmts = $statementParser->parseList($parserState);
+            $stmts = $this->topLevelParser->parseList($parserState);
             if (!empty($stmts)) {
                 $statements = array_merge($statements, $stmts);
             } else {
