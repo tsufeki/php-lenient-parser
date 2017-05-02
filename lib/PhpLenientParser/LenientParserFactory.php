@@ -38,6 +38,8 @@ use PhpLenientParser\Expression\Ternary;
 use PhpLenientParser\Expression\Variable;
 use PhpLenientParser\Expression\Yield_;
 use PhpLenientParser\Statement\Block;
+use PhpLenientParser\Statement\ClassConst;
+use PhpLenientParser\Statement\Class_;
 use PhpLenientParser\Statement\Declare_;
 use PhpLenientParser\Statement\DoWhile;
 use PhpLenientParser\Statement\Echo_;
@@ -49,14 +51,19 @@ use PhpLenientParser\Statement\Global_;
 use PhpLenientParser\Statement\GoTo_;
 use PhpLenientParser\Statement\If_;
 use PhpLenientParser\Statement\InlineHtml;
+use PhpLenientParser\Statement\Interface_;
 use PhpLenientParser\Statement\Label;
+use PhpLenientParser\Statement\MemberModifier;
+use PhpLenientParser\Statement\Method;
 use PhpLenientParser\Statement\Nop;
 use PhpLenientParser\Statement\ParameterList;
+use PhpLenientParser\Statement\Property;
 use PhpLenientParser\Statement\Simple;
 use PhpLenientParser\Statement\StatementParser;
 use PhpLenientParser\Statement\StatementParserInterface;
 use PhpLenientParser\Statement\Static_;
 use PhpLenientParser\Statement\Switch_;
+use PhpLenientParser\Statement\Trait_;
 use PhpLenientParser\Statement\Try_;
 use PhpLenientParser\Statement\Type;
 use PhpLenientParser\Statement\Unset_;
@@ -289,6 +296,32 @@ class LenientParserFactory
         $statementParser->addStatement(new Simple(Tokens::T_THROW, Stmt\Throw_::class, true));
 
         $statementParser->addStatement(new Function_($parameters, $type, $identifier));
+
+        $classStatements = new StatementParser();
+
+        $classStatements->addStatement(
+            new MemberModifier(Tokens::T_PUBLIC, Stmt\Class_::MODIFIER_PUBLIC, $classStatements));
+        $classStatements->addStatement(
+            new MemberModifier(Tokens::T_PROTECTED, Stmt\Class_::MODIFIER_PROTECTED, $classStatements));
+        $classStatements->addStatement(
+            new MemberModifier(Tokens::T_PRIVATE, Stmt\Class_::MODIFIER_PRIVATE, $classStatements));
+        $classStatements->addStatement(
+            new MemberModifier(Tokens::T_STATIC, Stmt\Class_::MODIFIER_STATIC, $classStatements));
+        $classStatements->addStatement(
+            new MemberModifier(Tokens::T_ABSTRACT, Stmt\Class_::MODIFIER_ABSTRACT, $classStatements));
+        $classStatements->addStatement(
+            new MemberModifier(Tokens::T_FINAL, Stmt\Class_::MODIFIER_FINAL, $classStatements));
+
+        $classStatements->addStatement(new Property(Tokens::T_VAR, $variable));
+        $classStatements->addStatement(new Property(Tokens::T_VARIABLE, $variable));
+        $classStatements->addStatement(new ClassConst($identifier));
+        $classStatements->addStatement(new Method($parameters, $type, $identifier));
+
+        $statementParser->addStatement(new Trait_($identifier, $classStatements));
+        $statementParser->addStatement(new Interface_($identifier, $name, $classStatements));
+        $statementParser->addStatement(new Class_(Tokens::T_CLASS, $identifier, $name, $classStatements));
+        $statementParser->addStatement(new Class_(Tokens::T_ABSTRACT, $identifier, $name, $classStatements));
+        $statementParser->addStatement(new Class_(Tokens::T_FINAL, $identifier, $name, $classStatements));
 
         return new LenientParser(
             $parserOptions,

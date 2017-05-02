@@ -49,20 +49,20 @@ class Type
         /** @var Node\Name|Node\Identifier|Node\NullableType|null $type */
         $type = null;
         $nullable = $parser->eat(ord('?'));
-        switch ($parser->lookAhead()->type) {
-            case Tokens::T_STRING:
-            case Tokens::T_NS_SEPARATOR:
-                $type = $this->nameParser->parse($parser);
 
-                if ($type->isUnqualified() && isset(static::BUILTIN_TYPES[strtolower($type->toString())])) {
-                    $type = new Node\Identifier(strtolower($type->toString()), $type->getAttributes());
-                }
-                break;
-            case Tokens::T_ARRAY:
-            case Tokens::T_CALLABLE:
-                $type = $this->identifierParser->parse($parser);
-                break;
+        $type = $this->nameParser->parserOrNull($parser);
+        if ($type !== null && $type->isUnqualified() && isset(static::BUILTIN_TYPES[strtolower($type->toString())])) {
+            $type = new Node\Identifier(strtolower($type->toString()), $type->getAttributes());
         }
+
+        if ($type === null && in_array($parser->lookAhead()->type, [
+            Tokens::T_ARRAY,
+            Tokens::T_CALLABLE,
+        ])) {
+            $type = $this->identifierParser->parse($parser);
+            $type->name = strtolower($type->name);
+        }
+
         if ($type !== null && $nullable !== null) {
             $type = $parser->setAttributes(new Node\NullableType($type), $nullable, $parser->last());
         }

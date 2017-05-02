@@ -87,8 +87,9 @@ class Try_ implements StatementInterface
 
         $types = [];
         do {
-            if (in_array($parser->lookAhead()->type, [Tokens::T_STRING, Tokens::T_NS_SEPARATOR])) {
-                $types[] = $this->nameParser->parse($parser);
+            $type = $this->nameParser->parserOrNull($parser);
+            if ($type) {
+                $types[] = $type;
             } else {
                 break;
             }

@@ -28,4 +28,18 @@ class Name extends AbstractPrefix
         $name = $fullyQualified ? new NameNode\FullyQualified($parts) : new NameNode($parts);
         return $parser->setAttributes($name, $first, $parser->last());
     }
+
+    /**
+     * @param ParserStateInterface $parser
+     *
+     * @return Name|null
+     */
+    public function parserOrNull(ParserStateInterface $parser)
+    {
+        if (in_array($parser->lookAhead()->type, [Tokens::T_STRING, Tokens::T_NS_SEPARATOR])) {
+            return $this->parse($parser);
+        }
+
+        return null;
+    }
 }

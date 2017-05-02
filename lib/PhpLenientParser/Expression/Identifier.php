@@ -97,7 +97,7 @@ class Identifier
     {
         $token = $parser->lookAhead();
 
-        if (isset(self::TOKENS[$token->type])) {
+        if ($this->isIdentifierToken($token->type)) {
             $parser->eat();
             $id = new Node\Identifier($token->value);
             $parser->setAttributes($id, $token, $token);
@@ -106,5 +106,15 @@ class Identifier
         }
 
         return null;
+    }
+
+    /**
+     * @param int $token
+     *
+     * @return bool
+     */
+    public function isIdentifierToken(int $token): bool
+    {
+        return isset(self::TOKENS[$token]);
     }
 }
