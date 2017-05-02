@@ -27,7 +27,7 @@ class CodeParsingTest extends CodeTestAbstract
         $lexer = new Lexer\Emulative(array('usedAttributes' => array(
             'startLine', 'endLine', 'startFilePos', 'endFilePos', 'comments'
         )));
-        $parser7 = new LenientParser($lexer, $parserOptions);
+        $parser7 = (new LenientParserFactory())->create(LenientParserFactory::ONLY_PHP7, $lexer, $parserOptions);
 
         $output7 = $this->getParseOutput($parser7, $code, $modes);
 

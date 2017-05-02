@@ -15,7 +15,7 @@ class ParserTest extends TestCase
 {
     /** @return Parser */
     protected function getParser(Lexer $lexer) {
-        return new LenientParser($lexer);
+        return (new LenientParserFactory())->create(LenientParserFactory::ONLY_PHP7, $lexer);
     }
 
     /**
