@@ -12,6 +12,7 @@ class LNumber extends AbstractPrefix
         $token = $parser->eat();
 
         list($value, $kind) = $this->parseLNumber($token->value);
+
         return $parser->setAttributes(new Node\Scalar\LNumber($value, ['kind' => $kind]), $token, $token);
     }
 

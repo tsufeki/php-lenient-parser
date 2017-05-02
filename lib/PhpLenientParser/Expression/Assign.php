@@ -37,6 +37,7 @@ class Assign extends AbstractOperator implements InfixInterface
         $right = $parser->getExpressionParser()->parseOrError($parser, $this->getPrecedence() - 1);
 
         $class = $isRef ? $this->refNodeClass : $this->getNodeClass();
+
         return $parser->setAttributes(new $class($left, $right), $left, $right);
     }
 }

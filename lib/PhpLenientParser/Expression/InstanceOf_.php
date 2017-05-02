@@ -13,8 +13,8 @@ class InstanceOf_ extends AbstractOperator implements InfixInterface
     private $classRefParser;
 
     /**
-     * @param int $token
-     * @param int $precedence
+     * @param int                       $token
+     * @param int                       $precedence
      * @param ExpressionParserInterface $classRefParser
      */
     public function __construct(int $token, int $precedence, ExpressionParserInterface $classRefParser)
@@ -29,6 +29,7 @@ class InstanceOf_ extends AbstractOperator implements InfixInterface
         $right = $this->classRefParser->parseOrError($parser);
 
         $class = $this->getNodeClass();
+
         return $parser->setAttributes(new $class($left, $right), $left, $right);
     }
 }

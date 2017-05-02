@@ -2,11 +2,11 @@
 
 namespace PhpLenientParser\Statement;
 
+use PhpLenientParser\Expression\Name;
 use PhpLenientParser\Expression\Variable;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Expression\Name;
 
 class Try_ implements StatementInterface
 {
@@ -22,7 +22,7 @@ class Try_ implements StatementInterface
 
     /**
      * @param Variable $variableParser
-     * @param Name $nameParser
+     * @param Name     $nameParser
      */
     public function __construct(Variable $variableParser, Name $nameParser)
     {

@@ -2,10 +2,10 @@
 
 namespace PhpLenientParser\Statement;
 
+use PhpLenientParser\Expression\Name;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Expression\Name;
 
 class Namespace_ implements StatementInterface
 {
@@ -20,7 +20,7 @@ class Namespace_ implements StatementInterface
     private $innerStatementsParser;
 
     /**
-     * @param Name $nameParser
+     * @param Name                     $nameParser
      * @param StatementParserInterface $innerStatementsParser
      */
     public function __construct(Name $nameParser, StatementParserInterface $innerStatementsParser)

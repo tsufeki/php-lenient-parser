@@ -26,6 +26,7 @@ class Name extends AbstractPrefix
         }
 
         $name = $fullyQualified ? new NameNode\FullyQualified($parts) : new NameNode($parts);
+
         return $parser->setAttributes($name, $first, $parser->last());
     }
 

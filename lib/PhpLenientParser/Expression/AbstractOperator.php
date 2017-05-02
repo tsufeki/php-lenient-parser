@@ -20,8 +20,8 @@ abstract class AbstractOperator
     private $nodeClass;
 
     /**
-     * @param int $token
-     * @param int $precedence
+     * @param int    $token
+     * @param int    $precedence
      * @param string $nodeClass
      */
     public function __construct(int $token, int $precedence, $nodeClass)

@@ -36,6 +36,7 @@ class ArgumentList
         }
 
         $parser->assert(ord(')'));
+
         return $args;
     }
 }

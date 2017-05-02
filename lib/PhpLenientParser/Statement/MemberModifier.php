@@ -39,6 +39,7 @@ class MemberModifier implements StatementInterface
         }
 
         $stmts[0]->flags |= $this->modifier;
+
         return $parser->setAttributes($stmts[0], $token, $stmts[0]);
     }
 

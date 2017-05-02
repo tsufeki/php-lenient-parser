@@ -2,10 +2,10 @@
 
 namespace PhpLenientParser\Statement;
 
+use PhpLenientParser\Expression\Variable;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Expression\Variable;
 
 class Property implements StatementInterface
 {
@@ -20,7 +20,7 @@ class Property implements StatementInterface
     private $variableParser;
 
     /**
-     * @param int $token
+     * @param int      $token
      * @param Variable $variableParser
      */
     public function __construct(int $token, Variable $variableParser)

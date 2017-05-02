@@ -2,8 +2,6 @@
 
 namespace PhpLenientParser\Expression;
 
-use PhpParser\Node;
-
 abstract class AbstractPrefix implements PrefixInterface
 {
     /**

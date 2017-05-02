@@ -16,7 +16,7 @@ interface StatementParserInterface
 
     /**
      * @param ParserStateInterface $parser
-     * @param int $delimiter Token expected after the list of statements, must not be a valid start of statement.
+     * @param int                  $delimiter Token expected after the list of statements, must not be a valid start of statement.
      *
      * @return Node\Stmt[]
      */

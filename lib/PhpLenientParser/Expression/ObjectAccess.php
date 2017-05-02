@@ -28,12 +28,12 @@ class ObjectAccess extends AbstractOperator implements InfixInterface
     private $argsParser;
 
     /**
-     * @param int $token
-     * @param int $precedence
-     * @param Identifier $identifierParser
-     * @param Variable $variableParser
+     * @param int              $token
+     * @param int              $precedence
+     * @param Identifier       $identifierParser
+     * @param Variable         $variableParser
      * @param IndirectVariable $indirectVariableParser
-     * @param ArgumentList $argsParser
+     * @param ArgumentList     $argsParser
      */
     public function __construct(
         int $token,

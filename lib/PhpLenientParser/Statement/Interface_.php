@@ -2,11 +2,11 @@
 
 namespace PhpLenientParser\Statement;
 
+use PhpLenientParser\Expression\Identifier;
+use PhpLenientParser\Expression\Name;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Expression\Identifier;
-use PhpLenientParser\Expression\Name;
 
 class Interface_ implements StatementInterface
 {
@@ -26,8 +26,8 @@ class Interface_ implements StatementInterface
     private $classStatementsParser;
 
     /**
-     * @param Identifier $identifierParser
-     * @param Name $nameParser
+     * @param Identifier               $identifierParser
+     * @param Name                     $nameParser
      * @param StatementParserInterface $classStatementsParser
      */
     public function __construct(

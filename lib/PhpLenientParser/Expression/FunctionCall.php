@@ -13,8 +13,8 @@ class FunctionCall extends AbstractOperator implements InfixInterface
     private $argsParser;
 
     /**
-     * @param int $token
-     * @param int $precedence
+     * @param int          $token
+     * @param int          $precedence
      * @param ArgumentList $argsParser
      */
     public function __construct(int $token, int $precedence, ArgumentList $argsParser)

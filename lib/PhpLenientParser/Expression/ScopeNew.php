@@ -18,9 +18,9 @@ class ScopeNew extends AbstractOperator implements InfixInterface
     private $indirectVariableParser;
 
     /**
-     * @param int $token
-     * @param int $precedence
-     * @param Variable $variableParser
+     * @param int              $token
+     * @param int              $precedence
+     * @param Variable         $variableParser
      * @param IndirectVariable $indirectVariableParser
      */
     public function __construct(

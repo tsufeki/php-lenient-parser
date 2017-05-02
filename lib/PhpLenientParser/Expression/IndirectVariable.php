@@ -4,7 +4,6 @@ namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node\Expr;
-use PhpParser\Parser\Tokens;
 
 class IndirectVariable extends AbstractPrefix
 {
@@ -14,7 +13,7 @@ class IndirectVariable extends AbstractPrefix
     private $variableParser;
 
     /**
-     * @param int $token
+     * @param int      $token
      * @param Variable $variableParser
      */
     public function __construct(int $token, Variable $variableParser)

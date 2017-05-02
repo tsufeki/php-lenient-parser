@@ -3,10 +3,10 @@
 namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
-use PhpParser\Node;
-use PhpParser\Parser\Tokens;
 use PhpLenientParser\Statement\ParameterList;
 use PhpLenientParser\Statement\Type;
+use PhpParser\Node;
+use PhpParser\Parser\Tokens;
 
 class Closure extends AbstractPrefix
 {

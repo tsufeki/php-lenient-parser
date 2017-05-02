@@ -34,7 +34,7 @@ class Switch_ implements StatementInterface
 
     /**
      * @param ParserStateInterface $parser
-     * @param int $delimiter
+     * @param int                  $delimiter
      *
      * @return Node\Stmt\Case_[]
      */

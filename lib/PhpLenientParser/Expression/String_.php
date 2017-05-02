@@ -106,20 +106,21 @@ class String_ extends AbstractPrefix
             return chr($cp);
         }
         if ($cp <= 0x7ff) {
-            return chr(($cp>>6) | 0xc0) .
-                    chr(($cp&0x3f) | 0x80);
+            return chr(($cp >> 6) | 0xc0) .
+                    chr(($cp & 0x3f) | 0x80);
         }
         if ($cp <= 0xffff) {
-            return chr(($cp>>12) | 0xe0) .
-                    chr((($cp>>6)&0x3f) | 0x80) .
-                    chr(($cp&0x3f) | 0x80);
+            return chr(($cp >> 12) | 0xe0) .
+                    chr((($cp >> 6) & 0x3f) | 0x80) .
+                    chr(($cp & 0x3f) | 0x80);
         }
         if ($cp <= 0x1fffff) {
-            return chr(($cp>>18) | 0xf0) .
-                    chr((($cp>>12)&0x3f) | 0x80) .
-                    chr((($cp>>6)&0x3f) | 0x80) .
-                    chr(($cp&0x3f) | 0x80);
+            return chr(($cp >> 18) | 0xf0) .
+                    chr((($cp >> 12) & 0x3f) | 0x80) .
+                    chr((($cp >> 6) & 0x3f) | 0x80) .
+                    chr(($cp & 0x3f) | 0x80);
         }
+
         return '';
     }
 }

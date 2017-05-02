@@ -13,10 +13,10 @@ class Infix extends AbstractOperator implements InfixInterface
     private $rightAssociative;
 
     /**
-     * @param int $token
-     * @param int $precedence
+     * @param int    $token
+     * @param int    $precedence
      * @param string $nodeClass
-     * @param bool $rightAssociative
+     * @param bool   $rightAssociative
      */
     public function __construct(int $token, int $precedence, string $nodeClass, bool $rightAssociative = false)
     {
@@ -33,6 +33,7 @@ class Infix extends AbstractOperator implements InfixInterface
         );
 
         $class = $this->getNodeClass();
+
         return $parser->setAttributes(new $class($left, $right), $left, $right);
     }
 }

@@ -36,6 +36,7 @@ class Parens implements PrefixInterface
         }
 
         $parser->setAttributes($expr, $open, $close);
+
         return $expr;
     }
 

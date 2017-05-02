@@ -22,10 +22,10 @@ class SpecialFunction extends AbstractPrefix
     private $precedence;
 
     /**
-     * @param int $token
+     * @param int    $token
      * @param string $nodeClass
-     * @param bool $parensRequired
-     * @param int $precedence
+     * @param bool   $parensRequired
+     * @param int    $precedence
      */
     public function __construct(int $token, string $nodeClass, bool $parensRequired = false, int $precedence = 0)
     {
@@ -48,6 +48,7 @@ class SpecialFunction extends AbstractPrefix
         }
 
         $nodeClass = $this->nodeClass;
+
         return $parser->setAttributes(new $nodeClass($expr), $token, $parser->last());
     }
 }

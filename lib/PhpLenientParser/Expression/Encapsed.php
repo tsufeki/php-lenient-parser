@@ -24,10 +24,10 @@ class Encapsed extends AbstractPrefix
     private $identifierParser;
 
     /**
-     * @param int $token
-     * @param string $nodeClass
+     * @param int        $token
+     * @param string     $nodeClass
      * @param Identifier $identifierParser
-     * @param Variable $variableParser
+     * @param Variable   $variableParser
      */
     public function __construct(int $token, string $nodeClass, Identifier $identifierParser, Variable $variableParser)
     {
@@ -62,6 +62,7 @@ class Encapsed extends AbstractPrefix
         }
 
         $class = $this->nodeClass;
+
         return $parser->setAttributes(
             new $class($parts, ['kind' => Node\Scalar\String_::KIND_DOUBLE_QUOTED]),
             $first, $parser->last()
@@ -107,11 +108,13 @@ class Encapsed extends AbstractPrefix
                 if ($id === null) {
                     $id = $parser->getExpressionParser()->makeErrorNode($parser->last());
                 }
+
                 return $parser->setAttributes(new Node\Expr\PropertyFetch($var, $id), $var, $parser->last());
             case ord('['):
                 $parser->eat();
                 $offset = $this->parseOffset($parser);
                 $parser->assert(ord(']'));
+
                 return $parser->setAttributes(new Node\Expr\ArrayDimFetch($var, $offset), $var, $parser->last());
             default:
                 return $var;
@@ -128,6 +131,7 @@ class Encapsed extends AbstractPrefix
         switch ($parser->lookAhead()->type) {
             case Tokens::T_STRING:
                 $token = $parser->eat();
+
                 return $parser->setAttributes(new Node\Scalar\String_($token->value), $token, $token);
             case $this->variableParser->getToken():
                 return $this->variableParser->parse($parser);
@@ -135,11 +139,14 @@ class Encapsed extends AbstractPrefix
                 if ($parser->lookAhead(1)->type === Tokens::T_NUM_STRING) {
                     $token = $parser->eat();
                     $last = $parser->eat();
+
                     return $parser->setAttributes($this->parseNumString('-' . $last->value), $token, $last);
                 }
+
                 return null;
             case Tokens::T_NUM_STRING:
                 $token = $parser->eat();
+
                 return $parser->setAttributes($this->parseNumString($token->value), $token, $token);
             default:
                 return null;

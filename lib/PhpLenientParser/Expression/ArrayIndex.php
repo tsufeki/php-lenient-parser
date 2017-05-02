@@ -33,6 +33,7 @@ class ArrayIndex extends AbstractOperator implements InfixInterface
         $parser->assert($this->closeToken);
 
         $class = $this->getNodeClass();
+
         return $parser->setAttributes(new $class($left, $right), $left, $parser->last());
     }
 }

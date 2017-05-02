@@ -3,15 +3,14 @@
 namespace PhpLenientParser;
 
 use PhpLenientParser\Expression\ArgumentList;
-use PhpLenientParser\Expression\ArrayIndex;
 use PhpLenientParser\Expression\Array_;
+use PhpLenientParser\Expression\ArrayIndex;
 use PhpLenientParser\Expression\Assign;
 use PhpLenientParser\Expression\Closure;
 use PhpLenientParser\Expression\DNumber;
 use PhpLenientParser\Expression\Encapsed;
 use PhpLenientParser\Expression\Exit_;
 use PhpLenientParser\Expression\ExpressionParser;
-use PhpLenientParser\Expression\ExpressionParserInterface;
 use PhpLenientParser\Expression\FunctionCall;
 use PhpLenientParser\Expression\HereDoc;
 use PhpLenientParser\Expression\Identifier;
@@ -39,8 +38,8 @@ use PhpLenientParser\Expression\Variable;
 use PhpLenientParser\Expression\Yield_;
 use PhpLenientParser\Statement\AggregateStatementParser;
 use PhpLenientParser\Statement\Block;
-use PhpLenientParser\Statement\ClassConst;
 use PhpLenientParser\Statement\Class_;
+use PhpLenientParser\Statement\ClassConst;
 use PhpLenientParser\Statement\Const_;
 use PhpLenientParser\Statement\Declare_;
 use PhpLenientParser\Statement\DoWhile;
@@ -63,7 +62,6 @@ use PhpLenientParser\Statement\ParameterList;
 use PhpLenientParser\Statement\Property;
 use PhpLenientParser\Statement\Simple;
 use PhpLenientParser\Statement\StatementParser;
-use PhpLenientParser\Statement\StatementParserInterface;
 use PhpLenientParser\Statement\Static_;
 use PhpLenientParser\Statement\Switch_;
 use PhpLenientParser\Statement\Trait_;
@@ -85,8 +83,8 @@ class LenientParserFactory
     /**
      * Creates a Parser instance, according to the provided kind.
      *
-     * @param int        $kind  ::ONLY_PHP7 is the only option.
-     * @param Lexer|null $lexer Lexer to use.
+     * @param int        $kind          ::ONLY_PHP7 is the only option.
+     * @param Lexer|null $lexer         Lexer to use.
      * @param array      $parserOptions Parser options. See ParserAbstract::__construct() argument
      *
      * @return Parser The parser instance

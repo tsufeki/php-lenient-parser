@@ -18,11 +18,11 @@ class Ternary extends AbstractOperator implements InfixInterface
     private $rightAssociative;
 
     /**
-     * @param int $token
-     * @param int $secondToken
-     * @param int $precedence
+     * @param int    $token
+     * @param int    $secondToken
+     * @param int    $precedence
      * @param string $nodeClass
-     * @param bool $rightAssociative
+     * @param bool   $rightAssociative
      */
     public function __construct(
         int $token,
@@ -52,6 +52,7 @@ class Ternary extends AbstractOperator implements InfixInterface
         }
 
         $class = $this->getNodeClass();
+
         return $parser->setAttributes(new $class($left, $middle, $right), $left, $right);
     }
 }

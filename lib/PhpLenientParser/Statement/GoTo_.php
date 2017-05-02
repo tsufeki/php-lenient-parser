@@ -2,10 +2,10 @@
 
 namespace PhpLenientParser\Statement;
 
+use PhpLenientParser\Expression\Identifier;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Expression\Identifier;
 
 class GoTo_ implements StatementInterface
 {

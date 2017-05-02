@@ -2,21 +2,21 @@
 
 namespace PhpLenientParser\Statement;
 
+use PhpLenientParser\Expression\Identifier;
+use PhpLenientParser\Expression\Name;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Expression\Name;
-use PhpLenientParser\Expression\Identifier;
 
 class Type
 {
     const BUILTIN_TYPES = [
-        'bool'     => true,
-        'int'      => true,
-        'float'    => true,
-        'string'   => true,
+        'bool' => true,
+        'int' => true,
+        'float' => true,
+        'string' => true,
         'iterable' => true,
-        'void'     => true,
+        'void' => true,
     ];
 
     /**
@@ -30,7 +30,7 @@ class Type
     private $identifierParser;
 
     /**
-     * @param Name $nameParser
+     * @param Name       $nameParser
      * @param Identifier $identifierParser
      */
     public function __construct(Name $nameParser, Identifier $identifierParser)

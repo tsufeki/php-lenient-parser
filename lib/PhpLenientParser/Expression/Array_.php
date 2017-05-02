@@ -29,10 +29,10 @@ class Array_ extends AbstractPrefix
     private $kind;
 
     /**
-     * @param int $token
+     * @param int      $token
      * @param int|null $secondToken
-     * @param int $endToken
-     * @param string $nodeClass
+     * @param int      $endToken
+     * @param string   $nodeClass
      * @param int|null $kind
      */
     public function __construct(int $token, int $secondToken = null, int $endToken, string $nodeClass, int $kind = null)

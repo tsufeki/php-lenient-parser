@@ -12,6 +12,7 @@ class DNumber extends AbstractPrefix
         $token = $parser->eat();
 
         $value = $this->parseDNumber($token->value);
+
         return $parser->setAttributes(new Node\Scalar\DNumber($value), $token, $token);
     }
 

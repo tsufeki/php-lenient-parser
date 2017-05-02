@@ -9,7 +9,7 @@ interface InfixInterface
 {
     /**
      * @param ParserStateInterface $parser
-     * @param Node\Expr $left
+     * @param Node\Expr            $left
      *
      * @return Node\Expr|null
      */

@@ -7,7 +7,6 @@ use PhpLenientParser\Statement\StatementParserInterface;
 use PhpParser\ErrorHandler;
 use PhpParser\Lexer;
 use PhpParser\Parser as ParserInterface;
-use PhpParser\Parser\Tokens;
 
 class LenientParser implements ParserInterface
 {
@@ -37,11 +36,11 @@ class LenientParser implements ParserInterface
     private $topLevelParser;
 
     /**
-     * @param array $options
-     * @param Lexer $lexer
+     * @param array                     $options
+     * @param Lexer                     $lexer
      * @param ExpressionParserInterface $expressionParser
-     * @param StatementParserInterface $statementParser
-     * @param StatementParserInterface $topLevelParser
+     * @param StatementParserInterface  $statementParser
+     * @param StatementParserInterface  $topLevelParser
      */
     public function __construct(
         array $options,
@@ -79,7 +78,7 @@ class LenientParser implements ParserInterface
     }
 
     /**
-     * @param string $code
+     * @param string       $code
      * @param ErrorHandler $errorHandler
      *
      * @return ParserStateInterface

@@ -12,7 +12,7 @@ class Nullary extends AbstractPrefix
     private $nodeClass;
 
     /**
-     * @param int $token
+     * @param int    $token
      * @param string $nodeClass
      */
     public function __construct(int $token, string $nodeClass)
@@ -25,6 +25,7 @@ class Nullary extends AbstractPrefix
     {
         $token = $parser->eat();
         $class = $this->nodeClass;
+
         return $parser->setAttributes(new $class(), $token, $token);
     }
 }

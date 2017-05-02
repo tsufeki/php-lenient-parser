@@ -15,7 +15,7 @@ class HereDoc extends Encapsed
 
     /**
      * @param Identifier $identifierParser
-     * @param Variable $variableParser
+     * @param Variable   $variableParser
      */
     public function __construct(Identifier $identifierParser, Variable $variableParser)
     {
@@ -30,11 +30,11 @@ class HereDoc extends Encapsed
         $this->nowDoc = $matches[1] === '\'';
         $label = $matches[2];
 
-        /** @var Node\Scalar\Encapsed */
+        /** @var Node\Scalar\Encapsed $encapsed */
         $encapsed = parent::parse($parser);
-        /** @var Node\Scalar\EncapsedStringPart[]|Node\Expr[] */
+        /** @var Node\Scalar\EncapsedStringPart[]|Node\Expr[] $parts */
         $parts = [];
-        /** @var Node\Scalar\EncapsedStringPart|Node\Expr */
+        /** @var Node\Scalar\EncapsedStringPart|Node\Expr $part */
         foreach ($encapsed->parts as $part) {
             if (!($part instanceof Node\Scalar\EncapsedStringPart) || $part->value !== '') {
                 $parts[] = $part;

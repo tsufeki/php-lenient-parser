@@ -3,8 +3,6 @@
 namespace PhpLenientParser\Statement;
 
 use PhpLenientParser\ParserStateInterface;
-use PhpParser\Node;
-use PhpParser\Parser\Tokens;
 
 class Simple implements StatementInterface
 {
@@ -24,9 +22,9 @@ class Simple implements StatementInterface
     private $expressionRequired;
 
     /**
-     * @param int $token
+     * @param int    $token
      * @param string $nodeClass
-     * @param bool $expressionRequired
+     * @param bool   $expressionRequired
      */
     public function __construct(int $token, string $nodeClass, bool $expressionRequired = false)
     {
@@ -45,6 +43,7 @@ class Simple implements StatementInterface
         $parser->assert(ord(';'));
 
         $nodeClass = $this->nodeClass;
+
         return $parser->setAttributes(new $nodeClass($expr), $token, $parser->last());
     }
 

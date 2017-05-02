@@ -2,12 +2,10 @@
 
 namespace PhpLenientParser\Statement;
 
+use PhpLenientParser\Expression\Variable;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Expression\Name;
-use PhpLenientParser\Expression\Identifier;
-use PhpLenientParser\Expression\Variable;
 
 class ParameterList
 {
@@ -22,7 +20,7 @@ class ParameterList
     private $variableParser;
 
     /**
-     * @param Type $typeParser
+     * @param Type     $typeParser
      * @param Variable $variableParser
      */
     public function __construct(Type $typeParser, Variable $variableParser)
@@ -77,6 +75,7 @@ class ParameterList
         }
 
         $parser->assert(ord(')'));
+
         return $params;
     }
 }

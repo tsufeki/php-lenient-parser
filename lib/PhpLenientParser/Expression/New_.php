@@ -18,9 +18,9 @@ class New_ extends AbstractPrefix
     private $argsParser;
 
     /**
-     * @param int $token
+     * @param int                       $token
      * @param ExpressionParserInterface $classRefParser
-     * @param ArgumentList $argsParser
+     * @param ArgumentList              $argsParser
      */
     public function __construct(int $token, ExpressionParserInterface $classRefParser, ArgumentList $argsParser)
     {

@@ -71,6 +71,7 @@ class If_ implements StatementInterface
         $parser->assert(ord(')'));
 
         list($stmts, $colon) = $this->parseBlock($parser);
+
         return [$condition, $stmts, $colon];
     }
 

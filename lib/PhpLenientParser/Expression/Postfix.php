@@ -11,6 +11,7 @@ class Postfix extends AbstractOperator implements InfixInterface
     {
         $token = $parser->eat();
         $class = $this->getNodeClass();
+
         return $parser->setAttributes(new $class($left), $left, $token);
     }
 }

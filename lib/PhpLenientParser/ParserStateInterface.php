@@ -52,14 +52,14 @@ interface ParserStateInterface
 
     /**
      * @param string $message
-     * @param array $attributes
+     * @param array  $attributes
      */
     public function addError(string $message, array $attributes = []);
 
     /**
      * Set set location-related attributes on node so it encompases $start and $end.
      *
-     * @param Node $node
+     * @param Node       $node
      * @param Node|Token $start
      * @param Node|Token $end
      *

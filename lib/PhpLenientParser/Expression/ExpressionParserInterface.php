@@ -10,7 +10,7 @@ interface ExpressionParserInterface
 {
     /**
      * @param ParserStateInterface $parser
-     * @param int $precedence
+     * @param int                  $precedence
      *
      * @return Node\Expr|null
      */
@@ -18,7 +18,7 @@ interface ExpressionParserInterface
 
     /**
      * @param ParserStateInterface $parser
-     * @param int $precedence
+     * @param int                  $precedence
      *
      * @return Node\Expr
      */

@@ -12,6 +12,7 @@ class Prefix extends AbstractOperator implements PrefixInterface
         $expr = $parser->getExpressionParser()->parseOrError($parser, $this->getPrecedence());
 
         $class = $this->getNodeClass();
+
         return $parser->setAttributes(new $class($expr), $token, $expr);
     }
 }

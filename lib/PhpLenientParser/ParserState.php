@@ -47,11 +47,11 @@ class ParserState implements ParserStateInterface
     private $last;
 
     /**
-     * @param Lexer $lexer
-     * @param ErrorHandler $errorHandler
-     * @param array $options
+     * @param Lexer                     $lexer
+     * @param ErrorHandler              $errorHandler
+     * @param array                     $options
      * @param ExpressionParserInterface $expressionParser
-     * @param StatementParserInterface $statementParser
+     * @param StatementParserInterface  $statementParser
      */
     public function __construct(
         $lexer,
@@ -95,6 +95,7 @@ class ParserState implements ParserStateInterface
 
         $this->last = $token;
         $this->lookAheadQueue->dequeue();
+
         return $token;
     }
 
@@ -107,11 +108,13 @@ class ParserState implements ParserStateInterface
                 sprintf('Syntax error, unexpected %s, expecting %s', $token->getName(), Token::getNameFromType($tokenType)),
                 $token->getAttributes()
             );
+
             return null;
         }
 
         $this->last = $token;
         $this->lookAheadQueue->dequeue();
+
         return $token;
     }
 
