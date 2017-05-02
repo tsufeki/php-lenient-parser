@@ -41,6 +41,7 @@ use PhpLenientParser\Statement\AggregateStatementParser;
 use PhpLenientParser\Statement\Block;
 use PhpLenientParser\Statement\ClassConst;
 use PhpLenientParser\Statement\Class_;
+use PhpLenientParser\Statement\Const_;
 use PhpLenientParser\Statement\Declare_;
 use PhpLenientParser\Statement\DoWhile;
 use PhpLenientParser\Statement\Echo_;
@@ -325,7 +326,9 @@ class LenientParserFactory
         $statementParser->addStatement(new Class_(Tokens::T_ABSTRACT, $identifier, $name, $classStatements));
         $statementParser->addStatement(new Class_(Tokens::T_FINAL, $identifier, $name, $classStatements));
 
-        $insideNamespaceParser = new AggregateStatementParser($statementParser, new StatementParser());
+        $insideNamespaceParser = new AggregateStatementParser($statementParser, new StatementParser(
+            new Const_($identifier)
+        ));
         $topLevelParser = new AggregateStatementParser($insideNamespaceParser, new StatementParser(
             new Namespace_($name, $insideNamespaceParser)
         ));
