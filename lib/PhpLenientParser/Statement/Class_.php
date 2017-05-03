@@ -5,6 +5,7 @@ namespace PhpLenientParser\Statement;
 use PhpLenientParser\Expression\Identifier;
 use PhpLenientParser\Expression\Name;
 use PhpLenientParser\ParserStateInterface;
+use PhpLenientParser\Token;
 use PhpParser\Node;
 use PhpParser\Parser\Tokens;
 
@@ -61,6 +62,15 @@ class Class_ implements StatementInterface
         $parser->eat();
         $id = $this->identifierParser->parse($parser);
 
+        return $this->parseBody($parser, $token, $flags, $id);
+    }
+
+    public function parseBody(
+        ParserStateInterface $parser,
+        Token $token,
+        int $flags = 0,
+        Node\Identifier $id = null
+    ): Node\Stmt\Class_ {
         $extends = null;
         if ($parser->eat(Tokens::T_EXTENDS) !== null) {
             $extends = $this->nameParser->parserOrNull($parser);

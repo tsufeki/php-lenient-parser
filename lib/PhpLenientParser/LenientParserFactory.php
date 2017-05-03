@@ -66,6 +66,7 @@ use PhpLenientParser\Statement\StatementParser;
 use PhpLenientParser\Statement\Static_;
 use PhpLenientParser\Statement\Switch_;
 use PhpLenientParser\Statement\Trait_;
+use PhpLenientParser\Statement\TraitUse;
 use PhpLenientParser\Statement\Try_;
 use PhpLenientParser\Statement\Type;
 use PhpLenientParser\Statement\Unset_;
@@ -77,7 +78,6 @@ use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
 use PhpParser\Parser;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Statement\TraitUse;
 
 class LenientParserFactory
 {
@@ -212,7 +212,6 @@ class LenientParserFactory
         $expressionParser->addInfix(new Postfix(Tokens::T_DEC, 210, Expr\PostDec::class));
 
         $expressionParser->addPrefix(new Prefix(Tokens::T_CLONE, 220, Expr\Clone_::class));
-        $expressionParser->addPrefix(new New_(Tokens::T_NEW, $classRef, $arguments));
 
         $expressionParser->addInfix(new ArrayIndex(ord('['), ord(']'), 230));
         $expressionParser->addInfix(new ArrayIndex(ord('{'), ord('}'), 230));
@@ -326,9 +325,11 @@ class LenientParserFactory
 
         $statementParser->addStatement(new Trait_($identifier, $classStatements));
         $statementParser->addStatement(new Interface_($identifier, $name, $classStatements));
-        $statementParser->addStatement(new Class_(Tokens::T_CLASS, $identifier, $name, $classStatements));
+        $statementParser->addStatement($class = new Class_(Tokens::T_CLASS, $identifier, $name, $classStatements));
         $statementParser->addStatement(new Class_(Tokens::T_ABSTRACT, $identifier, $name, $classStatements));
         $statementParser->addStatement(new Class_(Tokens::T_FINAL, $identifier, $name, $classStatements));
+
+        $expressionParser->addPrefix(new New_(Tokens::T_NEW, $classRef, $arguments, $class));
 
         $insideNamespaceParser = new AggregateStatementParser($statementParser, new StatementParser(
             new Const_($identifier),

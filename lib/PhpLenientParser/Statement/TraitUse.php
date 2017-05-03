@@ -3,10 +3,10 @@
 namespace PhpLenientParser\Statement;
 
 use PhpLenientParser\Expression\Identifier;
+use PhpLenientParser\Expression\Name;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 use PhpParser\Parser\Tokens;
-use PhpLenientParser\Expression\Name;
 
 class TraitUse implements StatementInterface
 {
@@ -21,7 +21,7 @@ class TraitUse implements StatementInterface
     private $identifierParser;
 
     /**
-     * @param Name $nameParser
+     * @param Name       $nameParser
      * @param Identifier $identifierParser
      */
     public function __construct(Name $nameParser, Identifier $identifierParser)

@@ -36,10 +36,12 @@ class MemberModifier implements StatementInterface
         $stmts = $this->classStatementsParser->parse($parser);
         if (empty($stmts)) {
             $parser->unexpected($token);
+
             return null;
         }
         if (!isset($stmts[0]->flags)) {
             $parser->unexpected($token);
+
             return $stmts[0];
         }
 
