@@ -117,6 +117,7 @@ class LenientParserFactory
         $classRef->addPrefix($indirectVariable);
         $classRef->addPrefix(new Name(Tokens::T_NS_SEPARATOR));
         $classRef->addPrefix(new Name(Tokens::T_STRING));
+        $classRef->addPrefix(new Name(Tokens::T_NAMESPACE));
         $classRef->addInfix(new ArrayIndex(ord('['), ord(']'), 230));
         $classRef->addInfix(new ArrayIndex(ord('{'), ord('}'), 230));
         $classRef->addInfix(
@@ -132,6 +133,7 @@ class LenientParserFactory
         $expressionParser->addPrefix($indirectVariable);
         $expressionParser->addPrefix(new NameOrConst(Tokens::T_NS_SEPARATOR));
         $expressionParser->addPrefix(new NameOrConst(Tokens::T_STRING));
+        $expressionParser->addPrefix(new NameOrConst(Tokens::T_NAMESPACE));
 
         $expressionParser->addInfix(new Infix(Tokens::T_LOGICAL_OR, 10, Expr\BinaryOp\LogicalOr::class));
         $expressionParser->addInfix(new Infix(Tokens::T_LOGICAL_XOR, 20, Expr\BinaryOp\LogicalXor::class));

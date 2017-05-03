@@ -104,10 +104,7 @@ class ParserState implements ParserStateInterface
         $token = $this->lookAhead();
 
         if ($tokenType !== $token->type) {
-            $this->addError(
-                sprintf('Syntax error, unexpected %s, expecting %s', $token->getName(), Token::getNameFromType($tokenType)),
-                $token->getAttributes()
-            );
+            $this->unexpected($token, $tokenType);
 
             return null;
         }
@@ -118,12 +115,22 @@ class ParserState implements ParserStateInterface
         return $token;
     }
 
-    public function unexpected(Token $token)
+    public function unexpected(Token $token, int $expected = null)
     {
-        $this->addError(
-            sprintf('Syntax error, unexpected %s', $token->getName()),
-            $token->getAttributes()
-        );
+        if ($expected !== null) {
+            $msg = sprintf(
+                'Syntax error, unexpected %s, expecting %s',
+                $token->getName(),
+                Token::getNameFromType($expected)
+            );
+        } else {
+            $msg = sprintf(
+                'Syntax error, unexpected %s',
+                $token->getName()
+            );
+        }
+
+        $this->addError($msg, $token->getAttributes());
     }
 
     public function last()

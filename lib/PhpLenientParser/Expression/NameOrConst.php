@@ -11,6 +11,9 @@ class NameOrConst extends Name
     public function parse(ParserStateInterface $parser)
     {
         $name = parent::parse($parser);
+        if ($name === null) {
+            return null;
+        }
 
         switch ($parser->lookAhead()->type) {
             case Tokens::T_PAAMAYIM_NEKUDOTAYIM:

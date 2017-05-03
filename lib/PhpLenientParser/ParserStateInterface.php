@@ -41,9 +41,10 @@ interface ParserStateInterface
     /**
      * Add an error for token.
      *
-     * @param Token $token
+     * @param Token    $token
+     * @param int|null $expected
      */
-    public function unexpected(Token $token);
+    public function unexpected(Token $token, int $expected = null);
 
     /**
      * @return Token|null

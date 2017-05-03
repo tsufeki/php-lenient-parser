@@ -37,7 +37,7 @@ class Use_ implements StatementInterface
         $uses = [];
         $type = $this->parseType($parser);
 
-        $name = $this->parseName($parser);
+        $name = $this->parseName($parser, true);
         if ($name === null || $parser->eat(ord('{')) === null) {
             while ($name !== null) {
                 $alias = $this->parseAlias($parser);
@@ -106,11 +106,11 @@ class Use_ implements StatementInterface
      *
      * @return Node\Name|null
      */
-    private function parseName(ParserStateInterface $parser)
+    private function parseName(ParserStateInterface $parser, bool $trailingSep = false)
     {
         while ($parser->eat(Tokens::T_NS_SEPARATOR) !== null);
 
-        return $this->nameParser->parserOrNull($parser);
+        return $this->nameParser->parserOrNull($parser, Name::NORMAL, $trailingSep);
     }
 
     /**
