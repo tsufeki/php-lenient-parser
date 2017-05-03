@@ -8,6 +8,7 @@ use PhpParser\Error;
 use PhpParser\ErrorHandler;
 use PhpParser\Lexer;
 use PhpParser\Node;
+use PhpParser\Parser\Tokens;
 
 class ParserState implements ParserStateInterface
 {
@@ -79,10 +80,26 @@ class ParserState implements ParserStateInterface
         for ($i = 0; $i < $toRead; $i++) {
             $token = new Token();
             $token->type = $this->lexer->getNextToken($token->value, $token->startAttributes, $token->endAttributes);
+            if ($token->type === Tokens::T_HALT_COMPILER) {
+                $this->handleHaltCompiler($token);
+            }
             $this->lookAheadQueue->enqueue($token);
         }
 
         return $this->lookAheadQueue[$count];
+    }
+
+    /**
+     * @param Token $token
+     */
+    private function handleHaltCompiler(Token $token)
+    {
+        try {
+            $rest = $this->lexer->handleHaltCompiler();
+            $token->startAttributes['rest'] = $rest;
+        } catch (Error $e) {
+            $this->errorHandler->handleError($e);
+        }
     }
 
     public function eat(int $tokenType = null)

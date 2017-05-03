@@ -50,6 +50,7 @@ use PhpLenientParser\Statement\Foreach_;
 use PhpLenientParser\Statement\Function_;
 use PhpLenientParser\Statement\Global_;
 use PhpLenientParser\Statement\GoTo_;
+use PhpLenientParser\Statement\HaltCompiler;
 use PhpLenientParser\Statement\If_;
 use PhpLenientParser\Statement\InlineHtml;
 use PhpLenientParser\Statement\Interface_;
@@ -332,7 +333,8 @@ class LenientParserFactory
             new Use_($name, $identifier)
         ));
         $topLevelParser = new AggregateStatementParser($insideNamespaceParser, new StatementParser(
-            new Namespace_($name, $insideNamespaceParser)
+            new Namespace_($name, $insideNamespaceParser),
+            new HaltCompiler()
         ));
 
         return new LenientParser(
