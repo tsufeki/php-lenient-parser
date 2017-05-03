@@ -77,6 +77,7 @@ use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
 use PhpParser\Parser;
 use PhpParser\Parser\Tokens;
+use PhpLenientParser\Statement\TraitUse;
 
 class LenientParserFactory
 {
@@ -321,6 +322,7 @@ class LenientParserFactory
         $classStatements->addStatement(new Property(Tokens::T_VARIABLE, $variable));
         $classStatements->addStatement(new ClassConst($identifier));
         $classStatements->addStatement(new Method($parameters, $type, $identifier));
+        $classStatements->addStatement(new TraitUse($name, $identifier));
 
         $statementParser->addStatement(new Trait_($identifier, $classStatements));
         $statementParser->addStatement(new Interface_($identifier, $name, $classStatements));
