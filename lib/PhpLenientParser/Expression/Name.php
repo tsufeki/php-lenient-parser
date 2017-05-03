@@ -8,6 +8,11 @@ use PhpParser\Parser\Tokens;
 
 class Name extends AbstractPrefix
 {
+    /**
+     * @param ParserStateInterface $parser
+     *
+     * @return NameNode|null
+     */
     public function parse(ParserStateInterface $parser)
     {
         //TODO: relative name
@@ -15,15 +20,14 @@ class Name extends AbstractPrefix
         $first = $parser->lookAhead();
         $fullyQualified = null !== $parser->eat(Tokens::T_NS_SEPARATOR);
 
-        while (true) {
-            $token = $parser->assert(Tokens::T_STRING);
-            $parts[] = $token !== null ? $token->value : '';
+        do {
+            $token = $parser->eat(Tokens::T_STRING);
+            if ($token !== null) {
+                $parts[] = $token->value;
+            }
 
             $sep = $parser->eat(Tokens::T_NS_SEPARATOR);
-            if ($sep === null) {
-                break;
-            }
-        }
+        } while ($sep !== null);
 
         $name = $fullyQualified ? new NameNode\FullyQualified($parts) : new NameNode($parts);
 
@@ -33,7 +37,7 @@ class Name extends AbstractPrefix
     /**
      * @param ParserStateInterface $parser
      *
-     * @return Name|null
+     * @return NameNode|null
      */
     public function parserOrNull(ParserStateInterface $parser)
     {

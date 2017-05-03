@@ -68,6 +68,7 @@ use PhpLenientParser\Statement\Trait_;
 use PhpLenientParser\Statement\Try_;
 use PhpLenientParser\Statement\Type;
 use PhpLenientParser\Statement\Unset_;
+use PhpLenientParser\Statement\Use_;
 use PhpLenientParser\Statement\While_;
 use PhpParser\Lexer;
 use PhpParser\Node\Expr;
@@ -325,7 +326,8 @@ class LenientParserFactory
         $statementParser->addStatement(new Class_(Tokens::T_FINAL, $identifier, $name, $classStatements));
 
         $insideNamespaceParser = new AggregateStatementParser($statementParser, new StatementParser(
-            new Const_($identifier)
+            new Const_($identifier),
+            new Use_($name, $identifier)
         ));
         $topLevelParser = new AggregateStatementParser($insideNamespaceParser, new StatementParser(
             new Namespace_($name, $insideNamespaceParser)
