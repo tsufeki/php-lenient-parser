@@ -145,19 +145,20 @@ class LenientParserFactory
         $expressionParser->addInfix(new Infix(Tokens::T_LOGICAL_XOR, 20, Expr\BinaryOp\LogicalXor::class));
         $expressionParser->addInfix(new Infix(Tokens::T_LOGICAL_AND, 30, Expr\BinaryOp\LogicalAnd::class));
 
-        $expressionParser->addInfix(new Assign(ord('='), ord('&'), 40));
-        $expressionParser->addInfix(new Infix(Tokens::T_AND_EQUAL, 40, Expr\AssignOp\BitwiseAnd::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_OR_EQUAL, 40, Expr\AssignOp\BitwiseOr::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_XOR_EQUAL, 40, Expr\AssignOp\BitwiseXor::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_CONCAT_EQUAL, 40, Expr\AssignOp\Concat::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_DIV_EQUAL, 40, Expr\AssignOp\Div::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_MINUS_EQUAL, 40, Expr\AssignOp\Minus::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_MOD_EQUAL, 40, Expr\AssignOp\Mod::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_MUL_EQUAL, 40, Expr\AssignOp\Mul::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_PLUS_EQUAL, 40, Expr\AssignOp\Plus::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_POW_EQUAL, 40, Expr\AssignOp\Pow::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_SL_EQUAL, 40, Expr\AssignOp\ShiftLeft::class, true));
-        $expressionParser->addInfix(new Infix(Tokens::T_SR_EQUAL, 40, Expr\AssignOp\ShiftRight::class, true));
+        // Assignment operator bind differently on the left an right.
+        $expressionParser->addInfix(new Assign(ord('='), ord('&'), 230, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_AND_EQUAL, 230, Expr\AssignOp\BitwiseAnd::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_OR_EQUAL, 230, Expr\AssignOp\BitwiseOr::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_XOR_EQUAL, 230, Expr\AssignOp\BitwiseXor::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_CONCAT_EQUAL, 230, Expr\AssignOp\Concat::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_DIV_EQUAL, 230, Expr\AssignOp\Div::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_MINUS_EQUAL, 230, Expr\AssignOp\Minus::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_MOD_EQUAL, 230, Expr\AssignOp\Mod::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_MUL_EQUAL, 230, Expr\AssignOp\Mul::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_PLUS_EQUAL, 230, Expr\AssignOp\Plus::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_POW_EQUAL, 230, Expr\AssignOp\Pow::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_SL_EQUAL, 230, Expr\AssignOp\ShiftLeft::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_SR_EQUAL, 230, Expr\AssignOp\ShiftRight::class, true, 40));
 
         $expressionParser->addInfix(new Ternary(ord('?'), ord(':'), 50, Expr\Ternary::class));
         $expressionParser->addInfix(new Infix(Tokens::T_COALESCE, 60, Expr\BinaryOp\Coalesce::class, true));
@@ -277,8 +278,6 @@ class LenientParserFactory
         ));
 
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
-
-        //TODO: precedence of prefix operators with assignment: !$a = 7
 
         $statementParser = new StatementParser();
 
