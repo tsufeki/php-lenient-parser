@@ -64,13 +64,14 @@ class LenientParser implements ParserInterface
 
         $parserState = $this->createParserState($code, $errorHandler);
         $statements = [];
-        while ($parserState->lookAhead()->type !== 0) {
+        while (true) {
             $stmts = $this->topLevelParser->parseList($parserState);
-            if (!empty($stmts)) {
-                $statements = array_merge($statements, $stmts);
-            } else {
+            $statements = array_merge($statements, $stmts);
+            if ($parserState->lookAhead()->type !== 0) {
                 // drop the errorneous token
                 $parserState->unexpected($parserState->eat());
+            } else {
+                break;
             }
         }
 

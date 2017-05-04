@@ -3,15 +3,17 @@
 namespace PhpLenientParser\Statement;
 
 use PhpLenientParser\ParserStateInterface;
-use PhpParser\Node;
 
-class StatementParser implements StatementParserInterface
+class StatementParser extends AbstractStatementParser
 {
     /**
      * @var StatementInterface[]
      */
     private $statements = [];
 
+    /**
+     * @param StatementInterface[] $statements
+     */
     public function __construct(StatementInterface ...$statements)
     {
         foreach ($statements as $statement) {
@@ -34,23 +36,6 @@ class StatementParser implements StatementParserInterface
         }
 
         return $stmt;
-    }
-
-    public function parseList(ParserStateInterface $parser, int $delimiter = null): array
-    {
-        $stmts = [];
-        while (null !== ($stmt = $this->parse($parser))) {
-            $stmts = array_merge($stmts, $stmt);
-        }
-
-        $lookAhead = $parser->lookAhead();
-        if ($lookAhead->type === 0 || ($delimiter !== null && $lookAhead->type === $delimiter)) {
-            if (!empty($lookAhead->startAttributes['comments'])) {
-                $stmts[] = $parser->setAttributes(new Node\Stmt\Nop(), $lookAhead, $parser->last());
-            }
-        }
-
-        return $stmts;
     }
 
     /**
