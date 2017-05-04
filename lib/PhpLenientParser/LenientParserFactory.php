@@ -2,6 +2,7 @@
 
 namespace PhpLenientParser;
 
+use PhpLenientParser\Expression\AggregatePrefix;
 use PhpLenientParser\Expression\ArgumentList;
 use PhpLenientParser\Expression\Array_;
 use PhpLenientParser\Expression\ArrayIndex;
@@ -22,6 +23,8 @@ use PhpLenientParser\Expression\Isset_;
 use PhpLenientParser\Expression\LNumber;
 use PhpLenientParser\Expression\Name;
 use PhpLenientParser\Expression\NameOrConst;
+use PhpLenientParser\Expression\NameSpecial;
+use PhpLenientParser\Expression\NameSpecialPreScope;
 use PhpLenientParser\Expression\New_;
 use PhpLenientParser\Expression\Nullary;
 use PhpLenientParser\Expression\ObjectAccess;
@@ -120,6 +123,7 @@ class LenientParserFactory
         $classRef->addPrefix(new Name(Tokens::T_NS_SEPARATOR));
         $classRef->addPrefix(new Name(Tokens::T_STRING));
         $classRef->addPrefix(new Name(Tokens::T_NAMESPACE));
+        $classRef->addPrefix(new NameSpecial(Tokens::T_STATIC));
         $classRef->addInfix(new ArrayIndex(ord('['), ord(']'), 230));
         $classRef->addInfix(new ArrayIndex(ord('{'), ord('}'), 230));
         $classRef->addInfix(
@@ -267,7 +271,10 @@ class LenientParserFactory
         $expressionParser->addPrefix(new Isset_());
 
         $expressionParser->addPrefix(new Closure(Tokens::T_FUNCTION, $type, $parameters, $variable));
-        $expressionParser->addPrefix(new Closure(Tokens::T_STATIC, $type, $parameters, $variable));
+        $expressionParser->addPrefix(new AggregatePrefix(
+            new NameSpecialPreScope(Tokens::T_STATIC),
+            new Closure(Tokens::T_STATIC, $type, $parameters, $variable)
+        ));
 
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
 

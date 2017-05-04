@@ -12,6 +12,9 @@ class AggregateStatementParser implements StatementParserInterface
      */
     private $parsers;
 
+    /**
+     * @param StatementParserInterface[] $parsers
+     */
     public function __construct(StatementParserInterface ...$parsers)
     {
         $this->parsers = $parsers;
