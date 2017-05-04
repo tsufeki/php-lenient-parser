@@ -1,9 +1,12 @@
 PHP Lenient Parser
 ==================
 
-This is a PHP 5.2 to PHP 7.1 parser written in PHP. It handles some partial and
+This is a PHP 7 parser written in PHP. It handles some partial and
 illegal code, producing best-effort partial syntax tree. Its purpose is to
 simplify static code analysis and manipulation.
+
+It's error reporting is not complete though, i.e. it may silently accept illegal
+PHP input.
 
 As this is just a parser replacement for [PHP Parser](https://github.com/nikic/PHP-Parser),
 go there for actual documentation.
