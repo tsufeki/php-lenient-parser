@@ -110,11 +110,10 @@ switch ($testType) {
         showHelp('Test type must be one of: PHP5, PHP7 or Symfony');
 }
 
-require_once dirname(__FILE__) . '/../lib/PhpParser/Autoloader.php';
-PhpParser\Autoloader::register();
+require_once __DIR__ . '/../vendor/autoload.php';
 
-$parserName    = 'PhpParser\Parser\\' . $version;
-$parser        = new $parserName(new PhpParser\Lexer\Emulative);
+$parserName    = PhpLenientParser\LenientParser::class;
+$parser        = (new PhpLenientParser\LenientParserFactory())->create();
 $prettyPrinter = new PhpParser\PrettyPrinter\Standard;
 $nodeDumper    = new PhpParser\NodeDumper;
 
