@@ -32,6 +32,11 @@ class HereDoc extends Encapsed
 
         /** @var Node\Scalar\Encapsed $encapsed */
         $encapsed = parent::parse($parser);
+        $partsCount = count($encapsed->parts);
+        if ($partsCount !== 0 && $encapsed->parts[$partsCount - 1] instanceof Node\Scalar\EncapsedStringPart) {
+            $encapsed->parts[$partsCount - 1]->value = preg_replace('/(\\r\\n|\\n|\\r)\z/', '', $encapsed->parts[$partsCount - 1]->value);
+        }
+
         /** @var Node\Scalar\EncapsedStringPart[]|Node\Expr[] $parts */
         $parts = [];
         /** @var Node\Scalar\EncapsedStringPart|Node\Expr $part */
@@ -66,7 +71,6 @@ class HereDoc extends Encapsed
     {
         $token = $parser->eat();
         $value = $token->value;
-        $value = preg_replace('/(\\r\\n|\\n|\\r)\z/', '', $value);
         if (!$this->nowDoc) {
             $value = String_::replaceEscapes($value);
             $value = String_::replaceBackslashes($value);
