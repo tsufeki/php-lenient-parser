@@ -35,13 +35,13 @@ class Property implements StatementInterface
         $parser->eat(Tokens::T_VAR);
         $props = [];
 
-        while ($parser->lookAhead()->type === $this->variableParser->getToken()) {
+        while (($first = $parser->lookAhead())->type === $this->variableParser->getToken()) {
             $var = $this->variableParser->parseIdentifier($parser);
             $expr = null;
             if ($parser->eat(ord('=')) !== null) {
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
             }
-            $props[] = $parser->setAttributes(new Node\Stmt\PropertyProperty($var, $expr), $var, $parser->last());
+            $props[] = $parser->setAttributes(new Node\Stmt\PropertyProperty($var, $expr), $first, $parser->last());
             if ($parser->lookAhead()->type === ord(';') || $parser->assert(ord(',')) === null) {
                 break;
             }

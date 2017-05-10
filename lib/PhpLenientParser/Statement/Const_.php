@@ -34,6 +34,7 @@ class Const_ implements StatementInterface
             if ($parser->lookAhead()->type !== Tokens::T_STRING) {
                 break;
             }
+            $first = $parser->lookAhead();
             $id = $this->identifierParser->parse($parser);
             $expr = null;
             if ($parser->assert(ord('=')) !== null) {
@@ -42,7 +43,7 @@ class Const_ implements StatementInterface
                 $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
             }
 
-            $consts[] = $parser->setAttributes(new Node\Const_($id, $expr), $id, $parser->last());
+            $consts[] = $parser->setAttributes(new Node\Const_($id, $expr), $first, $parser->last());
             if ($parser->lookAhead()->type === ord(';') || $parser->assert(ord(',')) === null) {
                 break;
             }

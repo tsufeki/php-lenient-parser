@@ -52,7 +52,11 @@ class Type
 
         $type = $this->nameParser->parserOrNull($parser);
         if ($type !== null && $type->isUnqualified() && isset(static::BUILTIN_TYPES[strtolower($type->toString())])) {
-            $type = new Node\Identifier(strtolower($type->toString()), $type->getAttributes());
+            if ($parser->getOption('v3compat')) {
+                $type = $type->toString();
+            } else {
+                $type = new Node\Identifier(strtolower($type->toString()), $type->getAttributes());
+            }
         }
 
         if ($type === null && in_array($parser->lookAhead()->type, [
@@ -60,7 +64,11 @@ class Type
             Tokens::T_CALLABLE,
         ])) {
             $type = $this->identifierParser->parse($parser);
-            $type->name = strtolower($type->name);
+            if ($parser->getOption('v3compat')) {
+                $type = strtolower($type);
+            } else {
+                $type->name = strtolower($type->name);
+            }
         }
 
         if ($type !== null && $nullable !== null) {

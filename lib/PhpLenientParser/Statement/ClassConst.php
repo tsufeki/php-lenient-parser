@@ -28,6 +28,7 @@ class ClassConst implements StatementInterface
         $consts = [];
 
         while (true) {
+            $first = $parser->lookAhead();
             $id = $this->identifierParser->parse($parser);
             if ($id === null) {
                 break;
@@ -39,7 +40,7 @@ class ClassConst implements StatementInterface
                 $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
             }
 
-            $consts[] = $parser->setAttributes(new Node\Const_($id, $expr), $id, $parser->last());
+            $consts[] = $parser->setAttributes(new Node\Const_($id, $expr), $first, $parser->last());
             if ($parser->lookAhead()->type === ord(';') || $parser->assert(ord(',')) === null) {
                 break;
             }

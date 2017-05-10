@@ -13,8 +13,9 @@ class ExpressionStatement implements StatementInterface
         $stmt = null;
         if ($expr !== null) {
             $parser->assert(ord(';'));
-            $stmt = new Node\Stmt\Expression($expr);
-            $parser->setAttributes($stmt, $expr, $expr);
+            $stmt = $parser->getOption('v3compat')
+                ? $expr
+                : $parser->setAttributes(new Node\Stmt\Expression($expr), $expr, $expr);
         }
 
         return $stmt;

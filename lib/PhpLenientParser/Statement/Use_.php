@@ -116,7 +116,7 @@ class Use_ implements StatementInterface
     /**
      * @param ParserStateInterface $parser
      *
-     * @return Identifier|null
+     * @return Identifier|string|null
      */
     private function parseAlias(ParserStateInterface $parser)
     {

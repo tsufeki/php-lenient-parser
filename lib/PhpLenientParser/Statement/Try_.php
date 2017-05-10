@@ -106,7 +106,10 @@ class Try_ implements StatementInterface
         $parser->assert(ord(')'));
         $stmts = $this->parseBlock($parser);
 
-        return $parser->setAttributes(new Node\Stmt\Catch_($types, $var, $stmts), $token, $parser->last());
+        return $parser->setAttributes(
+            new Node\Stmt\Catch_($types, $parser->getOption('v3compat') ? $var->name : $var, $stmts),
+            $token, $parser->last()
+        );
     }
 
     public function getToken()

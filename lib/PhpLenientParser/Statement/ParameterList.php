@@ -64,7 +64,7 @@ class ParameterList
 
             if ($var !== null) {
                 $params[] = $parser->setAttributes(
-                    new Node\Param($var, $expr, $type, $ref, $variadic),
+                    new Node\Param($parser->getOption('v3compat') ? $var->name : $var, $expr, $type, $ref, $variadic),
                     $first, $parser->last()
                 );
             }

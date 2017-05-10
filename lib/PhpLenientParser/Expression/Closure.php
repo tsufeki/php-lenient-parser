@@ -119,7 +119,10 @@ class Closure extends AbstractPrefix
                 break;
             }
             $var = $this->variableParser->parse($parser);
-            $uses[] = $parser->setAttributes(new Node\Expr\ClosureUse($var, $ref), $first, $parser->last());
+            $uses[] = $parser->setAttributes(
+                new Node\Expr\ClosureUse($parser->getOption('v3compat') ? $var->name : $var, $ref),
+                $first, $parser->last()
+            );
             $parser->eat(ord(','));
         }
 

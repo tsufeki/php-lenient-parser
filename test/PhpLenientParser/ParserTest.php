@@ -8,12 +8,11 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt;
-use PhpParser\Parser;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
-    /** @return Parser */
+    /** @return LenientParser */
     protected function getParser(Lexer $lexer)
     {
         return (new LenientParserFactory())->create(LenientParserFactory::ONLY_PHP7, $lexer);

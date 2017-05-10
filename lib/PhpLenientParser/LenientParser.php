@@ -6,9 +6,8 @@ use PhpLenientParser\Expression\ExpressionParserInterface;
 use PhpLenientParser\Statement\StatementParserInterface;
 use PhpParser\ErrorHandler;
 use PhpParser\Lexer;
-use PhpParser\Parser as ParserInterface;
 
-class LenientParser implements ParserInterface
+class LenientParser
 {
     /**
      * @var array

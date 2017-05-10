@@ -15,7 +15,7 @@ class CodeParsingTest extends CodeTestAbstract
     /**
      * @dataProvider provideTestParse
      */
-    public function testParse($name, $code, $expected, $modeLine)
+    public function testParse(string $name, string $code, string $expected, string $modeLine = null)
     {
         if (null !== $modeLine) {
             $modes = array_fill_keys(explode(',', $modeLine), true);
@@ -39,7 +39,14 @@ class CodeParsingTest extends CodeTestAbstract
         }
     }
 
-    public function getParseOutput(Parser $parser, $code, array $modes)
+    /**
+     * @param LenientParser $parser
+     * @param string        $code
+     * @param array         $modes
+     *
+     * @return string
+     */
+    public function getParseOutput($parser, string $code, array $modes): string
     {
         $dumpPositions = isset($modes['positions']);
 
@@ -64,7 +71,7 @@ class CodeParsingTest extends CodeTestAbstract
         return $this->getTests(__DIR__ . '/../code/parser', 'test');
     }
 
-    private function formatErrorMessage(Error $e, $code)
+    private function formatErrorMessage(Error $e, string $code): string
     {
         if ($e->hasColumnInfo()) {
             return $e->getMessageWithColumnInfo($code);

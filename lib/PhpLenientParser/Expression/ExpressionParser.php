@@ -31,7 +31,7 @@ class ExpressionParser implements ExpressionParserInterface
         }
         while (true) {
             $token = $parser->lookAhead();
-            $infix = isset($this->infix[$token->type]) ? $this->infix[$token->type] : null;
+            $infix = $this->infix[$token->type] ?? null;
             if ($infix !== null && $precedence < $infix->getPrecedence()) {
                 $left = $infix->parse($parser, $left);
             } else {

@@ -8,7 +8,7 @@ require_once __DIR__ . '/CodeTestParser.php';
 
 abstract class CodeTestAbstract extends TestCase
 {
-    protected function getTests($directory, $fileExtension, $chunksPerTest = 2)
+    protected function getTests(string $directory, string $fileExtension, int $chunksPerTest = 2): array
     {
         $parser = new CodeTestParser();
         $allTests = [];

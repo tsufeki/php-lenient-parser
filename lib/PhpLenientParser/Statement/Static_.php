@@ -37,7 +37,10 @@ class Static_ implements StatementInterface
             if ($parser->eat(ord('=')) !== null) {
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
             }
-            $vars[] = $parser->setAttributes(new Node\Stmt\StaticVar($var, $expr), $var, $parser->last());
+            $vars[] = $parser->setAttributes(
+                new Node\Stmt\StaticVar($parser->getOption('v3compat') ? $var->name : $var, $expr),
+                $var, $parser->last()
+            );
             if ($parser->lookAhead()->type === ord(';') || $parser->assert(ord(',')) === null) {
                 break;
             }

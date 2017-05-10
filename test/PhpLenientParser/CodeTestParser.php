@@ -4,7 +4,7 @@ namespace PhpLenientParser;
 
 class CodeTestParser
 {
-    public function parseTest($code, $chunksPerTest)
+    public function parseTest(string $code, int $chunksPerTest): array
     {
         $code = canonicalize($code);
 
@@ -35,7 +35,7 @@ class CodeTestParser
         return [$name, $tests];
     }
 
-    public function reconstructTest($name, array $tests)
+    public function reconstructTest(string $name, array $tests): string
     {
         $result = $name;
         foreach ($tests as list($mode, $parts)) {
@@ -54,7 +54,7 @@ class CodeTestParser
         return $result;
     }
 
-    private function extractMode($expected)
+    private function extractMode(string $expected): array
     {
         $firstNewLine = strpos($expected, "\n");
         if (false === $firstNewLine) {

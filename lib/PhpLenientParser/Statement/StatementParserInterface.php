@@ -10,7 +10,7 @@ interface StatementParserInterface
     /**
      * @param ParserStateInterface $parser
      *
-     * @return Node\Stmt[]|null
+     * @return Node\Stmt[]|Node\Expr[]|null
      */
     public function parse(ParserStateInterface $parser);
 
@@ -19,7 +19,7 @@ interface StatementParserInterface
      * @param int[]                $delimiters Token expected after the list of statements,
      *                                         must not be a valid start of statement.
      *
-     * @return Node\Stmt[]
+     * @return Node\Stmt[]|Node\Expr[]
      */
     public function parseList(ParserStateInterface $parser, int ...$delimiters): array;
 }

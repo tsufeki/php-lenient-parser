@@ -91,7 +91,7 @@ class Identifier
     /**
      * @param ParserStateInterface $parser
      *
-     * @return Node|null
+     * @return Node\Identifier|string|null
      */
     public function parse(ParserStateInterface $parser)
     {
@@ -99,8 +99,12 @@ class Identifier
 
         if ($this->isIdentifierToken($token->type)) {
             $parser->eat();
-            $id = new Node\Identifier($token->value);
-            $parser->setAttributes($id, $token, $token);
+            if ($parser->getOption('v3compat')) {
+                $id = $token->value;
+            } else {
+                $id = new Node\Identifier($token->value);
+                $parser->setAttributes($id, $token, $token);
+            }
 
             return $id;
         }

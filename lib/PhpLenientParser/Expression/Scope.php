@@ -53,7 +53,7 @@ class Scope extends AbstractOperator implements InfixInterface
     public function parse(ParserStateInterface $parser, Node $left)
     {
         $parser->eat();
-        /** @var Node\Identifier|null */
+        /** @var Node\Identifier|string|null */
         $id = null;
         /** @var Node\Expr\Variable|null */
         $var = null;
@@ -84,7 +84,7 @@ class Scope extends AbstractOperator implements InfixInterface
             $node = new Node\Expr\StaticCall($left, $expr, []);
         } elseif ($var !== null) {
             $name = $var->name;
-            if (is_string($name)) {
+            if (is_string($name) && !$parser->getOption('v3compat')) {
                 $name = new Node\VarLikeIdentifier($name);
             }
             $node = new Node\Expr\StaticPropertyFetch($left, $name);

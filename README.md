@@ -43,9 +43,6 @@ Do not instantiate `LenientParser` directly, use the factory.
 Info
 ----
 
-Lenient parser requires `nikic/php-parser` 4.0 (i.e. currently `master` branch)
-for node classes definitions and such.
-
 At the moment parsing of PHP 5 is not supported, only PHP 7.
 
 Internally, the parser is implemented as a Pratt parser (also called "Top down

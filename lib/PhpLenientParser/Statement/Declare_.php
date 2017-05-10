@@ -29,13 +29,14 @@ class Declare_ implements StatementInterface
 
         if ($parser->assert(ord('(')) !== null) {
             while (true) {
+                $first = $parser->lookAhead();
                 $id = $this->identifierParser->parse($parser);
                 if ($id === null || $parser->assert(ord('=')) === null) {
                     break;
                 }
 
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
-                $items[] = $parser->setAttributes(new Node\Stmt\DeclareDeclare($id, $expr), $id, $parser->last());
+                $items[] = $parser->setAttributes(new Node\Stmt\DeclareDeclare($id, $expr), $first, $parser->last());
 
                 if ($parser->lookAhead()->type === ord(')') || $parser->assert(ord(',')) === null) {
                     break;

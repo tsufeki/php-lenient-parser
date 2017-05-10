@@ -77,6 +77,7 @@ use PhpLenientParser\Statement\Use_;
 use PhpLenientParser\Statement\While_;
 use PhpParser\Lexer;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Identifier as NodeIdentifier;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
 use PhpParser\Parser;
@@ -93,9 +94,9 @@ class LenientParserFactory
      * @param Lexer|null $lexer         Lexer to use.
      * @param array      $parserOptions Parser options. See ParserAbstract::__construct() argument
      *
-     * @return Parser The parser instance
+     * @return LenientParser The parser instance
      */
-    public function create(int $kind = self::ONLY_PHP7, $lexer = null, array $parserOptions = []): Parser
+    public function create(int $kind = self::ONLY_PHP7, $lexer = null, array $parserOptions = [])
     {
         if ($kind !== self::ONLY_PHP7) {
             throw new \LogicException(
@@ -345,6 +346,9 @@ class LenientParserFactory
             new Namespace_($name, $insideNamespaceParser),
             new HaltCompiler()
         ));
+
+        // PHP-Parser v3 compatibility
+        $parserOptions['v3compat'] = $parserOptions['v3compat'] ?? !class_exists(NodeIdentifier::class);
 
         return new LenientParser(
             $parserOptions,

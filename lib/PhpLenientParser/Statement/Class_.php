@@ -65,11 +65,19 @@ class Class_ implements StatementInterface
         return $this->parseBody($parser, $token, $flags, $id);
     }
 
+    /**
+     * @param ParserStateInterface        $parser
+     * @param Token                       $token
+     * @param int                         $flags
+     * @param Node\Identifier|string|null $id
+     *
+     * @return Node\Stmt\Class_
+     */
     public function parseBody(
         ParserStateInterface $parser,
         Token $token,
         int $flags = 0,
-        Node\Identifier $id = null
+        $id = null
     ): Node\Stmt\Class_ {
         $extends = null;
         if ($parser->eat(Tokens::T_EXTENDS) !== null) {
