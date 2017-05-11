@@ -42,7 +42,7 @@ class Encapsed extends AbstractPrefix
         $first = $parser->eat();
 
         $parts = [];
-        while ($parser->eat($this->getEndToken()) === null && $parser->lookAhead()->type !== 0) {
+        while ($parser->eat($this->getEndToken()) === null && !$parser->isNext(0)) {
             switch ($parser->lookAhead()->type) {
                 case Tokens::T_ENCAPSED_AND_WHITESPACE:
                     $parts[] = $this->parseStringPart($parser);
@@ -196,10 +196,10 @@ class Encapsed extends AbstractPrefix
         $token = $parser->eat();
         $expr = null;
 
-        if ($parser->lookAhead()->type === Tokens::T_STRING_VARNAME) {
+        if ($parser->isNext(Tokens::T_STRING_VARNAME)) {
             $expr = $parser->setAttributes(new Node\Expr\Variable($parser->eat()->value), $parser->last(), $parser->last());
 
-            if ($parser->lookAhead()->type === ord('[')) {
+            if ($parser->isNext(ord('['))) {
                 $parser->eat();
                 $index = $parser->getExpressionParser()->parse($parser);
                 $parser->assert(ord(']'));

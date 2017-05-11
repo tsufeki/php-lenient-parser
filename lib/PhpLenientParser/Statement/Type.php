@@ -59,10 +59,7 @@ class Type
             }
         }
 
-        if ($type === null && in_array($parser->lookAhead()->type, [
-            Tokens::T_ARRAY,
-            Tokens::T_CALLABLE,
-        ])) {
+        if ($type === null && $parser->isNext(Tokens::T_ARRAY, Tokens::T_CALLABLE)) {
             $type = $this->identifierParser->parse($parser);
             if ($parser->getOption('v3compat')) {
                 $type = strtolower($type);

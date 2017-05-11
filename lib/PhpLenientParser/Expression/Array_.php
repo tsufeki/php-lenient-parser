@@ -52,15 +52,12 @@ class Array_ extends AbstractPrefix
         }
         $items = [];
 
-        while ($parser->lookAhead()->type !== $this->endToken) {
+        while (!$parser->isNext($this->endToken)) {
             $first = $parser->lookAhead();
             $key = null;
             $ref = $parser->eat(ord('&')) !== null;
             $expr = $parser->getExpressionParser()->parse($parser);
-            if ($expr === null && !in_array(
-                $parser->lookAhead()->type,
-                [ord(','), Tokens::T_DOUBLE_ARROW, $this->endToken]
-            )) {
+            if ($expr === null && !$parser->isNext(ord(','), Tokens::T_DOUBLE_ARROW, $this->endToken)) {
                 break;
             }
 

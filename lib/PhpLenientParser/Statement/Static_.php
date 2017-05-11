@@ -31,7 +31,7 @@ class Static_ implements StatementInterface
         $token = $parser->eat();
         $vars = [];
 
-        while ($parser->lookAhead()->type === $this->variableParser->getToken()) {
+        while ($parser->isNext($this->variableParser->getToken())) {
             $var = $this->variableParser->parse($parser);
             $expr = null;
             if ($parser->eat(ord('=')) !== null) {
@@ -41,7 +41,7 @@ class Static_ implements StatementInterface
                 new Node\Stmt\StaticVar($parser->getOption('v3compat') ? $var->name : $var, $expr),
                 $var, $parser->last()
             );
-            if ($parser->lookAhead()->type === ord(';') || $parser->assert(ord(',')) === null) {
+            if ($parser->isNext(ord(';')) || !$parser->assert(ord(','))) {
                 break;
             }
         }

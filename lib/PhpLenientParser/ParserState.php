@@ -89,17 +89,9 @@ class ParserState implements ParserStateInterface
         return $this->lookAheadQueue[$count];
     }
 
-    /**
-     * @param Token $token
-     */
-    private function handleHaltCompiler(Token $token)
+    public function isNext(int ...$tokenTypes): bool
     {
-        try {
-            $rest = $this->lexer->handleHaltCompiler();
-            $token->startAttributes['rest'] = $rest;
-        } catch (Error $e) {
-            $this->errorHandler->handleError($e);
-        }
+        return in_array($this->lookAhead()->type, $tokenTypes);
     }
 
     public function eat(int $tokenType = null)
@@ -116,20 +108,20 @@ class ParserState implements ParserStateInterface
         return $token;
     }
 
-    public function assert(int $tokenType)
+    public function assert(int $tokenType): bool
     {
         $token = $this->lookAhead();
 
         if ($tokenType !== $token->type) {
             $this->unexpected($token, $tokenType);
 
-            return null;
+            return false;
         }
 
         $this->last = $token;
         $this->lookAheadQueue->dequeue();
 
-        return $token;
+        return true;
     }
 
     public function unexpected(Token $token, int $expected = null)
@@ -192,5 +184,18 @@ class ParserState implements ParserStateInterface
     public function getStatementParser(): StatementParserInterface
     {
         return $this->statementParser;
+    }
+
+    /**
+     * @param Token $token
+     */
+    private function handleHaltCompiler(Token $token)
+    {
+        try {
+            $rest = $this->lexer->handleHaltCompiler();
+            $token->startAttributes['rest'] = $rest;
+        } catch (Error $e) {
+            $this->errorHandler->handleError($e);
+        }
     }
 }

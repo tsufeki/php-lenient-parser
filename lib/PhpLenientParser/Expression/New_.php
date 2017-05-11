@@ -50,7 +50,7 @@ class New_ extends AbstractPrefix
         $class = $classToken === null ? $this->classRefParser->parseOrError($parser) : null;
 
         $args = [];
-        if ($parser->lookAhead()->type === ord('(')) {
+        if ($parser->isNext(ord('('))) {
             $args = $this->argsParser->parse($parser);
         }
 

@@ -47,7 +47,7 @@ class Use_ implements StatementInterface
                 );
 
                 $name = null;
-                if ($parser->eat(ord(',')) !== null && $parser->lookAhead()->type !== ord(';')) {
+                if ($parser->eat(ord(',')) !== null && !$parser->isNext(ord(';'))) {
                     $name = $this->parseName($parser);
                 }
             }
@@ -70,7 +70,7 @@ class Use_ implements StatementInterface
                     new Node\Stmt\UseUse($name, $alias, $innerType),
                     $name, $parser->last()
                 );
-                if ($parser->eat(ord(',')) === null && $parser->lookAhead()->type !== ord('}')) {
+                if ($parser->eat(ord(',')) === null) {
                     break;
                 }
             }
@@ -121,7 +121,7 @@ class Use_ implements StatementInterface
     private function parseAlias(ParserStateInterface $parser)
     {
         $alias = null;
-        if ($parser->eat(Tokens::T_AS) !== null && $parser->lookAhead()->type === Tokens::T_STRING) {
+        if ($parser->eat(Tokens::T_AS) !== null && $parser->isNext(Tokens::T_STRING)) {
             $alias = $this->identifierParser->parse($parser);
         }
 

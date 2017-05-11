@@ -46,7 +46,7 @@ class TraitUse implements StatementInterface
         if ($parser->eat(ord('{')) === null) {
             $parser->assert(ord(';'));
         } else {
-            while ($parser->lookAhead()->type !== ord('}')) {
+            while (!$parser->isNext(ord('}'))) {
                 $first = $parser->lookAhead();
 
                 $name = null;

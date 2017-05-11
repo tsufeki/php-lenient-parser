@@ -39,7 +39,7 @@ class ParameterList
         $parser->eat();
         $params = [];
 
-        while ($parser->lookAhead()->type !== ord(')')) {
+        while (!$parser->isNext(ord(')'))) {
             $first = $parser->lookAhead();
 
             $type = $this->typeParser->parse($parser);
@@ -48,7 +48,7 @@ class ParameterList
 
             $var = null;
             $varLast = $parser->last();
-            if ($parser->lookAhead()->type === $this->variableParser->getToken()) {
+            if ($parser->isNext($this->variableParser->getToken())) {
                 $var = $this->variableParser->parse($parser);
             }
 

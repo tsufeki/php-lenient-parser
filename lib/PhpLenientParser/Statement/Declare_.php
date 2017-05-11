@@ -27,18 +27,18 @@ class Declare_ implements StatementInterface
         $token = $parser->eat();
         $items = [];
 
-        if ($parser->assert(ord('(')) !== null) {
+        if ($parser->assert(ord('('))) {
             while (true) {
                 $first = $parser->lookAhead();
                 $id = $this->identifierParser->parse($parser);
-                if ($id === null || $parser->assert(ord('=')) === null) {
+                if ($id === null || !$parser->assert(ord('='))) {
                     break;
                 }
 
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
                 $items[] = $parser->setAttributes(new Node\Stmt\DeclareDeclare($id, $expr), $first, $parser->last());
 
-                if ($parser->lookAhead()->type === ord(')') || $parser->assert(ord(',')) === null) {
+                if ($parser->isNext(ord(')')) || !$parser->assert(ord(','))) {
                     break;
                 }
             }

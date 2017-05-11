@@ -83,7 +83,7 @@ class Name extends AbstractPrefix
      */
     public function parserOrNull(ParserStateInterface $parser, int $kinds = self::ANY, bool $trailingSep = false)
     {
-        if (in_array($parser->lookAhead()->type, [Tokens::T_STRING, Tokens::T_NS_SEPARATOR, Tokens::T_NAMESPACE])) {
+        if ($parser->isNext(Tokens::T_STRING, Tokens::T_NS_SEPARATOR, Tokens::T_NAMESPACE)) {
             return $this->parse($parser, $kinds, $trailingSep);
         }
 

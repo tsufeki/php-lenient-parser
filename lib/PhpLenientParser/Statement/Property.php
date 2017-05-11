@@ -42,7 +42,7 @@ class Property implements StatementInterface
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
             }
             $props[] = $parser->setAttributes(new Node\Stmt\PropertyProperty($var, $expr), $first, $parser->last());
-            if ($parser->lookAhead()->type === ord(';') || $parser->assert(ord(',')) === null) {
+            if ($parser->isNext(ord(';')) || !$parser->assert(ord(','))) {
                 break;
             }
         }

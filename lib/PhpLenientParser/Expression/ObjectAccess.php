@@ -75,7 +75,7 @@ class ObjectAccess extends AbstractOperator implements InfixInterface
             $name = $parser->getExpressionParser()->makeErrorNode($parser->last());
         }
 
-        if ($parser->lookAhead()->type === ord('(')) {
+        if ($parser->isNext(ord('('))) {
             $args = $this->argsParser->parse($parser);
             $node = new Node\Expr\MethodCall($left, $name, $args);
         } else {

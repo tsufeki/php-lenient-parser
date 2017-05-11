@@ -36,7 +36,7 @@ class Try_ implements StatementInterface
         $stmts = $this->parseBlock($parser);
 
         $catches = [];
-        while ($parser->lookAhead()->type === Tokens::T_CATCH) {
+        while ($parser->isNext(Tokens::T_CATCH)) {
             $catch = $this->parseCatch($parser);
             if ($catch !== null) {
                 $catches[] = $catch;
@@ -66,7 +66,7 @@ class Try_ implements StatementInterface
     private function parseBlock(ParserStateInterface $parser): array
     {
         $stmts = [];
-        if ($parser->lookAhead()->type === ord('{')) {
+        if ($parser->isNext(ord('{'))) {
             $stmts = $parser->getStatementParser()->parse($parser) ?: [];
         }
 
@@ -81,7 +81,7 @@ class Try_ implements StatementInterface
     private function parseCatch(ParserStateInterface $parser)
     {
         $token = $parser->eat();
-        if ($parser->assert(ord('(')) === null) {
+        if (!$parser->assert(ord('('))) {
             return null;
         }
 
@@ -96,7 +96,7 @@ class Try_ implements StatementInterface
         } while ($parser->eat(ord('|')) !== null);
 
         $var = null;
-        if ($parser->lookAhead()->type === $this->variableParser->getToken()) {
+        if ($parser->isNext($this->variableParser->getToken())) {
             $var = $this->variableParser->parse($parser);
         } else {
             $errorNode = $parser->getExpressionParser()->makeErrorNode($parser->last());

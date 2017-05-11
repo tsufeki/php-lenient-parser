@@ -34,14 +34,14 @@ class ClassConst implements StatementInterface
                 break;
             }
             $expr = null;
-            if ($parser->assert(ord('=')) !== null) {
+            if ($parser->assert(ord('='))) {
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
             } else {
                 $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
             }
 
             $consts[] = $parser->setAttributes(new Node\Const_($id, $expr), $first, $parser->last());
-            if ($parser->lookAhead()->type === ord(';') || $parser->assert(ord(',')) === null) {
+            if ($parser->isNext(ord(';')) || !$parser->assert(ord(','))) {
                 break;
             }
         }

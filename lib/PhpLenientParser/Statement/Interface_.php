@@ -60,7 +60,7 @@ class Interface_ implements StatementInterface
         }
 
         $stmts = [];
-        if ($parser->assert(ord('{')) !== null) {
+        if ($parser->assert(ord('{'))) {
             $stmts = $this->classStatementsParser->parseList($parser, ord('}'));
             $parser->assert(ord('}'));
         }

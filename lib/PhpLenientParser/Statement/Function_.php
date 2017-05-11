@@ -49,7 +49,7 @@ class Function_ implements StatementInterface
         $id = $this->identifierParser->parse($parser);
 
         $params = [];
-        if ($parser->lookAhead()->type === ord('(')) {
+        if ($parser->isNext(ord('('))) {
             $params = $this->parametersParser->parse($parser);
         }
 
@@ -59,7 +59,7 @@ class Function_ implements StatementInterface
         }
 
         $stmts = [];
-        if ($parser->lookAhead()->type === ord('{')) {
+        if ($parser->isNext(ord('{'))) {
             $stmts = $parser->getStatementParser()->parse($parser);
         }
 

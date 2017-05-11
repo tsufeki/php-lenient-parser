@@ -76,7 +76,7 @@ class Scope extends AbstractOperator implements InfixInterface
                 $id = $this->identifierParser->parse($parser);
         }
 
-        if ($parser->lookAhead()->type === ord('(')) {
+        if ($parser->isNext(ord('('))) {
             $args = $this->argsParser->parse($parser);
             $name = $id ?: ($var ?: ($expr ?: $parser->getExpressionParser()->makeErrorNode($parser->last())));
             $node = new Node\Expr\StaticCall($left, $name, $args);

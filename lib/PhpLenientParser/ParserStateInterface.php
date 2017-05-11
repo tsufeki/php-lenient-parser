@@ -23,6 +23,15 @@ interface ParserStateInterface
     public function lookAhead(int $count = 0): Token;
 
     /**
+     * Check if next token matches any of given types. Don't eat it.
+     *
+     * @param int[] $tokenTypes
+     *
+     * @return bool
+     */
+    public function isNext(int ...$tokenTypes): bool;
+
+    /**
      * @param int $tokenType If not null and token doesn't match it, don't eat anything.
      *
      * @return Token|null
@@ -34,9 +43,9 @@ interface ParserStateInterface
      *
      * @param int $tokenType
      *
-     * @return Token|null
+     * @return bool True if token was eaten.
      */
-    public function assert(int $tokenType);
+    public function assert(int $tokenType): bool;
 
     /**
      * Add an error for token.

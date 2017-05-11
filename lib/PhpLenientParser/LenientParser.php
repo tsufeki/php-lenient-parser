@@ -66,7 +66,7 @@ class LenientParser
         while (true) {
             $stmts = $this->topLevelParser->parseList($parserState);
             $statements = array_merge($statements, $stmts);
-            if ($parserState->lookAhead()->type !== 0) {
+            if (!$parserState->isNext(0)) {
                 // drop the errorneous token
                 $parserState->unexpected($parserState->eat());
             } else {

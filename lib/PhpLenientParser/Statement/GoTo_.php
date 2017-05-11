@@ -26,7 +26,7 @@ class GoTo_ implements StatementInterface
     {
         $token = $parser->eat();
         $label = null;
-        if ($parser->lookAhead()->type === Tokens::T_STRING) {
+        if ($parser->isNext(Tokens::T_STRING)) {
             $label = $this->identifierParser->parse($parser);
         }
         $parser->assert(ord(';'));

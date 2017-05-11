@@ -36,16 +36,16 @@ class Global_ implements StatementInterface
         $vars = [];
 
         while (true) {
-            if ($parser->lookAhead()->type === $this->variableParser->getToken()) {
+            if ($parser->isNext($this->variableParser->getToken())) {
                 $var = $this->variableParser->parse($parser);
-            } elseif ($parser->lookAhead()->type === $this->indirectVariableParser->getToken()) {
+            } elseif ($parser->isNext($this->indirectVariableParser->getToken())) {
                 $var = $this->indirectVariableParser->parse($parser);
             } else {
                 break;
             }
 
             $vars[] = $var;
-            if ($parser->lookAhead()->type === ord(';') || $parser->assert(ord(',')) === null) {
+            if ($parser->isNext(ord(';')) || !$parser->assert(ord(','))) {
                 break;
             }
         }

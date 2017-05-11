@@ -45,12 +45,12 @@ class Closure extends AbstractPrefix
         $ref = $parser->eat(ord('&')) !== null;
 
         $params = [];
-        if ($parser->lookAhead()->type === ord('(')) {
+        if ($parser->isNext(ord('('))) {
             $params = $this->parametersParser->parse($parser);
         }
 
         $uses = [];
-        if ($parser->lookAhead()->type === Tokens::T_USE) {
+        if ($parser->isNext(Tokens::T_USE)) {
             $uses = $this->parseUses($parser);
         }
 
@@ -60,7 +60,7 @@ class Closure extends AbstractPrefix
         }
 
         $stmts = [];
-        if ($parser->lookAhead()->type === ord('{')) {
+        if ($parser->isNext(ord('{'))) {
             $stmts = $parser->getStatementParser()->parse($parser);
         }
 
@@ -115,7 +115,7 @@ class Closure extends AbstractPrefix
         while (true) {
             $first = $parser->lookAhead();
             $ref = $parser->eat(ord('&')) !== null;
-            if ($parser->lookAhead()->type !== $this->variableParser->getToken()) {
+            if (!$parser->isNext($this->variableParser->getToken())) {
                 break;
             }
             $var = $this->variableParser->parse($parser);

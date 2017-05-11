@@ -18,13 +18,13 @@ class ArgumentList
         $parser->eat();
         $args = [];
 
-        while ($parser->lookAhead()->type !== ord(')')) {
+        while (!$parser->isNext(ord(')'))) {
             $first = $parser->lookAhead();
             $ref = $parser->eat(ord('&')) !== null;
             $unpack = $parser->eat(Tokens::T_ELLIPSIS) !== null;
             $expr = $parser->getExpressionParser()->parse($parser);
             if ($expr === null) {
-                if (in_array($parser->lookAhead()->type, [ord(','), ord(')')])) {
+                if ($parser->isNext(ord(','), ord(')'))) {
                     $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
                 } else {
                     break;

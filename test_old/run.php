@@ -7,7 +7,8 @@ if ('cli' !== php_sapi_name()) {
     die('This script is designed for running on the command line.');
 }
 
-function showHelp($error) {
+function showHelp($error)
+{
     die($error . "\n\n" .
 <<<OUTPUT
 This script has to be called with the following signature:
@@ -24,8 +25,8 @@ OUTPUT
     );
 }
 
-$options = array();
-$arguments = array();
+$options = [];
+$arguments = [];
 
 // remove script name from argv
 array_shift($argv);
@@ -60,20 +61,20 @@ $dir = $arguments[1];
 switch ($testType) {
     case 'Symfony':
         $version = 'Php5';
-        $fileFilter = function($path) {
+        $fileFilter = function ($path) {
             return preg_match('~\.php(?:\.cache)?$~', $path) && false === strpos($path, 'skeleton');
         };
-        $codeExtractor = function($file, $code) {
+        $codeExtractor = function ($file, $code) {
             return $code;
         };
         break;
     case 'PHP5':
     case 'PHP7':
     $version = $testType === 'PHP5' ? 'Php5' : 'Php7';
-        $fileFilter = function($path) {
+        $fileFilter = function ($path) {
             return preg_match('~\.phpt$~', $path);
         };
-        $codeExtractor = function($file, $code) {
+        $codeExtractor = function ($file, $code) {
             if (preg_match('~(?:
 # skeleton files
   ext.gmp.tests.001
@@ -112,10 +113,10 @@ switch ($testType) {
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$parserName    = PhpLenientParser\LenientParser::class;
-$parser        = (new PhpLenientParser\LenientParserFactory())->create();
-$prettyPrinter = new PhpParser\PrettyPrinter\Standard;
-$nodeDumper    = new PhpParser\NodeDumper;
+$parserName = PhpLenientParser\LenientParser::class;
+$parser = (new PhpLenientParser\LenientParserFactory())->create();
+$prettyPrinter = new PhpParser\PrettyPrinter\Standard();
+$nodeDumper = new PhpParser\NodeDumper();
 
 $parseFail = $ppFail = $compareFail = $count = 0;
 

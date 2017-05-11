@@ -15,7 +15,7 @@ class DoWhile implements StatementInterface
         $stmts = $parser->getStatementParser()->parse($parser) ?: [];
 
         $condition = null;
-        if ($parser->assert(Tokens::T_WHILE) !== null) {
+        if ($parser->assert(Tokens::T_WHILE)) {
             $parser->assert(ord('('));
             $condition = $parser->getExpressionParser()->parseOrError($parser);
             $parser->assert(ord(')'));

@@ -49,7 +49,7 @@ class Method implements StatementInterface
         $id = $this->identifierParser->parse($parser);
 
         $params = [];
-        if ($parser->lookAhead()->type === ord('(')) {
+        if ($parser->isNext(ord('('))) {
             $params = $this->parametersParser->parse($parser);
         }
 
@@ -59,7 +59,7 @@ class Method implements StatementInterface
         }
 
         $stmts = null;
-        if ($parser->lookAhead()->type === ord('{')) {
+        if ($parser->isNext(ord('{'))) {
             $stmts = $parser->getStatementParser()->parse($parser);
         } else {
             $parser->eat(ord(';'));
