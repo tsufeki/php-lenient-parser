@@ -4,13 +4,30 @@ namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Name as NameNode;
 use PhpParser\Parser\Tokens;
 
-class NameOrConst extends Name
+class NameOrConst extends AbstractPrefix
 {
+    /**
+     * @var Name
+     */
+    private $nameParser;
+
+    public function __construct(int $token)
+    {
+        parent::__construct($token);
+        $this->nameParser = new Name($token);
+    }
+
+    /**
+     * @param ParserStateInterface $parser
+     *
+     * @return NameNode|Expr\ConstFetch|null
+     */
     public function parse(ParserStateInterface $parser)
     {
-        $name = parent::parse($parser);
+        $name = $this->nameParser->parse($parser);
         if ($name === null) {
             return null;
         }
