@@ -54,7 +54,7 @@ class ScopeNew extends AbstractOperator implements InfixInterface
         }
 
         if (is_string($name) && !$parser->getOption('v3compat')) {
-            $name = new Node\VarLikeIdentifier($name);
+            $name = $parser->setAttributes(new Node\VarLikeIdentifier($name), $var, $var);
         }
         $node = new Node\Expr\StaticPropertyFetch($left, $name);
 
