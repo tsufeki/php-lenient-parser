@@ -67,9 +67,17 @@ class Name extends AbstractPrefix
             }
         } while ($sep !== null);
 
+        if ($parts === []) {
+            $parts = [''];
+        }
+
         $name = $fullyQualified ? new NameNode\FullyQualified($parts)
             : ($relative ? new NameNode\Relative($parts)
             : new NameNode($parts));
+
+        if ($parts === ['']) {
+            $name->parts = [];
+        }
 
         return $parser->setAttributes($name, $first, $parser->last());
     }
