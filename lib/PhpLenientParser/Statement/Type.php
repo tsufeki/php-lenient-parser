@@ -17,6 +17,7 @@ class Type
         'string' => true,
         'iterable' => true,
         'void' => true,
+        'object' => true,
     ];
 
     /**
