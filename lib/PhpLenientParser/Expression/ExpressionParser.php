@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
-use PhpParser\Node\Expr;
+use PhpParser\Node;
 use PhpParser\Node\Expr\Error;
 
 class ExpressionParser implements ExpressionParserInterface
@@ -18,7 +18,7 @@ class ExpressionParser implements ExpressionParserInterface
      */
     private $infix = [];
 
-    public function parse(ParserStateInterface $parser, int $precedence = 0)
+    public function parse(ParserStateInterface $parser, int $precedence = 0): ?Node\Expr
     {
         $token = $parser->lookAhead();
         if (!isset($this->prefix[$token->type])) {
@@ -26,13 +26,20 @@ class ExpressionParser implements ExpressionParserInterface
         }
 
         $left = $this->prefix[$token->type]->parse($parser);
+
+        return $this->parseInfix($parser, $left, $precedence);
+    }
+
+    public function parseInfix(ParserStateInterface $parser, ?Node\Expr $left, int $precedence = 0): ?Node\Expr
+    {
         if ($left === null) {
             return null;
         }
+
         while (true) {
             $token = $parser->lookAhead();
             $infix = $this->infix[$token->type] ?? null;
-            if ($infix !== null && $precedence < $infix->getPrecedence()) {
+            if ($infix !== null && $left !== null && $precedence < $infix->getPrecedence()) {
                 $left = $infix->parse($parser, $left);
             } else {
                 break;
@@ -42,7 +49,7 @@ class ExpressionParser implements ExpressionParserInterface
         return $left;
     }
 
-    public function makeErrorNode($last): Expr
+    public function makeErrorNode($last): Node\Expr\Error
     {
         $lastAttrs = $last->getAttributes();
         $attrs = [];
@@ -62,7 +69,7 @@ class ExpressionParser implements ExpressionParserInterface
         return new Error($attrs);
     }
 
-    public function parseOrError(ParserStateInterface $parser, int $precedence = 0)
+    public function parseOrError(ParserStateInterface $parser, int $precedence = 0): Node\Expr
     {
         $expr = $this->parse($parser, $precedence);
         if ($expr === null) {
@@ -80,7 +87,7 @@ class ExpressionParser implements ExpressionParserInterface
             if ($expr !== null) {
                 $expressions[] = $expr;
             }
-            if ($parser->eat(ord(',')) === null) {
+            if ($parser->eatIf(ord(',')) === null) {
                 break;
             }
         }
@@ -88,12 +95,12 @@ class ExpressionParser implements ExpressionParserInterface
         return $expressions;
     }
 
-    public function addPrefix(PrefixInterface $prefix)
+    public function addPrefix(PrefixInterface $prefix): void
     {
         $this->prefix[$prefix->getToken()] = $prefix;
     }
 
-    public function addInfix(InfixInterface $infix)
+    public function addInfix(InfixInterface $infix): void
     {
         $this->infix[$infix->getToken()] = $infix;
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -8,14 +8,9 @@ use PhpParser\Node;
 interface StatementInterface
 {
     /**
-     * @param ParserStateInterface $parser
-     *
-     * @return Node\Stmt|Node\Stmt[]|Node\Expr|Node\Expr[]|null
+     * @return Node\Stmt|Node\Stmt[]|null
      */
     public function parse(ParserStateInterface $parser);
 
-    /**
-     * @return int|null
-     */
-    public function getToken();
+    public function getToken(): ?int;
 }

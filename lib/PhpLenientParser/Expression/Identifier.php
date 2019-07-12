@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -88,23 +88,14 @@ class Identifier
         Tokens::T_STATIC => true,
     ];
 
-    /**
-     * @param ParserStateInterface $parser
-     *
-     * @return Node\Identifier|string|null
-     */
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Identifier
     {
         $token = $parser->lookAhead();
 
         if ($this->isIdentifierToken($token->type)) {
             $parser->eat();
-            if ($parser->getOption('v3compat')) {
-                $id = $token->value;
-            } else {
-                $id = new Node\Identifier($token->value);
-                $parser->setAttributes($id, $token, $token);
-            }
+            $id = new Node\Identifier($token->value);
+            $parser->setAttributes($id, $token, $token);
 
             return $id;
         }
@@ -112,13 +103,13 @@ class Identifier
         return null;
     }
 
-    /**
-     * @param int $token
-     *
-     * @return bool
-     */
     public function isIdentifierToken(int $token): bool
     {
         return isset(self::TOKENS[$token]);
+    }
+
+    public function makeEmpty(ParserStateInterface $parser): Node\Identifier
+    {
+        return new Node\Identifier('', $parser->getExpressionParser()->makeErrorNode($parser->last())->getAttributes());
     }
 }

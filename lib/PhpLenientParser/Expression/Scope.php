@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -27,14 +27,6 @@ class Scope extends AbstractOperator implements InfixInterface
      */
     private $argsParser;
 
-    /**
-     * @param int              $token
-     * @param int              $precedence
-     * @param Identifier       $identifierParser
-     * @param Variable         $variableParser
-     * @param IndirectVariable $indirectVariableParser
-     * @param ArgumentList     $argsParser
-     */
     public function __construct(
         int $token,
         int $precedence,
@@ -43,17 +35,20 @@ class Scope extends AbstractOperator implements InfixInterface
         IndirectVariable $indirectVariableParser,
         ArgumentList $argsParser
     ) {
-        parent::__construct($token, $precedence, null);
+        parent::__construct($token, $precedence, '');
         $this->identifierParser = $identifierParser;
         $this->variableParser = $variableParser;
         $this->indirectVariableParser = $indirectVariableParser;
         $this->argsParser = $argsParser;
     }
 
-    public function parse(ParserStateInterface $parser, Node $left)
+    /**
+     * @param Node\Expr|Node\Name $left
+     */
+    public function parse(ParserStateInterface $parser, $left): ?Node\Expr
     {
         $parser->eat();
-        /** @var Node\Identifier|string|null */
+        /** @var Node\Identifier|null */
         $id = null;
         /** @var Node\Expr\Variable|null */
         $var = null;
@@ -83,8 +78,9 @@ class Scope extends AbstractOperator implements InfixInterface
         } elseif ($expr !== null) {
             $node = new Node\Expr\StaticCall($left, $expr, []);
         } elseif ($var !== null) {
+            assert($var instanceof Node\Expr\Variable);
             $name = $var->name;
-            if (is_string($name) && !$parser->getOption('v3compat')) {
+            if (is_string($name)) {
                 $name = new Node\VarLikeIdentifier($name);
             }
             $parser->setAttributes($name, $var, $var);
@@ -94,6 +90,8 @@ class Scope extends AbstractOperator implements InfixInterface
             $node = new Node\Expr\ClassConstFetch($left, $name);
         }
 
-        return $parser->setAttributes($node, $left, $parser->last());
+        $parser->setAttributes($node, $left, $parser->last());
+
+        return $node;
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -14,9 +14,6 @@ class Label implements StatementInterface
      */
     private $identifierParser;
 
-    /**
-     * @param Identifier $identifierParser
-     */
     public function __construct(Identifier $identifierParser)
     {
         $this->identifierParser = $identifierParser;
@@ -30,12 +27,15 @@ class Label implements StatementInterface
 
         $token = $parser->lookAhead();
         $id = $this->identifierParser->parse($parser);
+        assert($id !== null);
         $parser->eat();
+        $node = new Node\Stmt\Label($id);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(new Node\Stmt\Label($id), $token, $parser->last());
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_STRING;
     }

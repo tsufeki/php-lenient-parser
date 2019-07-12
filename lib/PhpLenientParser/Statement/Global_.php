@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -20,10 +20,6 @@ class Global_ implements StatementInterface
      */
     private $indirectVariableParser;
 
-    /**
-     * @param Variable         $variableParser
-     * @param IndirectVariable $indirectVariableParser
-     */
     public function __construct(Variable $variableParser, IndirectVariable $indirectVariableParser)
     {
         $this->variableParser = $variableParser;
@@ -38,8 +34,10 @@ class Global_ implements StatementInterface
         while (true) {
             if ($parser->isNext($this->variableParser->getToken())) {
                 $var = $this->variableParser->parse($parser);
+                assert($var instanceof Node\Expr\Variable);
             } elseif ($parser->isNext($this->indirectVariableParser->getToken())) {
                 $var = $this->indirectVariableParser->parse($parser);
+                assert($var instanceof Node\Expr\Variable);
             } else {
                 break;
             }
@@ -51,11 +49,13 @@ class Global_ implements StatementInterface
         }
 
         $parser->assert(ord(';'));
+        $node = new Node\Stmt\Global_($vars);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(new Node\Stmt\Global_($vars), $token, $parser->last());
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_GLOBAL;
     }

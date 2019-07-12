@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -15,11 +15,13 @@ class Unset_ implements StatementInterface
         $expressions = $parser->getExpressionParser()->parseList($parser);
         $parser->assert(ord(')'));
         $parser->assert(ord(';'));
+        $node = new Node\Stmt\Unset_($expressions);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(new Node\Stmt\Unset_($expressions), $token, $parser->last());
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_UNSET;
     }

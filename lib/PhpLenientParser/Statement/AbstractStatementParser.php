@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -18,7 +18,9 @@ abstract class AbstractStatementParser implements StatementParserInterface
         $lookAhead = $parser->lookAhead();
         if (in_array($lookAhead->type, $delimiters)) {
             if (!empty($lookAhead->startAttributes['comments'])) {
-                $stmts[] = $parser->setAttributes(new Node\Stmt\Nop(), $lookAhead, $lookAhead);
+                $node = new Node\Stmt\Nop();
+                $parser->setAttributes($node, $lookAhead, $lookAhead);
+                $stmts[] = $node;
             }
         }
 

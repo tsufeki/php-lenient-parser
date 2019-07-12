@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node;
 use PhpParser\Node\Scalar;
 
 class String_ extends AbstractPrefix
@@ -17,7 +18,7 @@ class String_ extends AbstractPrefix
         '$' => '$',
     ];
 
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
 
@@ -36,14 +37,12 @@ class String_ extends AbstractPrefix
             $value = self::replaceQuoteEscapes($value, '"');
         }
 
-        return $parser->setAttributes(new Scalar\String_($value, ['kind' => $kind]), $token, $token);
+        $node = new Scalar\String_($value, ['kind' => $kind]);
+        $parser->setAttributes($node, $token, $token);
+
+        return $node;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
     public static function replaceQuoteEscapes(string $string, string $quote): string
     {
         return str_replace(
@@ -53,11 +52,6 @@ class String_ extends AbstractPrefix
         );
     }
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
     public static function replaceBackslashes(string $string): string
     {
         return str_replace(
@@ -67,11 +61,6 @@ class String_ extends AbstractPrefix
         );
     }
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
     public static function replaceEscapes(string $string): string
     {
         $string = preg_replace_callback(
@@ -79,27 +68,32 @@ class String_ extends AbstractPrefix
             function ($match) {
                 if (isset($match[1][0])) {
                     return '\\\\';
-                } elseif (isset($match[2][0])) {
+                }
+                if (isset($match[2][0])) {
                     return self::ESCAPES[$match[2]];
-                } elseif (isset($match[3][0])) {
+                }
+                if (isset($match[3][0])) {
                     return chr(octdec($match[3]));
-                } elseif (isset($match[4][0])) {
-                    return chr(hexdec($match[4]));
-                } elseif (isset($match[5][0])) {
-                    return self::utf8chr(hexdec($match[5]));
+                }
+                if (isset($match[4][0])) {
+                    return chr((int)hexdec($match[4]));
+                }
+                if (isset($match[5][0])) {
+                    $cp = hexdec($match[5]);
+                    if (!is_int($cp)) {
+                        return '';
+                    }
+
+                    return self::utf8chr($cp);
                 }
             },
             $string
         );
+        assert($string !== null);
 
         return $string;
     }
 
-    /**
-     * @param int $cp
-     *
-     * @return string
-     */
     public static function utf8chr(int $cp): string
     {
         if ($cp <= 0x7f) {
@@ -114,7 +108,7 @@ class String_ extends AbstractPrefix
                     chr((($cp >> 6) & 0x3f) | 0x80) .
                     chr(($cp & 0x3f) | 0x80);
         }
-        if ($cp <= 0x1fffff) {
+        if ($cp <= 0x10ffff) {
             return chr(($cp >> 18) | 0xf0) .
                     chr((($cp >> 12) & 0x3f) | 0x80) .
                     chr((($cp >> 6) & 0x3f) | 0x80) .

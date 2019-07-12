@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -31,12 +31,6 @@ class Class_ implements StatementInterface
      */
     private $classStatementsParser;
 
-    /**
-     * @param int                      $token
-     * @param Identifier               $identifierParser
-     * @param Name                     $nameParser
-     * @param StatementParserInterface $classStatementsParser
-     */
     public function __construct(
         int $token,
         Identifier $identifierParser,
@@ -57,41 +51,33 @@ class Class_ implements StatementInterface
 
         $token = $parser->lookAhead();
         $flags = 0;
-        $flags |= $parser->eat(Tokens::T_ABSTRACT) !== null ? Node\Stmt\Class_::MODIFIER_ABSTRACT : 0;
-        $flags |= $parser->eat(Tokens::T_FINAL) !== null ? Node\Stmt\Class_::MODIFIER_FINAL : 0;
+        $flags |= $parser->eatIf(Tokens::T_ABSTRACT) !== null ? Node\Stmt\Class_::MODIFIER_ABSTRACT : 0;
+        $flags |= $parser->eatIf(Tokens::T_FINAL) !== null ? Node\Stmt\Class_::MODIFIER_FINAL : 0;
         $parser->eat();
         $id = $this->identifierParser->parse($parser);
 
         return $this->parseBody($parser, $token, $flags, $id);
     }
 
-    /**
-     * @param ParserStateInterface        $parser
-     * @param Token                       $token
-     * @param int                         $flags
-     * @param Node\Identifier|string|null $id
-     *
-     * @return Node\Stmt\Class_
-     */
     public function parseBody(
         ParserStateInterface $parser,
         Token $token,
         int $flags = 0,
-        $id = null
+        ?Node\Identifier $id = null
     ): Node\Stmt\Class_ {
         $extends = null;
-        if ($parser->eat(Tokens::T_EXTENDS) !== null) {
-            $extends = $this->nameParser->parserOrNull($parser);
+        if ($parser->eatIf(Tokens::T_EXTENDS) !== null) {
+            $extends = $this->nameParser->parse($parser);
         }
 
         $implements = [];
-        if ($parser->eat(Tokens::T_IMPLEMENTS) !== null) {
+        if ($parser->eatIf(Tokens::T_IMPLEMENTS) !== null) {
             do {
-                $impl = $this->nameParser->parserOrNull($parser);
+                $impl = $this->nameParser->parse($parser);
                 if ($impl !== null) {
                     $implements[] = $impl;
                 }
-            } while ($impl !== null && $parser->eat(ord(',')) !== null);
+            } while ($impl !== null && $parser->eatIf(ord(',')) !== null);
         }
 
         $stmts = [];
@@ -100,22 +86,17 @@ class Class_ implements StatementInterface
             $parser->assert(ord('}'));
         }
 
-        return $parser->setAttributes(
-            new Node\Stmt\Class_($id, [
-                'flags' => $flags,
-                'extends' => $extends,
-                'implements' => $implements,
-                'stmts' => $stmts,
-            ]),
-            $token, $parser->last()
-        );
+        $node = new Node\Stmt\Class_($id, [
+            'flags' => $flags,
+            'extends' => $extends,
+            'implements' => $implements,
+            'stmts' => $stmts,
+        ]);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    /**
-     * @param ParserStateInterface $parser
-     *
-     * @return bool
-     */
     private function isClass(ParserStateInterface $parser): bool
     {
         $i = 0;
@@ -133,7 +114,7 @@ class Class_ implements StatementInterface
         return true;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return $this->token;
     }

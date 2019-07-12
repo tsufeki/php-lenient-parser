@@ -1,0 +1,4 @@
+parameters:
+    ignoreErrors:
+        - message: '~Unary operation "\+" on string results in an error~'
+          path: '%currentWorkingDirectory%/lib/PhpLenientParser/Expression/Encapsed.php'

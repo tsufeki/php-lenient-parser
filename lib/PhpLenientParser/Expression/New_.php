@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -10,7 +10,7 @@ use PhpParser\Parser\Tokens;
 class New_ extends AbstractPrefix
 {
     /**
-     * @var ExpressionParserInterface
+     * @var ClassNameReference
      */
     private $classRefParser;
 
@@ -24,15 +24,9 @@ class New_ extends AbstractPrefix
      */
     private $classParser;
 
-    /**
-     * @param int                       $token
-     * @param ExpressionParserInterface $classRefParser
-     * @param ArgumentList              $argsParser
-     * @param Class_                    $classParser
-     */
     public function __construct(
         int $token,
-        ExpressionParserInterface $classRefParser,
+        ClassNameReference $classRefParser,
         ArgumentList $argsParser,
         Class_ $classParser
     ) {
@@ -42,22 +36,29 @@ class New_ extends AbstractPrefix
         $this->classParser = $classParser;
     }
 
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
         // Check whether it's anonymous class:
-        $classToken = $parser->eat(Tokens::T_CLASS);
-        $class = $classToken === null ? $this->classRefParser->parseOrError($parser) : null;
+        $classToken = $parser->eatIf(Tokens::T_CLASS);
+        $class = null;
+        if ($classToken === null) {
+            $class = $this->classRefParser->parseOrError($parser);
+        }
 
         $args = [];
         if ($parser->isNext(ord('('))) {
             $args = $this->argsParser->parse($parser);
         }
 
-        if ($classToken !== null) {
+        if ($class === null) {
+            assert($classToken !== null);
             $class = $this->classParser->parseBody($parser, $classToken);
         }
 
-        return $parser->setAttributes(new Node\Expr\New_($class, $args), $token, $parser->last());
+        $node = new Node\Expr\New_($class, $args);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 }

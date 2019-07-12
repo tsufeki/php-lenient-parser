@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -24,13 +24,16 @@ class DoWhile implements StatementInterface
             $condition = $parser->getExpressionParser()->makeErrorNode($parser->last());
         }
 
-        return $parser->setAttributes(new Node\Stmt\Do_(
+        $node = new Node\Stmt\Do_(
             $condition,
             $stmts
-        ), $token, $parser->last());
+        );
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_DO;
     }

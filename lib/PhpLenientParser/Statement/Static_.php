@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -14,9 +14,6 @@ class Static_ implements StatementInterface
      */
     private $variableParser;
 
-    /**
-     * @param Variable $variableParser
-     */
     public function __construct(Variable $variableParser)
     {
         $this->variableParser = $variableParser;
@@ -33,25 +30,29 @@ class Static_ implements StatementInterface
 
         while ($parser->isNext($this->variableParser->getToken())) {
             $var = $this->variableParser->parse($parser);
+            assert($var instanceof Node\Expr\Variable);
             $expr = null;
-            if ($parser->eat(ord('=')) !== null) {
+            if ($parser->eatIf(ord('=')) !== null) {
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
             }
-            $vars[] = $parser->setAttributes(
-                new Node\Stmt\StaticVar($parser->getOption('v3compat') ? $var->name : $var, $expr),
-                $var, $parser->last()
-            );
+
+            $svar = new Node\Stmt\StaticVar($var, $expr);
+            $parser->setAttributes($svar, $var, $parser->last());
+            $vars[] = $svar;
+
             if ($parser->isNext(ord(';')) || !$parser->assert(ord(','))) {
                 break;
             }
         }
 
         $parser->assert(ord(';'));
+        $node = new Node\Stmt\Static_($vars);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(new Node\Stmt\Static_($vars), $token, $parser->last());
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_STATIC;
     }

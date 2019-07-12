@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -8,18 +8,15 @@ use PhpParser\Node;
 interface StatementParserInterface
 {
     /**
-     * @param ParserStateInterface $parser
-     *
-     * @return Node\Stmt[]|Node\Expr[]|null
+     * @return Node\Stmt[]|null
      */
-    public function parse(ParserStateInterface $parser);
+    public function parse(ParserStateInterface $parser): ?array;
 
     /**
-     * @param ParserStateInterface $parser
-     * @param int[]                $delimiters Token expected after the list of statements,
-     *                                         must not be a valid start of statement.
+     * @param array<int,int> $delimiters Token expected after the list of statements,
+     *                                   must not be a valid start of statement.
      *
-     * @return Node\Stmt[]|Node\Expr[]
+     * @return Node\Stmt[]
      */
     public function parseList(ParserStateInterface $parser, int ...$delimiters): array;
 }

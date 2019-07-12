@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser;
 
@@ -39,15 +39,12 @@ final class Token
         return $this->startAttributes + $this->endAttributes;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return self::getNameFromType($this->type);
     }
 
-    public static function getNameFromType($type)
+    public static function getNameFromType(int $type): string
     {
         self::loadNames();
 
@@ -58,7 +55,7 @@ final class Token
         return $type === ord("'") ? "'\\''" : "'" . chr($type) . "'";
     }
 
-    private static function loadNames()
+    private static function loadNames(): void
     {
         if (self::$names === null) {
             self::$names = array_flip((new \ReflectionClass(Tokens::class))->getConstants());

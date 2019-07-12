@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser;
 
@@ -66,7 +66,7 @@ class CodeTestParser
             return [$expected, null];
         }
 
-        $expected = (string) substr($expected, $firstNewLine + 1);
+        $expected = (string)substr($expected, $firstNewLine + 1);
 
         return [$expected, substr($firstLine, 2)];
     }

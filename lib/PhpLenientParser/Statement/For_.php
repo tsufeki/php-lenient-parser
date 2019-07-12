@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -21,7 +21,7 @@ class For_ implements StatementInterface
         $parser->assert(ord(')'));
 
         $stmts = [];
-        if ($parser->eat(ord(':')) !== null) {
+        if ($parser->eatIf(ord(':')) !== null) {
             $stmts = $parser->getStatementParser()->parseList($parser, Tokens::T_ENDFOR);
             $parser->assert(Tokens::T_ENDFOR);
             $parser->assert(ord(';'));
@@ -29,15 +29,18 @@ class For_ implements StatementInterface
             $stmts = $parser->getStatementParser()->parse($parser) ?: [];
         }
 
-        return $parser->setAttributes(new Node\Stmt\For_([
+        $node = new Node\Stmt\For_([
             'init' => $init,
             'cond' => $cond,
             'loop' => $loop,
             'stmts' => $stmts,
-        ]), $token, $parser->last());
+        ]);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_FOR;
     }

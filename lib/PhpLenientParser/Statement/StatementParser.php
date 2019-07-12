@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -11,9 +11,6 @@ class StatementParser extends AbstractStatementParser
      */
     private $statements = [];
 
-    /**
-     * @param StatementInterface[] $statements
-     */
     public function __construct(StatementInterface ...$statements)
     {
         foreach ($statements as $statement) {
@@ -21,7 +18,7 @@ class StatementParser extends AbstractStatementParser
         }
     }
 
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?array
     {
         $token = $parser->lookAhead();
         $stmt = null;

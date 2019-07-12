@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -32,9 +32,9 @@ class MemberModifier implements StatementInterface
     public function parse(ParserStateInterface $parser)
     {
         $token = $parser->eat();
-        /** @var Node\Stmt\ClassConst[]|Node\Stmt\ClassMethod[]|Node\Stmt\Property */
+        /** @var (Node\Stmt\ClassConst|Node\Stmt\ClassMethod|Node\Stmt\Property)[] */
         $stmts = $this->classStatementsParser->parse($parser);
-        if (empty($stmts)) {
+        if ($stmts === []) {
             $parser->unexpected($token);
 
             return null;
@@ -46,11 +46,12 @@ class MemberModifier implements StatementInterface
         }
 
         $stmts[0]->flags |= $this->modifier;
+        $parser->setAttributes($stmts[0], $token, $stmts[0]);
 
-        return $parser->setAttributes($stmts[0], $token, $stmts[0]);
+        return $stmts[0];
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return $this->token;
     }

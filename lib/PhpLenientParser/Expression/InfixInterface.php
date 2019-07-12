@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -7,21 +7,9 @@ use PhpParser\Node;
 
 interface InfixInterface
 {
-    /**
-     * @param ParserStateInterface $parser
-     * @param Node\Expr            $left
-     *
-     * @return Node\Expr|null
-     */
-    public function parse(ParserStateInterface $parser, Node $left);
+    public function parse(ParserStateInterface $parser, Node\Expr $left): ?Node\Expr;
 
-    /**
-     * @return int
-     */
     public function getToken(): int;
 
-    /**
-     * @return int
-     */
     public function getPrecedence(): int;
 }

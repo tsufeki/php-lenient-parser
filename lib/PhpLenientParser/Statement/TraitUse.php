@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -20,10 +20,6 @@ class TraitUse implements StatementInterface
      */
     private $identifierParser;
 
-    /**
-     * @param Name       $nameParser
-     * @param Identifier $identifierParser
-     */
     public function __construct(Name $nameParser, Identifier $identifierParser)
     {
         $this->nameParser = $nameParser;
@@ -36,14 +32,14 @@ class TraitUse implements StatementInterface
 
         $traits = [];
         do {
-            $trait = $this->nameParser->parserOrNull($parser);
+            $trait = $this->nameParser->parse($parser);
             if ($trait !== null) {
                 $traits[] = $trait;
             }
-        } while ($trait !== null && $parser->eat(ord(',')) !== null);
+        } while ($trait !== null && $parser->eatIf(ord(',')) !== null);
 
         $adaptations = [];
-        if ($parser->eat(ord('{')) === null) {
+        if ($parser->eatIf(ord('{')) === null) {
             $parser->assert(ord(';'));
         } else {
             while (!$parser->isNext(ord('}'))) {
@@ -55,42 +51,41 @@ class TraitUse implements StatementInterface
                     $parser->lookAhead(1)->type === Tokens::T_NS_SEPARATOR ||
                     $parser->lookAhead(1)->type === Tokens::T_PAAMAYIM_NEKUDOTAYIM
                 ) {
-                    $name = $this->nameParser->parserOrNull($parser);
+                    $name = $this->nameParser->parse($parser);
                 }
-                $parser->eat(Tokens::T_PAAMAYIM_NEKUDOTAYIM);
-                $method = $this->identifierParser->parse($parser);
+                $parser->eatIf(Tokens::T_PAAMAYIM_NEKUDOTAYIM);
+                $method = $this->identifierParser->parse($parser) ?? $this->identifierParser->makeEmpty($parser);
 
-                if ($parser->eat(Tokens::T_AS) !== null) {
+                if ($parser->eatIf(Tokens::T_AS) !== null) {
                     $modifier = null;
-                    if ($parser->eat(Tokens::T_PUBLIC) !== null) {
+                    if ($parser->eatIf(Tokens::T_PUBLIC) !== null) {
                         $modifier = Node\Stmt\Class_::MODIFIER_PUBLIC;
-                    } elseif ($parser->eat(Tokens::T_PROTECTED) !== null) {
+                    } elseif ($parser->eatIf(Tokens::T_PROTECTED) !== null) {
                         $modifier = Node\Stmt\Class_::MODIFIER_PROTECTED;
-                    } elseif ($parser->eat(Tokens::T_PRIVATE) !== null) {
+                    } elseif ($parser->eatIf(Tokens::T_PRIVATE) !== null) {
                         $modifier = Node\Stmt\Class_::MODIFIER_PRIVATE;
                     }
+
                     $newMethod = $this->identifierParser->parse($parser);
                     $parser->assert(ord(';'));
 
-                    $adaptations[] = $parser->setAttributes(
-                        new Node\Stmt\TraitUseAdaptation\Alias($name, $method, $modifier, $newMethod),
-                        $first, $parser->last()
-                    );
+                    $adaptation = new Node\Stmt\TraitUseAdaptation\Alias($name, $method, $modifier, $newMethod);
+                    $parser->setAttributes($adaptation, $first, $parser->last());
+                    $adaptations[] = $adaptation;
                 } elseif ($name !== null) {
                     $parser->assert(Tokens::T_INSTEADOF);
                     $insteadofs = [];
                     do {
-                        $insteadof = $this->nameParser->parserOrNull($parser);
+                        $insteadof = $this->nameParser->parse($parser);
                         if ($insteadof !== null) {
                             $insteadofs[] = $insteadof;
                         }
-                    } while ($insteadof !== null && $parser->eat(ord(',')) !== null);
+                    } while ($insteadof !== null && $parser->eatIf(ord(',')) !== null);
                     $parser->assert(ord(';'));
 
-                    $adaptations[] = $parser->setAttributes(
-                        new Node\Stmt\TraitUseAdaptation\Precedence($name, $method, $insteadofs),
-                        $first, $parser->last()
-                    );
+                    $adaptation = new Node\Stmt\TraitUseAdaptation\Precedence($name, $method, $insteadofs);
+                    $parser->setAttributes($adaptation, $first, $parser->last());
+                    $adaptations[] = $adaptation;
                 } else {
                     break;
                 }
@@ -98,10 +93,13 @@ class TraitUse implements StatementInterface
             $parser->assert(ord('}'));
         }
 
-        return $parser->setAttributes(new Node\Stmt\TraitUse($traits, $adaptations), $token, $parser->last());
+        $node = new Node\Stmt\TraitUse($traits, $adaptations);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_USE;
     }

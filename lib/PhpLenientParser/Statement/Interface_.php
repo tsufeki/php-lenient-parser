@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -25,11 +25,6 @@ class Interface_ implements StatementInterface
      */
     private $classStatementsParser;
 
-    /**
-     * @param Identifier               $identifierParser
-     * @param Name                     $nameParser
-     * @param StatementParserInterface $classStatementsParser
-     */
     public function __construct(
         Identifier $identifierParser,
         Name $nameParser,
@@ -48,15 +43,16 @@ class Interface_ implements StatementInterface
 
         $token = $parser->eat();
         $id = $this->identifierParser->parse($parser);
+        assert($id !== null);
 
         $extends = [];
-        if ($parser->eat(Tokens::T_EXTENDS) !== null) {
+        if ($parser->eatIf(Tokens::T_EXTENDS) !== null) {
             do {
-                $ext = $this->nameParser->parserOrNull($parser);
+                $ext = $this->nameParser->parse($parser);
                 if ($ext !== null) {
                     $extends[] = $ext;
                 }
-            } while ($ext !== null && $parser->eat(ord(',')) !== null);
+            } while ($ext !== null && $parser->eatIf(ord(',')) !== null);
         }
 
         $stmts = [];
@@ -65,13 +61,13 @@ class Interface_ implements StatementInterface
             $parser->assert(ord('}'));
         }
 
-        return $parser->setAttributes(
-            new Node\Stmt\Interface_($id, ['extends' => $extends, 'stmts' => $stmts]),
-            $token, $parser->last()
-        );
+        $node = new Node\Stmt\Interface_($id, ['extends' => $extends, 'stmts' => $stmts]);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_INTERFACE;
     }

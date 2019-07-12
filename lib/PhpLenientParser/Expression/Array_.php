@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -28,15 +28,13 @@ class Array_ extends AbstractPrefix
      */
     private $kind;
 
-    /**
-     * @param int      $token
-     * @param int|null $secondToken
-     * @param int      $endToken
-     * @param string   $nodeClass
-     * @param int|null $kind
-     */
-    public function __construct(int $token, int $secondToken = null, int $endToken, string $nodeClass, int $kind = null)
-    {
+    public function __construct(
+        int $token,
+        ?int $secondToken,
+        int $endToken,
+        string $nodeClass,
+        ?int $kind = null
+    ) {
         parent::__construct($token);
         $this->secondToken = $secondToken;
         $this->endToken = $endToken;
@@ -44,7 +42,7 @@ class Array_ extends AbstractPrefix
         $this->kind = $kind;
     }
 
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
         if ($this->secondToken) {
@@ -55,34 +53,38 @@ class Array_ extends AbstractPrefix
         while (!$parser->isNext($this->endToken)) {
             $first = $parser->lookAhead();
             $key = null;
-            $ref = $parser->eat(ord('&')) !== null;
+            $ref = $parser->eatIf(ord('&')) !== null;
             $expr = $parser->getExpressionParser()->parse($parser);
             if ($expr === null && !$parser->isNext(ord(','), Tokens::T_DOUBLE_ARROW, $this->endToken)) {
                 break;
             }
 
-            if ($parser->eat(Tokens::T_DOUBLE_ARROW) !== null) {
+            if ($parser->eatIf(Tokens::T_DOUBLE_ARROW) !== null) {
                 $key = $expr;
-                $ref = $parser->eat(ord('&')) !== null;
+                $ref = $parser->eatIf(ord('&')) !== null;
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
             }
 
             if ($key === null && $expr === null) {
                 $items[] = null;
             } else {
-                $items[] = $parser->setAttributes(new Node\Expr\ArrayItem($expr, $key, $ref), $first, $parser->last());
+                $expr = $expr ?? $parser->getExpressionParser()->makeErrorNode($parser->last());
+                $item = new Node\Expr\ArrayItem($expr, $key, $ref);
+                $parser->setAttributes($item, $first, $parser->last());
+                $items[] = $item;
             }
-            $parser->eat(ord(','));
+            $parser->eatIf(ord(','));
         }
 
         $parser->assert($this->endToken);
         $class = $this->nodeClass;
-        /** @var Node */
+        /** @var Node\Expr */
         $node = new $class($items);
+        $parser->setAttributes($node, $token, $parser->last());
         if ($this->kind) {
             $node->setAttribute('kind', $this->kind);
         }
 
-        return $parser->setAttributes($node, $token, $parser->last());
+        return $node;
     }
 }

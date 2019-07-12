@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser;
 
@@ -7,6 +7,7 @@ use PhpLenientParser\Expression\ArgumentList;
 use PhpLenientParser\Expression\Array_;
 use PhpLenientParser\Expression\ArrayIndex;
 use PhpLenientParser\Expression\Assign;
+use PhpLenientParser\Expression\ClassNameReference;
 use PhpLenientParser\Expression\Closure;
 use PhpLenientParser\Expression\DNumber;
 use PhpLenientParser\Expression\Encapsed;
@@ -22,9 +23,7 @@ use PhpLenientParser\Expression\InstanceOf_;
 use PhpLenientParser\Expression\Isset_;
 use PhpLenientParser\Expression\LNumber;
 use PhpLenientParser\Expression\Name;
-use PhpLenientParser\Expression\NameOrConst;
-use PhpLenientParser\Expression\NameSpecial;
-use PhpLenientParser\Expression\NameSpecialPreScope;
+use PhpLenientParser\Expression\NamePrefix;
 use PhpLenientParser\Expression\New_;
 use PhpLenientParser\Expression\Nullary;
 use PhpLenientParser\Expression\ObjectAccess;
@@ -77,7 +76,6 @@ use PhpLenientParser\Statement\Use_;
 use PhpLenientParser\Statement\While_;
 use PhpParser\Lexer;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Identifier as NodeIdentifier;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
 use PhpParser\Parser;
@@ -96,7 +94,7 @@ class LenientParserFactory
      *
      * @return LenientParser The parser instance
      */
-    public function create(int $kind = self::ONLY_PHP7, $lexer = null, array $parserOptions = [])
+    public function create(int $kind = self::ONLY_PHP7, ?Lexer $lexer = null, array $parserOptions = []): Parser
     {
         if ($kind !== self::ONLY_PHP7) {
             throw new \LogicException(
@@ -104,43 +102,33 @@ class LenientParserFactory
             );
         }
 
-        if (null === $lexer) {
+        if ($lexer === null) {
             $lexer = new Lexer\Emulative();
         }
 
         $expressionParser = new ExpressionParser();
 
         $identifier = new Identifier();
-        $name = new Name(Tokens::T_STRING);
+        $name = new Name();
         $variable = new Variable(Tokens::T_VARIABLE);
         $indirectVariable = new IndirectVariable(ord('$'), $variable);
         $type = new Type($name, $identifier);
         $arguments = new ArgumentList();
         $parameters = new ParameterList($type, $variable);
 
-        $classRef = new ExpressionParser();
+        $scopeNew = new ScopeNew(Tokens::T_PAAMAYIM_NEKUDOTAYIM, 240, $variable, $indirectVariable);
+        $classRef = new ClassNameReference($name, $scopeNew);
         $classRef->addPrefix($variable);
         $classRef->addPrefix($indirectVariable);
-        $classRef->addPrefix(new Name(Tokens::T_NS_SEPARATOR));
-        $classRef->addPrefix(new Name(Tokens::T_STRING));
-        $classRef->addPrefix(new Name(Tokens::T_NAMESPACE));
-        $classRef->addPrefix(new NameSpecial(Tokens::T_STATIC));
         $classRef->addInfix(new ArrayIndex(ord('['), ord(']'), 230));
         $classRef->addInfix(new ArrayIndex(ord('{'), ord('}'), 230));
+        $classRef->addInfix($scopeNew);
         $classRef->addInfix(
-            new ObjectAccessNew(Tokens::T_OBJECT_OPERATOR, 240,
-            $identifier, $variable, $indirectVariable)
-        );
-        $classRef->addInfix(
-            new ScopeNew(Tokens::T_PAAMAYIM_NEKUDOTAYIM, 240,
-            $variable, $indirectVariable)
+            new ObjectAccessNew(Tokens::T_OBJECT_OPERATOR, 240, $identifier, $variable, $indirectVariable)
         );
 
         $expressionParser->addPrefix($variable);
         $expressionParser->addPrefix($indirectVariable);
-        $expressionParser->addPrefix(new NameOrConst(Tokens::T_NS_SEPARATOR));
-        $expressionParser->addPrefix(new NameOrConst(Tokens::T_STRING));
-        $expressionParser->addPrefix(new NameOrConst(Tokens::T_NAMESPACE));
 
         $expressionParser->addInfix(new Infix(Tokens::T_LOGICAL_OR, 10, Expr\BinaryOp\LogicalOr::class));
         $expressionParser->addInfix(new Infix(Tokens::T_LOGICAL_XOR, 20, Expr\BinaryOp\LogicalXor::class));
@@ -222,15 +210,17 @@ class LenientParserFactory
         $expressionParser->addInfix(new ArrayIndex(ord('['), ord(']'), 230));
         $expressionParser->addInfix(new ArrayIndex(ord('{'), ord('}'), 230));
 
-        $expressionParser->addInfix(new FunctionCall(ord('('), 240, $arguments));
+        $expressionParser->addInfix($functionCall = new FunctionCall(ord('('), 240, $arguments));
         $expressionParser->addInfix(
-            new ObjectAccess(Tokens::T_OBJECT_OPERATOR, 240,
-            $identifier, $variable, $indirectVariable, $arguments)
+            new ObjectAccess(Tokens::T_OBJECT_OPERATOR, 240, $identifier, $variable, $indirectVariable, $arguments)
         );
         $expressionParser->addInfix(
-            new Scope(Tokens::T_PAAMAYIM_NEKUDOTAYIM, 240,
-            $identifier, $variable, $indirectVariable, $arguments)
+            $scope = new Scope(Tokens::T_PAAMAYIM_NEKUDOTAYIM, 240, $identifier, $variable, $indirectVariable, $arguments)
         );
+
+        $expressionParser->addPrefix(new NamePrefix(Tokens::T_NS_SEPARATOR, $name, $functionCall, $scope));
+        $expressionParser->addPrefix(new NamePrefix(Tokens::T_STRING, $name, $functionCall, $scope));
+        $expressionParser->addPrefix(new NamePrefix(Tokens::T_NAMESPACE, $name, $functionCall, $scope));
 
         $expressionParser->addPrefix(new LNumber(Tokens::T_LNUMBER));
         $expressionParser->addPrefix(new DNumber(Tokens::T_DNUMBER));
@@ -274,7 +264,7 @@ class LenientParserFactory
 
         $expressionParser->addPrefix(new Closure(Tokens::T_FUNCTION, $type, $parameters, $variable));
         $expressionParser->addPrefix(new AggregatePrefix(
-            new NameSpecialPreScope(Tokens::T_STATIC),
+            new NamePrefix(Tokens::T_STATIC, $name, $functionCall, $scope),
             new Closure(Tokens::T_STATIC, $type, $parameters, $variable)
         ));
 
@@ -346,9 +336,6 @@ class LenientParserFactory
             new Namespace_($name, $insideNamespaceParser),
             new HaltCompiler()
         ));
-
-        // PHP-Parser v3 compatibility
-        $parserOptions['v3compat'] = $parserOptions['v3compat'] ?? !class_exists(NodeIdentifier::class);
 
         return new LenientParser(
             $parserOptions,

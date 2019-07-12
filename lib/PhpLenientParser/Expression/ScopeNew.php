@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -17,47 +17,48 @@ class ScopeNew extends AbstractOperator implements InfixInterface
      */
     private $indirectVariableParser;
 
-    /**
-     * @param int              $token
-     * @param int              $precedence
-     * @param Variable         $variableParser
-     * @param IndirectVariable $indirectVariableParser
-     */
     public function __construct(
         int $token,
         int $precedence,
         Variable $variableParser,
         IndirectVariable $indirectVariableParser
     ) {
-        parent::__construct($token, $precedence, null);
+        parent::__construct($token, $precedence, '');
         $this->variableParser = $variableParser;
         $this->indirectVariableParser = $indirectVariableParser;
     }
 
-    public function parse(ParserStateInterface $parser, Node $left)
+    /**
+     * @param Node\Expr|Node\Name $left
+     */
+    public function parse(ParserStateInterface $parser, $left): ?Node\Expr
     {
         $parser->eat();
+        $var = null;
 
         switch ($parser->lookAhead()->type) {
             case $this->variableParser->getToken():
-                /** @var Node\Expr\Variable */
                 $var = $this->variableParser->parse($parser);
+                assert($var instanceof Node\Expr\Variable);
                 $name = $var->name;
                 break;
             case $this->indirectVariableParser->getToken():
-                /** @var Node\Expr\Variable */
                 $var = $this->indirectVariableParser->parse($parser);
+                assert($var instanceof Node\Expr\Variable);
                 $name = $var->name;
                 break;
             default:
                 $name = $parser->getExpressionParser()->makeErrorNode($parser->last());
         }
 
-        if (is_string($name) && !$parser->getOption('v3compat')) {
-            $name = $parser->setAttributes(new Node\VarLikeIdentifier($name), $var, $var);
+        if (is_string($name)) {
+            $name = new Node\VarLikeIdentifier($name);
+            assert($var !== null);
+            $parser->setAttributes($name, $var, $var);
         }
         $node = new Node\Expr\StaticPropertyFetch($left, $name);
+        $parser->setAttributes($node, $left, $parser->last());
 
-        return $parser->setAttributes($node, $left, $parser->last());
+        return $node;
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser;
 
@@ -9,39 +9,26 @@ use PhpParser\Node;
 interface ParserStateInterface
 {
     /**
-     * @param string $option
-     *
      * @return mixed
      */
     public function getOption(string $option);
 
-    /**
-     * @param int $count
-     *
-     * @return Token
-     */
     public function lookAhead(int $count = 0): Token;
 
     /**
      * Check if next token matches any of given types. Don't eat it.
-     *
-     * @param int[] $tokenTypes
-     *
-     * @return bool
      */
     public function isNext(int ...$tokenTypes): bool;
 
+    public function eat(): Token;
+
     /**
      * @param int $tokenType If not null and token doesn't match it, don't eat anything.
-     *
-     * @return Token|null
      */
-    public function eat(int $tokenType = null);
+    public function eatIf(int $tokenType = null): ?Token;
 
     /**
      * If token matches type, eat it; otherwise add an error.
-     *
-     * @param int $tokenType
      *
      * @return bool True if token was eaten.
      */
@@ -49,41 +36,22 @@ interface ParserStateInterface
 
     /**
      * Add an error for token.
-     *
-     * @param Token    $token
-     * @param int|null $expected
      */
-    public function unexpected(Token $token, int $expected = null);
+    public function unexpected(Token $token, ?int $expected = null): void;
 
-    /**
-     * @return Token|null
-     */
-    public function last();
+    public function last(): Token;
 
-    /**
-     * @param string $message
-     * @param array  $attributes
-     */
-    public function addError(string $message, array $attributes = []);
+    public function addError(string $message, array $attributes = []): void;
 
     /**
      * Set set location-related attributes on node so it encompases $start and $end.
      *
-     * @param Node       $node
      * @param Node|Token $start
      * @param Node|Token $end
-     *
-     * @return Node $node itself.
      */
-    public function setAttributes(Node $node, $start, $end): Node;
+    public function setAttributes(Node $node, $start, $end): void;
 
-    /**
-     * @return ExpressionParserInterface
-     */
     public function getExpressionParser(): ExpressionParserInterface;
 
-    /**
-     * @return StatementParserInterface
-     */
     public function getStatementParser(): StatementParserInterface;
 }

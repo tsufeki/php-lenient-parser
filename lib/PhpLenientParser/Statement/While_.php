@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -17,7 +17,7 @@ class While_ implements StatementInterface
         $parser->assert(ord(')'));
 
         $stmts = [];
-        if ($parser->eat(ord(':')) !== null) {
+        if ($parser->eatIf(ord(':')) !== null) {
             $stmts = $parser->getStatementParser()->parseList($parser, Tokens::T_ENDWHILE);
             $parser->assert(Tokens::T_ENDWHILE);
             $parser->assert(ord(';'));
@@ -25,13 +25,13 @@ class While_ implements StatementInterface
             $stmts = $parser->getStatementParser()->parse($parser) ?: [];
         }
 
-        return $parser->setAttributes(new Node\Stmt\While_(
-            $condition,
-            $stmts
-        ), $token, $parser->last());
+        $node = new Node\Stmt\While_($condition, $stmts);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_WHILE;
     }

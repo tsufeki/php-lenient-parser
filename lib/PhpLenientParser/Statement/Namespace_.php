@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -19,10 +19,6 @@ class Namespace_ implements StatementInterface
      */
     private $innerStatementsParser;
 
-    /**
-     * @param Name                     $nameParser
-     * @param StatementParserInterface $innerStatementsParser
-     */
     public function __construct(Name $nameParser, StatementParserInterface $innerStatementsParser)
     {
         $this->nameParser = $nameParser;
@@ -36,10 +32,10 @@ class Namespace_ implements StatementInterface
         }
 
         $token = $parser->eat();
-        $name = $this->nameParser->parserOrNull($parser);
+        $name = $this->nameParser->parse($parser);
 
         $stmts = [];
-        if ($parser->eat(ord('{')) !== null) {
+        if ($parser->eatIf(ord('{')) !== null) {
             $stmts = $this->innerStatementsParser->parseList($parser, ord('}'));
             $parser->assert(ord('}'));
         } else {
@@ -47,10 +43,13 @@ class Namespace_ implements StatementInterface
             $stmts = $this->innerStatementsParser->parseList($parser, Tokens::T_NAMESPACE);
         }
 
-        return $parser->setAttributes(new Node\Stmt\Namespace_($name, $stmts), $token, $parser->last());
+        $node = new Node\Stmt\Namespace_($name, $stmts);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_NAMESPACE;
     }

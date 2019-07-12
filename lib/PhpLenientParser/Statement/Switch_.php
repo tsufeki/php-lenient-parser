@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -17,30 +17,27 @@ class Switch_ implements StatementInterface
         $parser->assert(ord(')'));
 
         $cases = [];
-        if ($parser->eat(ord(':')) !== null) {
+        if ($parser->eatIf(ord(':')) !== null) {
             $cases = $this->parseCases($parser, Tokens::T_ENDSWITCH);
             $parser->assert(Tokens::T_ENDSWITCH);
             $parser->assert(ord(';'));
-        } elseif ($parser->eat(ord('{')) !== null) {
+        } elseif ($parser->eatIf(ord('{')) !== null) {
             $cases = $this->parseCases($parser, ord('}'));
             $parser->assert(ord('}'));
         }
 
-        return $parser->setAttributes(new Node\Stmt\Switch_(
-            $condition,
-            $cases
-        ), $token, $parser->last());
+        $node = new Node\Stmt\Switch_($condition, $cases);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
     /**
-     * @param ParserStateInterface $parser
-     * @param int                  $delimiter
-     *
      * @return Node\Stmt\Case_[]
      */
     public function parseCases(ParserStateInterface $parser, int $delimiter): array
     {
-        $parser->eat(ord(';'));
+        $parser->eatIf(ord(';'));
         $cases = [];
         $delimiters = [$delimiter, Tokens::T_CASE, Tokens::T_DEFAULT];
 
@@ -56,21 +53,20 @@ class Switch_ implements StatementInterface
                 break;
             }
 
-            if ($parser->eat(ord(':')) === null) {
-                $parser->eat(ord(';'));
+            if ($parser->eatIf(ord(':')) === null) {
+                $parser->eatIf(ord(';'));
             }
 
             $stmts = $parser->getStatementParser()->parseList($parser, ...$delimiters);
-            $cases[] = $parser->setAttributes(new Node\Stmt\Case_(
-                $condition,
-                $stmts
-            ), $token, $parser->last());
+            $case = new Node\Stmt\Case_($condition, $stmts);
+            $parser->setAttributes($case, $token, $parser->last());
+            $cases[] = $case;
         }
 
         return $cases;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_SWITCH;
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -7,19 +7,18 @@ use PhpParser\Node;
 
 class LNumber extends AbstractPrefix
 {
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
-
         list($value, $kind) = $this->parseLNumber($token->value);
+        $node = new Node\Scalar\LNumber($value, ['kind' => $kind]);
+        $parser->setAttributes($node, $token, $token);
 
-        return $parser->setAttributes(new Node\Scalar\LNumber($value, ['kind' => $kind]), $token, $token);
+        return $node;
     }
 
     /**
-     * @param string $string
-     *
-     * @return array
+     * @return int[]
      */
     private function parseLNumber(string $string): array
     {
@@ -28,7 +27,7 @@ class LNumber extends AbstractPrefix
 
         if ('0' !== $string[0] || '0' === $string) {
             $kind = Node\Scalar\LNumber::KIND_DEC;
-            $value = (int) $string;
+            $value = (int)$string;
         } elseif ('x' === $string[1] || 'X' === $string[1]) {
             $kind = Node\Scalar\LNumber::KIND_HEX;
             $value = hexdec($string);
@@ -39,6 +38,8 @@ class LNumber extends AbstractPrefix
             $kind = Node\Scalar\LNumber::KIND_OCT;
             $value = intval($string, 8);
         }
+
+        assert(is_int($value));
 
         return [$value, $kind];
     }

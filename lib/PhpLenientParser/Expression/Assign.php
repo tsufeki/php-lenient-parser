@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -24,12 +24,9 @@ class Assign extends AbstractOperator implements InfixInterface
     private $rightPrecedence;
 
     /**
-     * @param int $token
-     * @param int $refToken
-     * @param int $precedence
-     * @param int $rightPrecedence Precedence when binding to the right, defaults to $precedence.
+     * @param int|null $rightPrecedence Precedence when binding to the right, defaults to $precedence.
      */
-    public function __construct(int $token, int $refToken, int $precedence, int $rightPrecedence = null)
+    public function __construct(int $token, int $refToken, int $precedence, ?int $rightPrecedence = null)
     {
         parent::__construct($token, $precedence, Expr\Assign::class);
         $this->refToken = $refToken;
@@ -37,14 +34,17 @@ class Assign extends AbstractOperator implements InfixInterface
         $this->rightPrecedence = ($rightPrecedence ?? $precedence) - 1;
     }
 
-    public function parse(ParserStateInterface $parser, Node $left)
+    public function parse(ParserStateInterface $parser, Node\Expr $left): ?Node\Expr
     {
         $token = $parser->eat();
-        $isRef = $parser->eat($this->refToken) !== null;
+        $isRef = $parser->eatIf($this->refToken) !== null;
         $right = $parser->getExpressionParser()->parseOrError($parser, $this->rightPrecedence);
 
         $class = $isRef ? $this->refNodeClass : $this->getNodeClass();
+        /** @var Node\Expr */
+        $node = new $class($left, $right);
+        $parser->setAttributes($node, $left, $right);
 
-        return $parser->setAttributes(new $class($left, $right), $left, $right);
+        return $node;
     }
 }

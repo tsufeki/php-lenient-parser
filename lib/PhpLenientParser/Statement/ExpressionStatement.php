@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -13,15 +13,14 @@ class ExpressionStatement implements StatementInterface
         $stmt = null;
         if ($expr !== null) {
             $parser->assert(ord(';'));
-            $stmt = $parser->getOption('v3compat')
-                ? $expr
-                : $parser->setAttributes(new Node\Stmt\Expression($expr), $expr, $expr);
+            $stmt = new Node\Stmt\Expression($expr);
+            $parser->setAttributes($stmt, $expr, $expr);
         }
 
         return $stmt;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return null;
     }

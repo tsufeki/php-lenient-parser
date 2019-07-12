@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -14,9 +14,6 @@ class GoTo_ implements StatementInterface
      */
     private $identifierParser;
 
-    /**
-     * @param Identifier $identifierParser
-     */
     public function __construct(Identifier $identifierParser)
     {
         $this->identifierParser = $identifierParser;
@@ -25,16 +22,21 @@ class GoTo_ implements StatementInterface
     public function parse(ParserStateInterface $parser)
     {
         $token = $parser->eat();
-        $label = null;
         if ($parser->isNext(Tokens::T_STRING)) {
             $label = $this->identifierParser->parse($parser);
+            assert($label !== null);
+        } else {
+            $parser->unexpected($parser->lookAhead(), Tokens::T_STRING);
+            $label = $this->identifierParser->makeEmpty($parser);
         }
         $parser->assert(ord(';'));
+        $node = new Node\Stmt\Goto_($label);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(new Node\Stmt\Goto_($label), $token, $parser->last());
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_GOTO;
     }

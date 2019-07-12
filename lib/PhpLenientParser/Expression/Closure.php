@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -33,16 +33,16 @@ class Closure extends AbstractPrefix
         $this->variableParser = $variableParser;
     }
 
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         if (!$this->isClosure($parser)) {
             return null;
         }
 
         $token = $parser->lookAhead();
-        $static = $parser->eat(Tokens::T_STATIC) !== null;
+        $static = $parser->eatIf(Tokens::T_STATIC) !== null;
         $parser->assert(Tokens::T_FUNCTION);
-        $ref = $parser->eat(ord('&')) !== null;
+        $ref = $parser->eatIf(ord('&')) !== null;
 
         $params = [];
         if ($parser->isNext(ord('('))) {
@@ -55,7 +55,7 @@ class Closure extends AbstractPrefix
         }
 
         $returnType = null;
-        if ($parser->eat(ord(':')) !== null) {
+        if ($parser->eatIf(ord(':')) !== null) {
             $returnType = $this->typeParser->parse($parser);
         }
 
@@ -64,23 +64,19 @@ class Closure extends AbstractPrefix
             $stmts = $parser->getStatementParser()->parse($parser);
         }
 
-        return $parser->setAttributes(new Node\Expr\Closure(
-            [
-                'static' => $static,
-                'byRef' => $ref,
-                'params' => $params,
-                'uses' => $uses,
-                'returnType' => $returnType,
-                'stmts' => $stmts,
-            ]
-        ), $token, $parser->last());
+        $node = new Node\Expr\Closure([
+            'static' => $static,
+            'byRef' => $ref,
+            'params' => $params,
+            'uses' => $uses,
+            'returnType' => $returnType,
+            'stmts' => $stmts,
+        ]);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    /**
-     * @param ParserStateInterface $parser
-     *
-     * @return bool
-     */
     private function isClosure(ParserStateInterface $parser): bool
     {
         $i = 0;
@@ -102,8 +98,6 @@ class Closure extends AbstractPrefix
     }
 
     /**
-     * @param ParserStateInterface $parser
-     *
      * @return Node\Expr\ClosureUse[]
      */
     private function parseUses(ParserStateInterface $parser): array
@@ -114,16 +108,16 @@ class Closure extends AbstractPrefix
 
         while (true) {
             $first = $parser->lookAhead();
-            $ref = $parser->eat(ord('&')) !== null;
+            $ref = $parser->eatIf(ord('&')) !== null;
             if (!$parser->isNext($this->variableParser->getToken())) {
                 break;
             }
             $var = $this->variableParser->parse($parser);
-            $uses[] = $parser->setAttributes(
-                new Node\Expr\ClosureUse($parser->getOption('v3compat') ? $var->name : $var, $ref),
-                $first, $parser->last()
-            );
-            $parser->eat(ord(','));
+            assert($var instanceof Node\Expr\Variable);
+            $use = new Node\Expr\ClosureUse($var, $ref);
+            $parser->setAttributes($use, $first, $parser->last());
+            $parser->eatIf(ord(','));
+            $uses[] = $use;
         }
 
         $parser->assert(ord(')'));

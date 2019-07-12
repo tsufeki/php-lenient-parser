@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -8,7 +8,7 @@ use PhpParser\Parser\Tokens;
 
 class Include_ extends AbstractPrefix
 {
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
 
@@ -26,10 +26,14 @@ class Include_ extends AbstractPrefix
             case Tokens::T_REQUIRE_ONCE:
                 $kind = Node\Expr\Include_::TYPE_REQUIRE_ONCE;
                 break;
+            default:
+                throw new \LogicException();
         }
 
         $expr = $parser->getExpressionParser()->parseOrError($parser);
+        $node = new Node\Expr\Include_($expr, $kind);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(new Node\Expr\Include_($expr, $kind), $token, $parser->last());
+        return $node;
     }
 }

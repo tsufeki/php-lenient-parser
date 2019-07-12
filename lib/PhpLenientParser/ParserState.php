@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser;
 
@@ -47,15 +47,8 @@ class ParserState implements ParserStateInterface
      */
     private $last;
 
-    /**
-     * @param Lexer                     $lexer
-     * @param ErrorHandler              $errorHandler
-     * @param array                     $options
-     * @param ExpressionParserInterface $expressionParser
-     * @param StatementParserInterface  $statementParser
-     */
     public function __construct(
-        $lexer,
+        Lexer $lexer,
         ErrorHandler $errorHandler,
         array $options,
         ExpressionParserInterface $expressionParser,
@@ -94,7 +87,16 @@ class ParserState implements ParserStateInterface
         return in_array($this->lookAhead()->type, $tokenTypes);
     }
 
-    public function eat(int $tokenType = null)
+    public function eat(): Token
+    {
+        $token = $this->lookAhead();
+        $this->last = $token;
+        $this->lookAheadQueue->dequeue();
+
+        return $token;
+    }
+
+    public function eatIf(int $tokenType = null): ?Token
     {
         $token = $this->lookAhead();
 
@@ -102,10 +104,7 @@ class ParserState implements ParserStateInterface
             return null;
         }
 
-        $this->last = $token;
-        $this->lookAheadQueue->dequeue();
-
-        return $token;
+        return $this->eat();
     }
 
     public function assert(int $tokenType): bool
@@ -124,7 +123,7 @@ class ParserState implements ParserStateInterface
         return true;
     }
 
-    public function unexpected(Token $token, int $expected = null)
+    public function unexpected(Token $token, ?int $expected = null): void
     {
         if ($expected !== null) {
             $msg = sprintf(
@@ -142,17 +141,21 @@ class ParserState implements ParserStateInterface
         $this->addError($msg, $token->getAttributes());
     }
 
-    public function last()
+    public function last(): Token
     {
+        if ($this->last === null) {
+            throw new \LogicException("Can't call ParserState::last() before first token");
+        }
+
         return $this->last;
     }
 
-    public function addError(string $message, array $attributes = [])
+    public function addError(string $message, array $attributes = []): void
     {
         $this->errorHandler->handleError(new Error($message, $attributes));
     }
 
-    public function setAttributes(Node $node, $start, $end): Node
+    public function setAttributes(Node $node, $start, $end): void
     {
         $startAttrs = $start->getAttributes();
         $endAttrs = $end->getAttributes();
@@ -172,8 +175,6 @@ class ParserState implements ParserStateInterface
         if (/*$start instanceof Token && */isset($startAttrs['comments'])) {
             $node->setAttribute('comments', $startAttrs['comments']);
         }
-
-        return $node;
     }
 
     public function getExpressionParser(): ExpressionParserInterface
@@ -186,9 +187,6 @@ class ParserState implements ParserStateInterface
         return $this->statementParser;
     }
 
-    /**
-     * @param Token $token
-     */
     private function handleHaltCompiler(Token $token)
     {
         try {

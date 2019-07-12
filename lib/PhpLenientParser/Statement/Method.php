@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -24,11 +24,6 @@ class Method implements StatementInterface
      */
     private $identifierParser;
 
-    /**
-     * @param ParameterList $parametersParser
-     * @param Type          $typeParser
-     * @param Identifier    $identifierParser
-     */
     public function __construct(ParameterList $parametersParser, Type $typeParser, Identifier $identifierParser)
     {
         $this->parametersParser = $parametersParser;
@@ -45,8 +40,9 @@ class Method implements StatementInterface
         }
 
         $token = $parser->eat();
-        $ref = $parser->eat(ord('&')) !== null;
+        $ref = $parser->eatIf(ord('&')) !== null;
         $id = $this->identifierParser->parse($parser);
+        assert($id !== null);
 
         $params = [];
         if ($parser->isNext(ord('('))) {
@@ -54,7 +50,7 @@ class Method implements StatementInterface
         }
 
         $returnType = null;
-        if ($parser->eat(ord(':')) !== null) {
+        if ($parser->eatIf(ord(':')) !== null) {
             $returnType = $this->typeParser->parse($parser);
         }
 
@@ -62,22 +58,22 @@ class Method implements StatementInterface
         if ($parser->isNext(ord('{'))) {
             $stmts = $parser->getStatementParser()->parse($parser);
         } else {
-            $parser->eat(ord(';'));
+            $parser->eatIf(ord(';'));
         }
 
-        return $parser->setAttributes(new Node\Stmt\ClassMethod(
-            $id,
-            [
-                'flags' => 0,
-                'byRef' => $ref,
-                'params' => $params,
-                'returnType' => $returnType,
-                'stmts' => $stmts,
-            ]
-        ), $token, $parser->last());
+        $node = new Node\Stmt\ClassMethod($id, [
+            'flags' => 0,
+            'byRef' => $ref,
+            'params' => $params,
+            'returnType' => $returnType,
+            'stmts' => $stmts,
+        ]);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_FUNCTION;
     }

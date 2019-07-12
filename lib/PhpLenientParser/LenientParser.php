@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser;
 
@@ -6,8 +6,9 @@ use PhpLenientParser\Expression\ExpressionParserInterface;
 use PhpLenientParser\Statement\StatementParserInterface;
 use PhpParser\ErrorHandler;
 use PhpParser\Lexer;
+use PhpParser\Parser;
 
-class LenientParser
+class LenientParser implements Parser
 {
     /**
      * @var array
@@ -34,16 +35,9 @@ class LenientParser
      */
     private $topLevelParser;
 
-    /**
-     * @param array                     $options
-     * @param Lexer                     $lexer
-     * @param ExpressionParserInterface $expressionParser
-     * @param StatementParserInterface  $statementParser
-     * @param StatementParserInterface  $topLevelParser
-     */
     public function __construct(
         array $options,
-        $lexer,
+        Lexer $lexer,
         ExpressionParserInterface $expressionParser,
         StatementParserInterface $statementParser,
         StatementParserInterface $topLevelParser
@@ -55,7 +49,7 @@ class LenientParser
         $this->topLevelParser = $topLevelParser;
     }
 
-    public function parse(string $code, ErrorHandler $errorHandler = null)
+    public function parse(string $code, ?ErrorHandler $errorHandler = null): ?array
     {
         if ($errorHandler === null) {
             $errorHandler = new ErrorHandler\Throwing();
@@ -77,12 +71,6 @@ class LenientParser
         return $statements;
     }
 
-    /**
-     * @param string       $code
-     * @param ErrorHandler $errorHandler
-     *
-     * @return ParserStateInterface
-     */
     protected function createParserState(string $code, ErrorHandler $errorHandler): ParserStateInterface
     {
         $this->lexer->startLexing($code, $errorHandler);

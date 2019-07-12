@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node;
 
 class Nullary extends AbstractPrefix
 {
@@ -11,21 +12,20 @@ class Nullary extends AbstractPrefix
      */
     private $nodeClass;
 
-    /**
-     * @param int    $token
-     * @param string $nodeClass
-     */
     public function __construct(int $token, string $nodeClass)
     {
         parent::__construct($token);
         $this->nodeClass = $nodeClass;
     }
 
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
         $class = $this->nodeClass;
+        /** @var Node\Expr */
+        $node = new $class();
+        $parser->setAttributes($node, $token, $token);
 
-        return $parser->setAttributes(new $class(), $token, $token);
+        return $node;
     }
 }

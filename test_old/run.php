@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 error_reporting(E_ALL | E_STRICT);
 ini_set('short_open_tag', false);
@@ -141,7 +141,7 @@ foreach (new RecursiveIteratorIterator(
 
     set_time_limit(10);
 
-    ++$count;
+    $count++;
 
     if ($showProgress) {
         echo substr(str_pad('Testing file ' . $count . ': ' . substr($file, strlen($dir)), 79), 0, 79), "\r";
@@ -171,7 +171,7 @@ foreach (new RecursiveIteratorIterator(
                     echo "Pretty printer output:\n=====\n$code\n=====\n\n";
                 }
 
-                ++$compareFail;
+                $compareFail++;
             }
         } catch (PhpParser\Error $e) {
             echo $file, ":\n    Parse of pretty print failed with message: {$e->getMessage()}\n";
@@ -179,12 +179,12 @@ foreach (new RecursiveIteratorIterator(
                 echo "Pretty printer output:\n=====\n$code\n=====\n\n";
             }
 
-            ++$ppFail;
+            $ppFail++;
         }
     } catch (PhpParser\Error $e) {
         echo $file, ":\n    Parse failed with message: {$e->getMessage()}\n";
 
-        ++$parseFail;
+        $parseFail++;
     }
 }
 

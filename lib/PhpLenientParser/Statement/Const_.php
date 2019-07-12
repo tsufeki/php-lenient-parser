@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -17,9 +17,6 @@ class Const_ implements StatementInterface
      */
     private $identifierParser;
 
-    /**
-     * @param Identifier $identifierParser
-     */
     public function __construct(Identifier $identifierParser)
     {
         $this->identifierParser = $identifierParser;
@@ -36,6 +33,7 @@ class Const_ implements StatementInterface
             }
             $first = $parser->lookAhead();
             $id = $this->identifierParser->parse($parser);
+            assert($id !== null);
             $expr = null;
             if ($parser->assert(ord('='))) {
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
@@ -43,18 +41,23 @@ class Const_ implements StatementInterface
                 $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
             }
 
-            $consts[] = $parser->setAttributes(new Node\Const_($id, $expr), $first, $parser->last());
+            $const = new Node\Const_($id, $expr);
+            $parser->setAttributes($const, $first, $parser->last());
+            $consts[] = $const;
+
             if ($parser->isNext(ord(';')) || !$parser->assert(ord(','))) {
                 break;
             }
         }
 
         $parser->assert(ord(';'));
+        $node = new Node\Stmt\Const_($consts);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(new Node\Stmt\Const_($consts), $token, $parser->last());
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_CONST;
     }

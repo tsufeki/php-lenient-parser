@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node;
 
 class SpecialFunction extends AbstractPrefix
 {
@@ -21,12 +22,6 @@ class SpecialFunction extends AbstractPrefix
      */
     private $precedence;
 
-    /**
-     * @param int    $token
-     * @param string $nodeClass
-     * @param bool   $parensRequired
-     * @param int    $precedence
-     */
     public function __construct(int $token, string $nodeClass, bool $parensRequired = false, int $precedence = 0)
     {
         parent::__construct($token);
@@ -35,7 +30,7 @@ class SpecialFunction extends AbstractPrefix
         $this->precedence = $precedence;
     }
 
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
         if ($this->parensRequired) {
@@ -48,7 +43,10 @@ class SpecialFunction extends AbstractPrefix
         }
 
         $nodeClass = $this->nodeClass;
+        /** @var Node\Expr */
+        $node = new $nodeClass($expr);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(new $nodeClass($expr), $token, $parser->last());
+        return $node;
     }
 }

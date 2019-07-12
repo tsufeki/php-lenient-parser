@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -12,13 +12,15 @@ class Nop implements StatementInterface
         $token = $parser->eat();
         $stmts = [];
         if (!empty($token->startAttributes['comments'])) {
-            $stmts[] = $parser->setAttributes(new Node\Stmt\Nop(), $token, $token);
+            $node = new Node\Stmt\Nop();
+            $parser->setAttributes($node, $token, $token);
+            $stmts[] = $node;
         }
 
         return $stmts;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return ord(';');
     }

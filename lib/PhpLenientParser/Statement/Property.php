@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -19,10 +19,6 @@ class Property implements StatementInterface
      */
     private $variableParser;
 
-    /**
-     * @param int      $token
-     * @param Variable $variableParser
-     */
     public function __construct(int $token, Variable $variableParser)
     {
         $this->token = $token;
@@ -32,27 +28,33 @@ class Property implements StatementInterface
     public function parse(ParserStateInterface $parser)
     {
         $token = $parser->lookAhead();
-        $parser->eat(Tokens::T_VAR);
+        $parser->eatIf(Tokens::T_VAR);
         $props = [];
 
         while (($first = $parser->lookAhead())->type === $this->variableParser->getToken()) {
             $var = $this->variableParser->parseIdentifier($parser);
             $expr = null;
-            if ($parser->eat(ord('=')) !== null) {
+            if ($parser->eatIf(ord('=')) !== null) {
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
             }
-            $props[] = $parser->setAttributes(new Node\Stmt\PropertyProperty($var, $expr), $first, $parser->last());
+
+            $prop = new Node\Stmt\PropertyProperty($var, $expr);
+            $parser->setAttributes($prop, $first, $parser->last());
+            $props[] = $prop;
+
             if ($parser->isNext(ord(';')) || !$parser->assert(ord(','))) {
                 break;
             }
         }
 
         $parser->assert(ord(';'));
+        $node = new Node\Stmt\Property(0, $props);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(new Node\Stmt\Property(0, $props), $token, $parser->last());
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return $this->token;
     }

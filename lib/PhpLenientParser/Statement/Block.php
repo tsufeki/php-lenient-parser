@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -16,7 +16,9 @@ class Block implements StatementInterface
         $comments = $token->startAttributes['comments'] ?? [];
         if (!empty($comments)) {
             if (empty($stmts)) {
-                $stmts[] = $parser->setAttributes(new Node\Stmt\Nop(), $token, $token);
+                $nop = new Node\Stmt\Nop();
+                $parser->setAttributes($nop, $token, $token);
+                $stmts[] = $nop;
             } else {
                 $comments = array_merge($comments, $stmts[0]->getAttribute('comments') ?? []);
                 $stmts[0]->setAttribute('comments', $comments);
@@ -26,7 +28,7 @@ class Block implements StatementInterface
         return $stmts;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return ord('{');
     }

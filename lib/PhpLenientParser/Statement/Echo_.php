@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -13,11 +13,13 @@ class Echo_ implements StatementInterface
         $token = $parser->eat();
         $expressions = $parser->getExpressionParser()->parseList($parser);
         $parser->assert(ord(';'));
+        $node = new Node\Stmt\Echo_($expressions);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(new Node\Stmt\Echo_($expressions), $token, $parser->last());
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_ECHO;
     }

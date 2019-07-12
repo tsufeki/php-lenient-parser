@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser;
 
@@ -10,6 +10,9 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversNothing
+ */
 class ParserTest extends TestCase
 {
     /** @return LenientParser */
@@ -18,32 +21,29 @@ class ParserTest extends TestCase
         return (new LenientParserFactory())->create(LenientParserFactory::ONLY_PHP7, $lexer);
     }
 
-    /**
-     * @expectedException \PhpParser\Error
-     * @expectedExceptionMessage Syntax error, unexpected EOF on line 1
-     */
     public function testParserThrowsSyntaxError()
     {
+        $this->expectException(\PhpParser\Error::class);
+        $this->expectExceptionMessage('Syntax error, unexpected EOF on line 1');
+
         $parser = $this->getParser(new Lexer());
         $parser->parse('<?php foo');
     }
 
-    /**
-     * @expectedException \PhpParser\Error
-     * @expectedExceptionMessage Cannot use foo as self because 'self' is a special class name on line 1
-     */
     public function testParserThrowsSpecialError()
     {
+        $this->expectException(\PhpParser\Error::class);
+        $this->expectExceptionMessage('Cannot use foo as self because \'self\' is a special class name on line 1');
+
         $parser = $this->getParser(new Lexer());
         $parser->parse('<?php use foo as self;');
     }
 
-    /**
-     * @expectedException \PhpParser\Error
-     * @expectedExceptionMessage Unterminated comment on line 1
-     */
     public function testParserThrowsLexerError()
     {
+        $this->expectException(\PhpParser\Error::class);
+        $this->expectExceptionMessage('Unterminated comment on line 1');
+
         $parser = $this->getParser(new Lexer());
         $parser->parse('<?php /*');
     }
@@ -118,12 +118,11 @@ EOC;
         ], $var->getAttributes());
     }
 
-    /**
-     * @expectedException \RangeException
-     * @expectedExceptionMessage The lexer returned an invalid token (id=999, value=foobar)
-     */
     public function testInvalidToken()
     {
+        $this->expectException(\RangeException::class);
+        $this->expectExceptionMessage('The lexer returned an invalid token (id=999, value=foobar)');
+
         $this->markTestSkipped();
         $lexer = new InvalidTokenLexer();
         $parser = $this->getParser($lexer);

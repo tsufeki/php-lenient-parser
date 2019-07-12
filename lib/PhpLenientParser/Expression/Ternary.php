@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -17,13 +17,6 @@ class Ternary extends AbstractOperator implements InfixInterface
      */
     private $rightAssociative;
 
-    /**
-     * @param int    $token
-     * @param int    $secondToken
-     * @param int    $precedence
-     * @param string $nodeClass
-     * @param bool   $rightAssociative
-     */
     public function __construct(
         int $token,
         int $secondToken,
@@ -36,7 +29,7 @@ class Ternary extends AbstractOperator implements InfixInterface
         $this->rightAssociative = $rightAssociative;
     }
 
-    public function parse(ParserStateInterface $parser, Node $left)
+    public function parse(ParserStateInterface $parser, Node\Expr $left): ?Node\Expr
     {
         $token = $parser->eat();
         $middle = $parser->getExpressionParser()->parse($parser);
@@ -51,7 +44,10 @@ class Ternary extends AbstractOperator implements InfixInterface
         }
 
         $class = $this->getNodeClass();
+        /** @var Node\Expr */
+        $node = new $class($left, $middle, $right);
+        $parser->setAttributes($node, $left, $right);
 
-        return $parser->setAttributes(new $class($left, $middle, $right), $left, $right);
+        return $node;
     }
 }

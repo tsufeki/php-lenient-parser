@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -13,17 +13,20 @@ class Exit_ extends AbstractPrefix
         parent::__construct(Tokens::T_EXIT);
     }
 
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
         $kind = strtolower($token->value) === 'exit' ? Node\Expr\Exit_::KIND_EXIT : Node\Expr\Exit_::KIND_DIE;
 
         $expr = null;
-        if ($parser->eat(ord('(')) !== null) {
+        if ($parser->eatIf(ord('(')) !== null) {
             $expr = $parser->getExpressionParser()->parse($parser);
             $parser->assert(ord(')'));
         }
 
-        return $parser->setAttributes(new Node\Expr\Exit_($expr, ['kind' => $kind]), $token, $parser->last());
+        $node = new Node\Expr\Exit_($expr, ['kind' => $kind]);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 }

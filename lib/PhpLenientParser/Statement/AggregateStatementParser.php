@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -11,15 +11,12 @@ class AggregateStatementParser extends AbstractStatementParser
      */
     private $parsers;
 
-    /**
-     * @param StatementParserInterface[] $parsers
-     */
     public function __construct(StatementParserInterface ...$parsers)
     {
         $this->parsers = $parsers;
     }
 
-    public function parse(ParserStateInterface $state)
+    public function parse(ParserStateInterface $state): ?array
     {
         foreach ($this->parsers as $parser) {
             $stmt = $parser->parse($state);

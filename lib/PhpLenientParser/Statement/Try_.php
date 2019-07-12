@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -20,10 +20,6 @@ class Try_ implements StatementInterface
      */
     private $nameParser;
 
-    /**
-     * @param Variable $variableParser
-     * @param Name     $nameParser
-     */
     public function __construct(Variable $variableParser, Name $nameParser)
     {
         $this->variableParser = $variableParser;
@@ -44,23 +40,18 @@ class Try_ implements StatementInterface
         }
 
         $finally = null;
-        if (null !== ($first = $parser->eat(Tokens::T_FINALLY))) {
-            $finally = $parser->setAttributes(
-                new Node\Stmt\Finally_($this->parseBlock($parser)),
-                $first, $parser->last()
-            );
+        if (null !== ($first = $parser->eatIf(Tokens::T_FINALLY))) {
+            $finally = new Node\Stmt\Finally_($this->parseBlock($parser));
+            $parser->setAttributes($finally, $first, $parser->last());
         }
 
-        return $parser->setAttributes(new Node\Stmt\TryCatch(
-            $stmts,
-            $catches,
-            $finally
-        ), $token, $parser->last());
+        $node = new Node\Stmt\TryCatch($stmts, $catches, $finally);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
     /**
-     * @param ParserStateInterface $parser
-     *
      * @return Node\Stmt[]
      */
     private function parseBlock(ParserStateInterface $parser): array
@@ -73,12 +64,7 @@ class Try_ implements StatementInterface
         return $stmts;
     }
 
-    /**
-     * @param ParserStateInterface $parser
-     *
-     * @return Node\Stmt\Catch_|null
-     */
-    private function parseCatch(ParserStateInterface $parser)
+    private function parseCatch(ParserStateInterface $parser): ?Node\Stmt\Catch_
     {
         $token = $parser->eat();
         if (!$parser->assert(ord('('))) {
@@ -87,32 +73,33 @@ class Try_ implements StatementInterface
 
         $types = [];
         do {
-            $type = $this->nameParser->parserOrNull($parser);
+            $type = $this->nameParser->parse($parser);
             if ($type) {
                 $types[] = $type;
             } else {
                 break;
             }
-        } while ($parser->eat(ord('|')) !== null);
+        } while ($parser->eatIf(ord('|')) !== null);
 
         $var = null;
         if ($parser->isNext($this->variableParser->getToken())) {
             $var = $this->variableParser->parse($parser);
+            assert($var instanceof Node\Expr\Variable);
         } else {
             $errorNode = $parser->getExpressionParser()->makeErrorNode($parser->last());
-            $var = $parser->setAttributes(new Node\Expr\Variable($errorNode), $errorNode, $errorNode);
+            $var = new Node\Expr\Variable($errorNode);
+            $parser->setAttributes($var, $errorNode, $errorNode);
         }
 
         $parser->assert(ord(')'));
         $stmts = $this->parseBlock($parser);
+        $node = new Node\Stmt\Catch_($types, $var, $stmts);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(
-            new Node\Stmt\Catch_($types, $parser->getOption('v3compat') ? $var->name : $var, $stmts),
-            $token, $parser->last()
-        );
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_TRY;
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -12,14 +12,13 @@ class InlineHtml implements StatementInterface
     {
         $token = $parser->eat();
         $hasLeadingNewline = $token->startAttributes['hasLeadingNewline'] ?? false;
+        $node = new Node\Stmt\InlineHTML($token->value, ['hasLeadingNewline' => $hasLeadingNewline]);
+        $parser->setAttributes($node, $token, $token);
 
-        return $parser->setAttributes(
-            new Node\Stmt\InlineHTML($token->value, ['hasLeadingNewline' => $hasLeadingNewline]),
-            $token, $token
-        );
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_INLINE_HTML;
     }

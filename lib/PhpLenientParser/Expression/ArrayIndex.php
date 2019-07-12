@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -12,28 +12,23 @@ class ArrayIndex extends AbstractOperator implements InfixInterface
      */
     private $closeToken;
 
-    /**
-     * @param int $token
-     * @param int $closeToken
-     * @param int $precedence
-     */
     public function __construct(int $token, int $closeToken, int $precedence)
     {
         parent::__construct($token, $precedence, Node\Expr\ArrayDimFetch::class);
         $this->closeToken = $closeToken;
     }
 
-    public function parse(ParserStateInterface $parser, Node $left)
+    public function parse(ParserStateInterface $parser, Node\Expr $left): ?Node\Expr
     {
-        if (!($left instanceof Node\Expr)) {
-            $left = $parser->getExpressionParser()->makeErrorNode($parser->last());
-        }
         $token = $parser->eat();
         $right = $parser->getExpressionParser()->parse($parser);
         $parser->assert($this->closeToken);
 
         $class = $this->getNodeClass();
+        /** @var Node\Expr */
+        $node = new $class($left, $right);
+        $parser->setAttributes($node, $left, $parser->last());
 
-        return $parser->setAttributes(new $class($left, $right), $left, $parser->last());
+        return $node;
     }
 }

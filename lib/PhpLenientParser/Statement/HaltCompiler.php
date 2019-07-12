@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -13,11 +13,13 @@ class HaltCompiler implements StatementInterface
         $token = $parser->eat();
         $rest = $token->startAttributes['rest'] ?? '';
         unset($token->startAttributes['rest']);
+        $node = new Node\Stmt\HaltCompiler($rest);
+        $parser->setAttributes($node, $token, $token);
 
-        return $parser->setAttributes(new Node\Stmt\HaltCompiler($rest), $token, $token);
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_HALT_COMPILER;
     }

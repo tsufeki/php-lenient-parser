@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -9,8 +9,6 @@ use PhpParser\Parser\Tokens;
 class ArgumentList
 {
     /**
-     * @param ParserStateInterface $parser
-     *
      * @return Node\Arg[]
      */
     public function parse(ParserStateInterface $parser): array
@@ -20,8 +18,8 @@ class ArgumentList
 
         while (!$parser->isNext(ord(')'))) {
             $first = $parser->lookAhead();
-            $ref = $parser->eat(ord('&')) !== null;
-            $unpack = $parser->eat(Tokens::T_ELLIPSIS) !== null;
+            $ref = $parser->eatIf(ord('&')) !== null;
+            $unpack = $parser->eatIf(Tokens::T_ELLIPSIS) !== null;
             $expr = $parser->getExpressionParser()->parse($parser);
             if ($expr === null) {
                 if ($parser->isNext(ord(','), ord(')'))) {
@@ -31,8 +29,10 @@ class ArgumentList
                 }
             }
 
-            $args[] = $parser->setAttributes(new Node\Arg($expr, $ref, $unpack), $first, $expr);
-            $parser->eat(ord(','));
+            $arg = new Node\Arg($expr, $ref, $unpack);
+            $parser->setAttributes($arg, $first, $expr);
+            $parser->eatIf(ord(','));
+            $args[] = $arg;
         }
 
         $parser->assert(ord(')'));

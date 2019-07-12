@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node;
 
 class Parens implements PrefixInterface
 {
@@ -16,17 +17,13 @@ class Parens implements PrefixInterface
      */
     private $closeToken;
 
-    /**
-     * @param int $openToken
-     * @param int $closeToken
-     */
     public function __construct(int $openToken, int $closeToken)
     {
         $this->openToken = $openToken;
         $this->closeToken = $closeToken;
     }
 
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $open = $parser->eat();
         $expr = $parser->getExpressionParser()->parseOrError($parser);

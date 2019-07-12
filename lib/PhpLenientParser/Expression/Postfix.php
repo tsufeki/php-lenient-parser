@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -7,11 +7,14 @@ use PhpParser\Node;
 
 class Postfix extends AbstractOperator implements InfixInterface
 {
-    public function parse(ParserStateInterface $parser, Node $left)
+    public function parse(ParserStateInterface $parser, Node\Expr $left): ?Node\Expr
     {
         $token = $parser->eat();
         $class = $this->getNodeClass();
+        /** @var Node\Expr */
+        $node = new $class($left);
+        $parser->setAttributes($node, $left, $token);
 
-        return $parser->setAttributes(new $class($left), $left, $token);
+        return $node;
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -13,7 +13,7 @@ class Isset_ extends AbstractPrefix
         parent::__construct(Tokens::T_ISSET);
     }
 
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
 
@@ -32,11 +32,13 @@ class Isset_ extends AbstractPrefix
             }
 
             $args[] = $expr;
-            $parser->eat(ord(','));
+            $parser->eatIf(ord(','));
         }
 
         $parser->assert(ord(')'));
+        $node = new Node\Expr\Isset_($args);
+        $parser->setAttributes($node, $token, $parser->last());
 
-        return $parser->setAttributes(new Node\Expr\Isset_($args), $token, $parser->last());
+        return $node;
     }
 }

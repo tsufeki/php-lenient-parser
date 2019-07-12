@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser;
 
@@ -10,6 +10,9 @@ use PhpParser\Parser;
 
 require_once __DIR__ . '/CodeTestAbstract.php';
 
+/**
+ * @coversNothing
+ */
 class CodeParsingTest extends CodeTestAbstract
 {
     /**
@@ -75,8 +78,8 @@ class CodeParsingTest extends CodeTestAbstract
     {
         if ($e->hasColumnInfo()) {
             return $e->getMessageWithColumnInfo($code);
-        } else {
-            return $e->getMessage();
         }
+
+        return $e->getMessage();
     }
 }

@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
+use PhpParser\Node;
 use PhpParser\Node\Expr;
 
 class IndirectVariable extends AbstractPrefix
@@ -12,17 +13,16 @@ class IndirectVariable extends AbstractPrefix
      */
     private $variableParser;
 
-    /**
-     * @param int      $token
-     * @param Variable $variableParser
-     */
     public function __construct(int $token, Variable $variableParser)
     {
         parent::__construct($token);
         $this->variableParser = $variableParser;
     }
 
-    public function parse(ParserStateInterface $parser)
+    /**
+     * @return Expr\Variable
+     */
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
         switch ($parser->lookAhead()->type) {
@@ -41,6 +41,10 @@ class IndirectVariable extends AbstractPrefix
                 $name = $parser->getExpressionParser()->makeErrorNode($token);
         }
 
-        return $parser->setAttributes(new Expr\Variable($name), $token, $name);
+        assert($name !== null);
+        $node = new Expr\Variable($name);
+        $parser->setAttributes($node, $token, $name);
+
+        return $node;
     }
 }

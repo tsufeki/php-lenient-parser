@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -19,10 +19,6 @@ class Trait_ implements StatementInterface
      */
     private $classStatementsParser;
 
-    /**
-     * @param Identifier               $identifierParser
-     * @param StatementParserInterface $classStatementsParser
-     */
     public function __construct(Identifier $identifierParser, StatementParserInterface $classStatementsParser)
     {
         $this->identifierParser = $identifierParser;
@@ -37,6 +33,7 @@ class Trait_ implements StatementInterface
 
         $token = $parser->eat();
         $id = $this->identifierParser->parse($parser);
+        assert($id !== null);
 
         $stmts = [];
         if ($parser->assert(ord('{'))) {
@@ -44,10 +41,13 @@ class Trait_ implements StatementInterface
             $parser->assert(ord('}'));
         }
 
-        return $parser->setAttributes(new Node\Stmt\Trait_($id, ['stmts' => $stmts]), $token, $parser->last());
+        $node = new Node\Stmt\Trait_($id, ['stmts' => $stmts]);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_TRAIT;
     }

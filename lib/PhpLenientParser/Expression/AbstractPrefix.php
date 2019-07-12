@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -9,9 +9,6 @@ abstract class AbstractPrefix implements PrefixInterface
      */
     private $token;
 
-    /**
-     * @param int $token
-     */
     public function __construct(int $token)
     {
         $this->token = $token;

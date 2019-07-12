@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -13,16 +13,12 @@ class HereDoc extends Encapsed
      */
     private $nowDoc;
 
-    /**
-     * @param Identifier $identifierParser
-     * @param Variable   $variableParser
-     */
     public function __construct(Identifier $identifierParser, Variable $variableParser)
     {
         parent::__construct(Tokens::T_START_HEREDOC, Node\Scalar\Encapsed::class, $identifierParser, $variableParser);
     }
 
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->lookAhead();
         preg_match('/^[bB]?<<<[ \\t]*([\'"]?)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)[\'"]?/',
@@ -34,7 +30,10 @@ class HereDoc extends Encapsed
         $encapsed = parent::parse($parser);
         $partsCount = count($encapsed->parts);
         if ($partsCount !== 0 && $encapsed->parts[$partsCount - 1] instanceof Node\Scalar\EncapsedStringPart) {
-            $encapsed->parts[$partsCount - 1]->value = preg_replace('/(\\r\\n|\\n|\\r)\z/', '', $encapsed->parts[$partsCount - 1]->value);
+            $value = $encapsed->parts[$partsCount - 1]->value;
+            $value = preg_replace('/(\\r\\n|\\n|\\r)\z/', '', $value);
+            assert($value !== null);
+            $encapsed->parts[$partsCount - 1]->value = $value;
         }
 
         /** @var Node\Scalar\EncapsedStringPart[]|Node\Expr[] $parts */
@@ -76,6 +75,9 @@ class HereDoc extends Encapsed
             $value = String_::replaceBackslashes($value);
         }
 
-        return $parser->setAttributes(new Node\Scalar\EncapsedStringPart($value), $token, $token);
+        $node = new Node\Scalar\EncapsedStringPart($value);
+        $parser->setAttributes($node, $token, $token);
+
+        return $node;
     }
 }

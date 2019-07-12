@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -7,24 +7,20 @@ use PhpParser\Node;
 
 class DNumber extends AbstractPrefix
 {
-    public function parse(ParserStateInterface $parser)
+    public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
-
         $value = $this->parseDNumber($token->value);
+        $node = new Node\Scalar\DNumber($value);
+        $parser->setAttributes($node, $token, $token);
 
-        return $parser->setAttributes(new Node\Scalar\DNumber($value), $token, $token);
+        return $node;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return float
-     */
-    private function parseDNumber($string)
+    private function parseDNumber(string $string): float
     {
         if (strpbrk($string, '.eE') !== false) {
-            return (float) $string;
+            return (float)$string;
         }
 
         if ($string[0] === '0') {
@@ -38,6 +34,6 @@ class DNumber extends AbstractPrefix
             return octdec(substr($string, 0, strcspn($string, '89')));
         }
 
-        return (float) $string;
+        return (float)$string;
     }
 }

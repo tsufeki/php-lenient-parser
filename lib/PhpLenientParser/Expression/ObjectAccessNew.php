@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Expression;
 
@@ -22,13 +22,6 @@ class ObjectAccessNew extends AbstractOperator implements InfixInterface
      */
     private $indirectVariableParser;
 
-    /**
-     * @param int              $token
-     * @param int              $precedence
-     * @param Identifier       $identifierParser
-     * @param Variable         $variableParser
-     * @param IndirectVariable $indirectVariableParser
-     */
     public function __construct(
         int $token,
         int $precedence,
@@ -36,17 +29,14 @@ class ObjectAccessNew extends AbstractOperator implements InfixInterface
         Variable $variableParser,
         IndirectVariable $indirectVariableParser
     ) {
-        parent::__construct($token, $precedence, null);
+        parent::__construct($token, $precedence, '');
         $this->identifierParser = $identifierParser;
         $this->variableParser = $variableParser;
         $this->indirectVariableParser = $indirectVariableParser;
     }
 
-    public function parse(ParserStateInterface $parser, Node $left)
+    public function parse(ParserStateInterface $parser, Node\Expr $left): ?Node\Expr
     {
-        if (!($left instanceof Node\Expr)) {
-            $left = $parser->getExpressionParser()->makeErrorNode($parser->last());
-        }
         $parser->eat();
         $name = null;
 
@@ -71,7 +61,8 @@ class ObjectAccessNew extends AbstractOperator implements InfixInterface
         }
 
         $node = new Node\Expr\PropertyFetch($left, $name);
+        $parser->setAttributes($node, $left, $parser->last());
 
-        return $parser->setAttributes($node, $left, $parser->last());
+        return $node;
     }
 }

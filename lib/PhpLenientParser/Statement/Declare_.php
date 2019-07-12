@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -14,9 +14,6 @@ class Declare_ implements StatementInterface
      */
     private $identifierParser;
 
-    /**
-     * @param Identifier $identifierParser
-     */
     public function __construct(Identifier $identifierParser)
     {
         $this->identifierParser = $identifierParser;
@@ -36,7 +33,9 @@ class Declare_ implements StatementInterface
                 }
 
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
-                $items[] = $parser->setAttributes(new Node\Stmt\DeclareDeclare($id, $expr), $first, $parser->last());
+                $item = new Node\Stmt\DeclareDeclare($id, $expr);
+                $parser->setAttributes($item, $first, $parser->last());
+                $items[] = $item;
 
                 if ($parser->isNext(ord(')')) || !$parser->assert(ord(','))) {
                     break;
@@ -46,9 +45,9 @@ class Declare_ implements StatementInterface
         }
 
         $stmts = null;
-        if ($parser->eat(ord(';')) !== null) {
+        if ($parser->eatIf(ord(';')) !== null) {
             $stmts = null;
-        } elseif ($parser->eat(ord(':')) !== null) {
+        } elseif ($parser->eatIf(ord(':')) !== null) {
             $stmts = $parser->getStatementParser()->parseList($parser, Tokens::T_ENDDECLARE);
             $parser->assert(Tokens::T_ENDDECLARE);
             $parser->assert(ord(';'));
@@ -56,10 +55,13 @@ class Declare_ implements StatementInterface
             $stmts = $parser->getStatementParser()->parse($parser) ?? [];
         }
 
-        return $parser->setAttributes(new Node\Stmt\Declare_($items, $stmts), $token, $parser->last());
+        $node = new Node\Stmt\Declare_($items, $stmts);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_DECLARE;
     }

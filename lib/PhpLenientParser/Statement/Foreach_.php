@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpLenientParser\Statement;
 
@@ -18,13 +18,13 @@ class Foreach_ implements StatementInterface
         $ref = false;
         $var = null;
 
-        if ($parser->eat(Tokens::T_AS) !== null) {
-            $ref = $parser->eat(ord('&')) !== null;
+        if ($parser->eatIf(Tokens::T_AS) !== null) {
+            $ref = $parser->eatIf(ord('&')) !== null;
             $var = $parser->getExpressionParser()->parse($parser);
 
-            if ($parser->eat(Tokens::T_DOUBLE_ARROW) !== null) {
+            if ($parser->eatIf(Tokens::T_DOUBLE_ARROW) !== null) {
                 $key = $var;
-                $ref = $parser->eat(ord('&')) !== null;
+                $ref = $parser->eatIf(ord('&')) !== null;
                 $var = $parser->getExpressionParser()->parse($parser);
             }
         }
@@ -36,7 +36,7 @@ class Foreach_ implements StatementInterface
         $parser->assert(ord(')'));
 
         $stmts = [];
-        if ($parser->eat(ord(':')) !== null) {
+        if ($parser->eatIf(ord(':')) !== null) {
             $stmts = $parser->getStatementParser()->parseList($parser, Tokens::T_ENDFOREACH);
             $parser->assert(Tokens::T_ENDFOREACH);
             $parser->assert(ord(';'));
@@ -44,18 +44,17 @@ class Foreach_ implements StatementInterface
             $stmts = $parser->getStatementParser()->parse($parser) ?: [];
         }
 
-        return $parser->setAttributes(new Node\Stmt\Foreach_(
-            $expr,
-            $var,
-            [
-                'keyVar' => $key,
-                'byRef' => $ref,
-                'stmts' => $stmts,
-            ]
-        ), $token, $parser->last());
+        $node = new Node\Stmt\Foreach_($expr, $var, [
+            'keyVar' => $key,
+            'byRef' => $ref,
+            'stmts' => $stmts,
+        ]);
+        $parser->setAttributes($node, $token, $parser->last());
+
+        return $node;
     }
 
-    public function getToken()
+    public function getToken(): ?int
     {
         return Tokens::T_FOREACH;
     }
