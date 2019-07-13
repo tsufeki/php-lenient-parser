@@ -76,7 +76,7 @@ EOC;
         $this->assertInstanceOf('PhpParser\Node\Stmt\Function_', $fn);
         $this->assertEquals([
             'comments' => [
-                new Comment\Doc('/** Doc comment */', 2, 6),
+                new Comment\Doc('/** Doc comment */', 2, 6, 1),
             ],
             'startLine' => 3,
             'endLine' => 7,
@@ -98,8 +98,8 @@ EOC;
         $this->assertInstanceOf('PhpParser\Node\Stmt\Echo_', $echo);
         $this->assertEquals([
             'comments' => [
-                new Comment("// Line\n", 4, 49),
-                new Comment("// Comments\n", 5, 61),
+                new Comment("// Line\n", 4, 49, 12),
+                new Comment("// Comments\n", 5, 61, 14),
             ],
             'startLine' => 6,
             'endLine' => 6,
@@ -123,7 +123,6 @@ EOC;
         $this->expectException(\RangeException::class);
         $this->expectExceptionMessage('The lexer returned an invalid token (id=999, value=foobar)');
 
-        $this->markTestSkipped();
         $lexer = new InvalidTokenLexer();
         $parser = $this->getParser($lexer);
         $parser->parse('dummy');
@@ -134,7 +133,7 @@ EOC;
      */
     public function testExtraAttributes($code, $expectedAttributes)
     {
-        $parser = $this->getParser(new Lexer());
+        $parser = $this->getParser(new Lexer\Emulative());
         $stmts = $parser->parse("<?php $code;");
         $node = $stmts[0] instanceof Stmt\Expression ? $stmts[0]->expr : $stmts[0];
         $attributes = $node->getAttributes();
@@ -164,25 +163,33 @@ EOC;
             ['"foo$bar"', ['kind' => String_::KIND_DOUBLE_QUOTED]],
             ['b"foo$bar"', ['kind' => String_::KIND_DOUBLE_QUOTED]],
             ['B"foo$bar"', ['kind' => String_::KIND_DOUBLE_QUOTED]],
-            ["<<<'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR']],
-            ["<<<STR\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']],
-            ["<<<\"STR\"\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']],
-            ["b<<<'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR']],
-            ["B<<<'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR']],
-            ["<<< \t 'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR']],
-            // HHVM doesn't support this due to a lexer bug
-            // (https://github.com/facebook/hhvm/issues/6970)
-            // array("<<<'\xff'\n\xff\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => "\xff"]),
-            ["<<<\"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']],
-            ["b<<<\"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']],
-            ["B<<<\"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']],
-            ["<<< \t \"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']],
+            ["<<<'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR', 'docIndentation' => '']],
+            ["<<<STR\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR', 'docIndentation' => '']],
+            ["<<<\"STR\"\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR', 'docIndentation' => '']],
+            ["b<<<'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR', 'docIndentation' => '']],
+            ["B<<<'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR', 'docIndentation' => '']],
+            ["<<< \t 'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR', 'docIndentation' => '']],
+            ["<<<'\xff'\n\xff\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => "\xff", 'docIndentation' => '']],
+            ["<<<\"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR', 'docIndentation' => '']],
+            ["b<<<\"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR', 'docIndentation' => '']],
+            ["B<<<\"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR', 'docIndentation' => '']],
+            ["<<< \t \"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR', 'docIndentation' => '']],
+            ["<<<STR\n    STR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR', 'docIndentation' => '    ']],
+            ["<<<STR\n\tSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR', 'docIndentation' => "\t"]],
+            ["<<<'STR'\n    Foo\n  STR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR', 'docIndentation' => '  ']],
             ['die', ['kind' => Expr\Exit_::KIND_DIE]],
             ["die('done')", ['kind' => Expr\Exit_::KIND_DIE]],
             ['exit', ['kind' => Expr\Exit_::KIND_EXIT]],
             ['exit(1)', ['kind' => Expr\Exit_::KIND_EXIT]],
             ['?>Foo', ['hasLeadingNewline' => false]],
             ["?>\nFoo", ['hasLeadingNewline' => true]],
+            ['namespace Foo;', ['kind' => Stmt\Namespace_::KIND_SEMICOLON]],
+            ['namespace Foo {}', ['kind' => Stmt\Namespace_::KIND_BRACED]],
+            ['namespace {}', ['kind' => Stmt\Namespace_::KIND_BRACED]],
+            ['(float) 5.0', ['kind' => Expr\Cast\Double::KIND_FLOAT]],
+            ['(double) 5.0', ['kind' => Expr\Cast\Double::KIND_DOUBLE]],
+            ['(real) 5.0', ['kind' => Expr\Cast\Double::KIND_REAL]],
+            [' (  REAL )  5.0', ['kind' => Expr\Cast\Double::KIND_REAL]],
         ];
     }
 }
