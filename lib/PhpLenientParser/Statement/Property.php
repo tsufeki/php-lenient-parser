@@ -10,25 +10,26 @@ use PhpParser\Parser\Tokens;
 class Property implements StatementInterface
 {
     /**
-     * @var int
-     */
-    private $token;
-
-    /**
      * @var Variable
      */
     private $variableParser;
 
-    public function __construct(int $token, Variable $variableParser)
+    /**
+     * @var Type
+     */
+    private $typeParser;
+
+    public function __construct(Variable $variableParser, Type $typeParser)
     {
-        $this->token = $token;
         $this->variableParser = $variableParser;
+        $this->typeParser = $typeParser;
     }
 
     public function parse(ParserStateInterface $parser)
     {
         $token = $parser->lookAhead();
         $parser->eatIf(Tokens::T_VAR);
+        $type = $this->typeParser->parse($parser);
         $props = [];
 
         while (($first = $parser->lookAhead())->type === $this->variableParser->getToken()) {
@@ -47,8 +48,12 @@ class Property implements StatementInterface
             }
         }
 
+        if ($type === null && $props === []) {
+            return null;
+        }
         $parser->assert(ord(';'));
-        $node = new Node\Stmt\Property(0, $props);
+
+        $node = new Node\Stmt\Property(0, $props, [], $type);
         $parser->setAttributes($node, $token, $parser->last());
 
         return $node;
@@ -56,6 +61,6 @@ class Property implements StatementInterface
 
     public function getToken(): ?int
     {
-        return $this->token;
+        return null;
     }
 }

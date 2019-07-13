@@ -314,8 +314,7 @@ class LenientParserFactory
         $classStatements->addStatement(
             new MemberModifier(Tokens::T_FINAL, Stmt\Class_::MODIFIER_FINAL, $classStatements));
 
-        $classStatements->addStatement(new Property(Tokens::T_VAR, $variable));
-        $classStatements->addStatement(new Property(Tokens::T_VARIABLE, $variable));
+        $classStatements->addStatement(new Property($variable, $type));
         $classStatements->addStatement(new ClassConst($identifier));
         $classStatements->addStatement(new Method($parameters, $type, $identifier));
         $classStatements->addStatement(new TraitUse($name, $identifier));
