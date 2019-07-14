@@ -11,6 +11,7 @@ use PhpLenientParser\Expression\Assign;
 use PhpLenientParser\Expression\ClassNameReference;
 use PhpLenientParser\Expression\Closure;
 use PhpLenientParser\Expression\DNumber;
+use PhpLenientParser\Expression\DoubleCast;
 use PhpLenientParser\Expression\Encapsed;
 use PhpLenientParser\Expression\Exit_;
 use PhpLenientParser\Expression\ExpressionParser;
@@ -194,7 +195,7 @@ class LenientParserFactory
 
         $expressionParser->addPrefix(new Prefix(Tokens::T_ARRAY_CAST, 190, Expr\Cast\Array_::class));
         $expressionParser->addPrefix(new Prefix(Tokens::T_BOOL_CAST, 190, Expr\Cast\Bool_::class));
-        $expressionParser->addPrefix(new Prefix(Tokens::T_DOUBLE_CAST, 190, Expr\Cast\Double::class));
+        $expressionParser->addPrefix(new DoubleCast(190));
         $expressionParser->addPrefix(new Prefix(Tokens::T_INT_CAST, 190, Expr\Cast\Int_::class));
         $expressionParser->addPrefix(new Prefix(Tokens::T_OBJECT_CAST, 190, Expr\Cast\Object_::class));
         $expressionParser->addPrefix(new Prefix(Tokens::T_STRING_CAST, 190, Expr\Cast\String_::class));

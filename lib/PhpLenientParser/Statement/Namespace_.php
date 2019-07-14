@@ -36,14 +36,17 @@ class Namespace_ implements StatementInterface
 
         $stmts = [];
         if ($parser->eatIf(ord('{')) !== null) {
+            $kind = Node\Stmt\Namespace_::KIND_BRACED;
             $stmts = $this->innerStatementsParser->parseList($parser, ord('}'));
             $parser->assert(ord('}'));
         } else {
+            $kind = Node\Stmt\Namespace_::KIND_SEMICOLON;
             $parser->assert(ord(';'));
             $stmts = $this->innerStatementsParser->parseList($parser, Tokens::T_NAMESPACE);
         }
 
         $node = new Node\Stmt\Namespace_($name, $stmts);
+        $node->setAttribute('kind', $kind);
         $parser->setAttributes($node, $token, $parser->last());
 
         return $node;
