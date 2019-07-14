@@ -4,7 +4,6 @@ namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 use PhpParser\Parser\Tokens;
 
 class NamePrefix extends AbstractPrefix
@@ -53,7 +52,7 @@ class NamePrefix extends AbstractPrefix
             case ord('('):
                 return $this->functionCallParser->parse($parser, $name);
             default:
-                $node = new Expr\ConstFetch($name);
+                $node = new Node\Expr\ConstFetch($name);
                 $parser->setAttributes($node, $name, $name);
 
                 return $node;

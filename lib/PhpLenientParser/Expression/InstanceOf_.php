@@ -5,7 +5,7 @@ namespace PhpLenientParser\Expression;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 
-class InstanceOf_ extends AbstractOperator implements InfixInterface
+class InstanceOf_ extends AbstractInfix
 {
     /**
      * @var ClassNameReference
@@ -14,7 +14,7 @@ class InstanceOf_ extends AbstractOperator implements InfixInterface
 
     public function __construct(int $token, int $precedence, ClassNameReference $classRefParser)
     {
-        parent::__construct($token, $precedence, Node\Expr\Instanceof_::class);
+        parent::__construct($token, $precedence, self::NOT_ASSOCIATIVE);
         $this->classRefParser = $classRefParser;
     }
 
@@ -23,9 +23,7 @@ class InstanceOf_ extends AbstractOperator implements InfixInterface
         $token = $parser->eat();
         $right = $this->classRefParser->parseOrError($parser);
 
-        $class = $this->getNodeClass();
-        /** @var Node\Expr */
-        $node = new $class($left, $right);
+        $node = new Node\Expr\Instanceof_($left, $right);
         $parser->setAttributes($node, $left, $right);
 
         return $node;

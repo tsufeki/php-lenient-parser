@@ -5,7 +5,7 @@ namespace PhpLenientParser\Expression;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 
-class ObjectAccess extends AbstractOperator implements InfixInterface
+class ObjectAccess extends AbstractInfix
 {
     /**
      * @var Identifier
@@ -35,7 +35,7 @@ class ObjectAccess extends AbstractOperator implements InfixInterface
         IndirectVariable $indirectVariableParser,
         ArgumentList $argsParser
     ) {
-        parent::__construct($token, $precedence, '');
+        parent::__construct($token, $precedence, self::LEFT_ASSOCIATIVE);
         $this->identifierParser = $identifierParser;
         $this->variableParser = $variableParser;
         $this->indirectVariableParser = $indirectVariableParser;

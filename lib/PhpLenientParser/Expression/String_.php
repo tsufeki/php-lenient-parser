@@ -4,7 +4,6 @@ namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
-use PhpParser\Node\Scalar;
 
 class String_ extends AbstractPrefix
 {
@@ -27,17 +26,17 @@ class String_ extends AbstractPrefix
             $start = 1;
         }
         if ($token->value[$start] === '\'') {
-            $kind = Scalar\String_::KIND_SINGLE_QUOTED;
+            $kind = Node\Scalar\String_::KIND_SINGLE_QUOTED;
             $value = substr($token->value, $start + 1, -1);
             $value = self::replaceQuoteEscapes($value, "'");
         } else {
-            $kind = Scalar\String_::KIND_DOUBLE_QUOTED;
+            $kind = Node\Scalar\String_::KIND_DOUBLE_QUOTED;
             $value = substr($token->value, $start + 1, -1);
             $value = self::replaceEscapes($value);
             $value = self::replaceQuoteEscapes($value, '"');
         }
 
-        $node = new Scalar\String_($value, ['kind' => $kind]);
+        $node = new Node\Scalar\String_($value, ['kind' => $kind]);
         $parser->setAttributes($node, $token, $token);
 
         return $node;

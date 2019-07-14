@@ -4,7 +4,6 @@ namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 
 class IndirectVariable extends AbstractPrefix
 {
@@ -20,7 +19,7 @@ class IndirectVariable extends AbstractPrefix
     }
 
     /**
-     * @return Expr\Variable
+     * @return Node\Expr\Variable
      */
     public function parse(ParserStateInterface $parser): ?Node\Expr
     {
@@ -42,7 +41,7 @@ class IndirectVariable extends AbstractPrefix
         }
 
         assert($name !== null);
-        $node = new Expr\Variable($name);
+        $node = new Node\Expr\Variable($name);
         $parser->setAttributes($node, $token, $name);
 
         return $node;

@@ -5,7 +5,7 @@ namespace PhpLenientParser\Expression;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 
-class ArrayIndex extends AbstractOperator implements InfixInterface
+class ArrayIndex extends AbstractInfix
 {
     /**
      * @var int
@@ -14,7 +14,7 @@ class ArrayIndex extends AbstractOperator implements InfixInterface
 
     public function __construct(int $token, int $closeToken, int $precedence)
     {
-        parent::__construct($token, $precedence, Node\Expr\ArrayDimFetch::class);
+        parent::__construct($token, $precedence, self::LEFT_ASSOCIATIVE);
         $this->closeToken = $closeToken;
     }
 
@@ -24,9 +24,7 @@ class ArrayIndex extends AbstractOperator implements InfixInterface
         $right = $parser->getExpressionParser()->parse($parser);
         $parser->assert($this->closeToken);
 
-        $class = $this->getNodeClass();
-        /** @var Node\Expr */
-        $node = new $class($left, $right);
+        $node = new Node\Expr\ArrayDimFetch($left, $right);
         $parser->setAttributes($node, $left, $parser->last());
 
         return $node;

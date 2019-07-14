@@ -4,7 +4,6 @@ namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
-use PhpParser\Node\Expr\Error;
 
 class ExpressionParser implements ExpressionParserInterface
 {
@@ -36,11 +35,18 @@ class ExpressionParser implements ExpressionParserInterface
             return null;
         }
 
+        $leftPrecedence = null;
+        $leftAssociativity = null;
         while (true) {
             $token = $parser->lookAhead();
             $infix = $this->infix[$token->type] ?? null;
             if ($infix !== null && $left !== null && $precedence < $infix->getPrecedence()) {
+                if ($leftPrecedence === $infix->getPrecedence() && $leftAssociativity === InfixInterface::NOT_ASSOCIATIVE) {
+                    $parser->unexpected($token);
+                }
                 $left = $infix->parse($parser, $left);
+                $leftPrecedence = $infix->getPrecedence();
+                $leftAssociativity = $infix->getAssociativity();
             } else {
                 break;
             }
@@ -66,7 +72,7 @@ class ExpressionParser implements ExpressionParserInterface
             $attrs['endFilePos'] = $lastAttrs['endFilePos'];
         }
 
-        return new Error($attrs);
+        return new Node\Expr\Error($attrs);
     }
 
     public function parseOrError(ParserStateInterface $parser, int $precedence = 0): Node\Expr

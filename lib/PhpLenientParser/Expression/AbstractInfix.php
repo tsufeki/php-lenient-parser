@@ -2,7 +2,7 @@
 
 namespace PhpLenientParser\Expression;
 
-abstract class AbstractOperator
+abstract class AbstractInfix implements InfixInterface
 {
     /**
      * @var int
@@ -15,15 +15,15 @@ abstract class AbstractOperator
     private $precedence;
 
     /**
-     * @var string
+     * @var int
      */
-    private $nodeClass;
+    private $associativity;
 
-    public function __construct(int $token, int $precedence, string $nodeClass)
+    public function __construct(int $token, int $precedence, int $associativity)
     {
         $this->token = $token;
         $this->precedence = $precedence;
-        $this->nodeClass = $nodeClass;
+        $this->associativity = $associativity;
     }
 
     public function getToken(): int
@@ -36,12 +36,8 @@ abstract class AbstractOperator
         return $this->precedence;
     }
 
-    public function getNodeClass(): string
+    public function getAssociativity(): int
     {
-        if ($this->nodeClass === '') {
-            throw new \LogicException();
-        }
-
-        return $this->nodeClass;
+        return $this->associativity;
     }
 }

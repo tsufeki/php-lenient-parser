@@ -5,7 +5,7 @@ namespace PhpLenientParser\Expression;
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
 
-class ScopeNew extends AbstractOperator implements InfixInterface
+class ScopeNew extends AbstractInfix
 {
     /**
      * @var Variable
@@ -23,7 +23,7 @@ class ScopeNew extends AbstractOperator implements InfixInterface
         Variable $variableParser,
         IndirectVariable $indirectVariableParser
     ) {
-        parent::__construct($token, $precedence, '');
+        parent::__construct($token, $precedence, self::LEFT_ASSOCIATIVE);
         $this->variableParser = $variableParser;
         $this->indirectVariableParser = $indirectVariableParser;
     }
