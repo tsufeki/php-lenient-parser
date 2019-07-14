@@ -19,6 +19,8 @@ class DNumber extends AbstractPrefix
 
     private function parseDNumber(string $string): float
     {
+        $string = str_replace('_', '', $string);
+
         if (strpbrk($string, '.eE') !== false) {
             return (float)$string;
         }

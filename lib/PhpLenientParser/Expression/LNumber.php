@@ -22,6 +22,7 @@ class LNumber extends AbstractPrefix
      */
     private function parseLNumber(string $string): array
     {
+        $string = str_replace('_', '', $string);
         $kind = null;
         $value = 0;
 
