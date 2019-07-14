@@ -3,16 +3,12 @@
 namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
+use PhpLenientParser\Token;
 use PhpParser\Node;
 use PhpParser\Parser\Tokens;
 
 class HereDoc extends Encapsed
 {
-    /**
-     * @var bool
-     */
-    private $nowDoc;
-
     public function __construct(Identifier $identifierParser, Variable $variableParser)
     {
         parent::__construct(Tokens::T_START_HEREDOC, Node\Scalar\Encapsed::class, $identifierParser, $variableParser);
@@ -21,42 +17,16 @@ class HereDoc extends Encapsed
     public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->lookAhead();
-        preg_match('/^[bB]?<<<[ \\t]*([\'"]?)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)[\'"]?/',
-            $token->value, $matches);
-        $this->nowDoc = $matches[1] === '\'';
-        $label = $matches[2];
+        preg_match('/\\A[bB]?<<<[ \\t]*([\'"]?)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)[\'"]?/', $token->value, $matches);
 
-        /** @var Node\Scalar\Encapsed $encapsed */
-        $encapsed = parent::parse($parser);
-        $partsCount = count($encapsed->parts);
-        if ($partsCount !== 0 && $encapsed->parts[$partsCount - 1] instanceof Node\Scalar\EncapsedStringPart) {
-            $value = $encapsed->parts[$partsCount - 1]->value;
-            $value = preg_replace('/(\\r\\n|\\n|\\r)\z/', '', $value);
-            assert($value !== null);
-            $encapsed->parts[$partsCount - 1]->value = $value;
-        }
-
-        /** @var Node\Scalar\EncapsedStringPart[]|Node\Expr[] $parts */
-        $parts = [];
-        /** @var Node\Scalar\EncapsedStringPart|Node\Expr $part */
-        foreach ($encapsed->parts as $part) {
-            if (!($part instanceof Node\Scalar\EncapsedStringPart) || $part->value !== '') {
-                $parts[] = $part;
-            }
-        }
-
-        $node = null;
-        if (count($parts) === 0) {
-            $node = new Node\Scalar\String_('');
-        } elseif (count($parts) === 1 && $parts[0] instanceof Node\Scalar\EncapsedStringPart) {
-            $node = new Node\Scalar\String_($parts[0]->value);
+        if ($matches[1] === '\'') {
+            $node = $this->parseNowDoc($parser);
         } else {
-            $node = new Node\Scalar\Encapsed($parts);
+            $node = $this->parseHereDoc($parser);
         }
 
         $parser->setAttributes($node, $token, $parser->last());
-        $node->setAttribute('kind', $this->nowDoc ? Node\Scalar\String_::KIND_NOWDOC : Node\Scalar\String_::KIND_HEREDOC);
-        $node->setAttribute('docLabel', $label);
+        $node->setAttribute('docLabel', $matches[2]);
 
         return $node;
     }
@@ -66,14 +36,143 @@ class HereDoc extends Encapsed
         return Tokens::T_END_HEREDOC;
     }
 
+    private function parseNowDoc(ParserStateInterface $parser): Node\Scalar\String_
+    {
+        $token = $parser->eat();
+        $value = '';
+        if (!$parser->isNext($this->getEndToken())) {
+            $token = $parser->eat();
+            $value = $token->value;
+            $value = preg_replace('/(\\r\\n|\\n|\\r)\z/', '', $value) ?? $value;
+        }
+
+        $parser->assert($this->getEndToken());
+        $indent = $this->getIndent($parser);
+        $value = $this->stripIndent($value, $indent, true, true, $parser, $token);
+
+        $node = new Node\Scalar\String_($value);
+        $node->setAttribute('kind', Node\Scalar\String_::KIND_NOWDOC);
+        $node->setAttribute('docIndentation', $indent);
+
+        return $node;
+    }
+
+    private function parseHereDoc(ParserStateInterface $parser): Node\Expr
+    {
+        /** @var Node\Scalar\Encapsed $encapsed */
+        $encapsed = parent::parse($parser);
+        $indent = $this->getIndent($parser);
+
+        $parts = [];
+        foreach ($encapsed->parts as $i => $part) {
+            $first = $i === 0;
+            $last = $i === count($encapsed->parts) - 1;
+            if ($part instanceof Node\Scalar\EncapsedStringPart) {
+                if ($last) {
+                    $part->value = preg_replace('/(\\r\\n|\\n|\\r)\z/', '', $part->value) ?? $part->value;
+                }
+
+                $part->value = $this->stripIndent($part->value, $indent, $first, $last, $parser, $part);
+                $part->value = String_::replaceEscapes($part->value);
+                $part->value = String_::replaceBackslashes($part->value);
+                if ($part->value !== '') {
+                    $parts[] = $part;
+                }
+            } else {
+                if ($first) {
+                    // Collect errors when there is no initial indent
+                    $this->stripIndent('', $indent, true, false, $parser, $part);
+                }
+                $parts[] = $part;
+            }
+        }
+
+        if (count($parts) === 0) {
+            $node = new Node\Scalar\String_('');
+        } elseif (count($parts) === 1 && $parts[0] instanceof Node\Scalar\EncapsedStringPart) {
+            $node = new Node\Scalar\String_($parts[0]->value);
+        } else {
+            $node = new Node\Scalar\Encapsed($parts);
+        }
+        $node->setAttribute('kind', Node\Scalar\String_::KIND_HEREDOC);
+        $node->setAttribute('docIndentation', $indent);
+
+        return $node;
+    }
+
+    private function getIndent(ParserStateInterface $parser): string
+    {
+        $token = $parser->last();
+        if ($token->type !== $this->getEndToken()) {
+            return '';
+        }
+
+        preg_match('/\\A[ \\t]*/', $token->value, $matches);
+
+        if (strpos($matches[0], ' ') !== false && strpos($matches[0], "\t") !== false) {
+            $parser->addError(
+                'Invalid indentation - tabs and spaces cannot be mixed',
+                $token->getAttributes()
+            );
+
+            return '';
+        }
+
+        return $matches[0];
+    }
+
+    /**
+     * @param Node|Token $node
+     */
+    private function stripIndent(
+        string $value,
+        string $indent,
+        bool $first,
+        bool $last,
+        ParserStateInterface $parser,
+        $node
+    ): string {
+        $start = $first ? '(?:\A|(?<=[\\r\\n]))' : '(?<=[\\r\\n])';
+        $end = $last ? '(?:\z|(?=[\\r\\n]))' : '(?=[\\r\\n])';
+        $len = strlen($indent);
+
+        $addError = function (string $msg) use ($parser, $node) {
+            $parser->addError($msg, $node->getAttributes());
+        };
+
+        $value = preg_replace_callback(
+            "/$start([ \\t]{0,$len})($end)?/",
+            function ($matches) use ($indent, $addError) {
+                return $this->stripIndentFromLine($matches[1], isset($matches[2]), $indent, $addError);
+            },
+            $value
+        ) ?? '';
+
+        return $value;
+    }
+
+    private function stripIndentFromLine(string $actualIndent, bool $isWholeLine, string $indent, callable $addError): string
+    {
+        if ($indent !== '' && strpos($actualIndent, $indent[0] === ' ' ? "\t" : ' ') !== false) {
+            $addError('Invalid indentation - tabs and spaces cannot be mixed');
+
+            return '';
+        }
+
+        if (!$isWholeLine && $actualIndent !== $indent) {
+            $len = strlen($indent);
+            $addError("Invalid body indentation level (expecting an indentation level of at least $len)");
+
+            return '';
+        }
+
+        return '';
+    }
+
     protected function parseStringPart(ParserStateInterface $parser): Node\Scalar\EncapsedStringPart
     {
         $token = $parser->eat();
         $value = $token->value;
-        if (!$this->nowDoc) {
-            $value = String_::replaceEscapes($value);
-            $value = String_::replaceBackslashes($value);
-        }
 
         $node = new Node\Scalar\EncapsedStringPart($value);
         $parser->setAttributes($node, $token, $token);
