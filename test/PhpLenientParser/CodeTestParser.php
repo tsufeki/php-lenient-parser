@@ -18,7 +18,7 @@ class CodeTestParser
         );
 
         // parse sections
-        $parts = preg_split("/\n-----(?:\n|$)/", $code);
+        $parts = preg_split("/\n-----(?:\n|$)/", $code) ?: [];
 
         // first part is the name
         $name = array_shift($parts);

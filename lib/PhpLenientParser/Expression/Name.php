@@ -8,13 +8,13 @@ use PhpParser\Parser\Tokens;
 
 class Name
 {
-    const NORMAL = 1;
-    const FULLY_QUALIFIED = 2;
-    const RELATIVE = 4;
-    const STATIC_ = 8;
+    public const NORMAL = 1;
+    public const FULLY_QUALIFIED = 2;
+    public const RELATIVE = 4;
+    public const STATIC_ = 8;
 
-    const NOT_STATIC = 7;
-    const ANY = 15;
+    public const NOT_STATIC = 7;
+    public const ANY = 15;
 
     public function parse(ParserStateInterface $parser, int $kinds = self::NOT_STATIC, bool $trailingSep = false): ?Node\Name
     {

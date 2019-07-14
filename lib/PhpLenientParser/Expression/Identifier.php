@@ -8,7 +8,7 @@ use PhpParser\Parser\Tokens;
 
 class Identifier
 {
-    const TOKENS = [
+    private const TOKENS = [
         Tokens::T_STRING => true,
 
         Tokens::T_ARRAY => true,

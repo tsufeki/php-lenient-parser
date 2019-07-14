@@ -1,4 +1,8 @@
 parameters:
+    level: max
+    paths:
+        - lib
+        - test
     ignoreErrors:
         - message: '~Unary operation "\+" on string results in an error~'
           path: '%currentWorkingDirectory%/lib/PhpLenientParser/Expression/Encapsed.php'

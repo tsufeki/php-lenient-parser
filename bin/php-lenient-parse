@@ -23,13 +23,13 @@ if (empty($operations)) {
 }
 
 if (empty($files)) {
-    showHelp("Must specify at least one file.");
+    showHelp('Must specify at least one file.');
 }
 
-$lexer = new PhpParser\Lexer\Emulative(array('usedAttributes' => array(
-    'startLine', 'endLine', 'startFilePos', 'endFilePos', 'comments'
-)));
-$parser = (new PhpLenientParser\LenientParserFactory)->create(
+$lexer = new PhpParser\Lexer\Emulative(['usedAttributes' => [
+    'startLine', 'endLine', 'startFilePos', 'endFilePos', 'comments',
+]]);
+$parser = (new PhpLenientParser\LenientParserFactory())->create(
     PhpLenientParser\LenientParserFactory::ONLY_PHP7,
     $lexer
 );
@@ -37,30 +37,31 @@ $dumper = new PhpParser\NodeDumper([
     'dumpComments' => true,
     'dumpPositions' => $attributes['with-positions'],
 ]);
-$prettyPrinter = new PhpParser\PrettyPrinter\Standard;
+$prettyPrinter = new PhpParser\PrettyPrinter\Standard();
 
 $traverser = new PhpParser\NodeTraverser();
-$traverser->addVisitor(new PhpParser\NodeVisitor\NameResolver);
+$traverser->addVisitor(new PhpParser\NodeVisitor\NameResolver());
 
 foreach ($files as $file) {
     if (strpos($file, '<?php') === 0) {
         $code = $file;
-        echo "====> Code $code\n";
+        fwrite(STDERR, "====> Code $code\n");
     } else {
         if (!file_exists($file)) {
-            die("File $file does not exist.\n");
+            fwrite(STDERR, "File $file does not exist.\n");
+            exit(1);
         }
 
         $code = file_get_contents($file);
-        echo "====> File $file:\n";
+        fwrite(STDERR, "====> File $file:\n");
     }
 
     if ($attributes['with-recovery']) {
-        $errorHandler = new PhpParser\ErrorHandler\Collecting;
+        $errorHandler = new PhpParser\ErrorHandler\Collecting();
         $stmts = $parser->parse($code, $errorHandler);
         foreach ($errorHandler->getErrors() as $error) {
             $message = formatErrorMessage($error, $code, $attributes['with-column-info']);
-            echo $message . "\n";
+            fwrite(STDERR, $message . "\n");
         }
         if (null === $stmts) {
             continue;
@@ -70,48 +71,55 @@ foreach ($files as $file) {
             $stmts = $parser->parse($code);
         } catch (PhpParser\Error $error) {
             $message = formatErrorMessage($error, $code, $attributes['with-column-info']);
-            die($message . "\n");
+            fwrite(STDERR, $message . "\n");
+            exit(1);
         }
     }
 
     foreach ($operations as $operation) {
         if ('dump' === $operation) {
-            echo "==> Node dump:\n";
+            fwrite(STDERR, "==> Node dump:\n");
             echo $dumper->dump($stmts, $code), "\n";
         } elseif ('pretty-print' === $operation) {
-            echo "==> Pretty print:\n";
+            fwrite(STDERR, "==> Pretty print:\n");
             echo $prettyPrinter->prettyPrintFile($stmts), "\n";
+        } elseif ('json-dump' === $operation) {
+            fwrite(STDERR, "==> JSON dump:\n");
+            echo json_encode($stmts, JSON_PRETTY_PRINT), "\n";
         } elseif ('var-dump' === $operation) {
-            echo "==> var_dump():\n";
+            fwrite(STDERR, "==> var_dump():\n");
             var_dump($stmts);
         } elseif ('resolve-names' === $operation) {
-            echo "==> Resolved names.\n";
+            fwrite(STDERR, "==> Resolved names.\n");
             $stmts = $traverser->traverse($stmts);
         }
     }
 }
 
-function formatErrorMessage(PhpParser\Error $e, $code, $withColumnInfo) {
+function formatErrorMessage(PhpParser\Error $e, $code, $withColumnInfo)
+{
     if ($withColumnInfo && $e->hasColumnInfo()) {
         return $e->getMessageWithColumnInfo($code);
-    } else {
-        return $e->getMessage();
     }
+
+    return $e->getMessage();
 }
 
-function showHelp($error = '') {
+function showHelp($error = '')
+{
     if ($error) {
-        echo $error . "\n\n";
+        fwrite(STDERR, $error . "\n\n");
     }
-    die(<<<OUTPUT
-Usage: php-lenient-parse [operations] file1.php [file2.php ...]
-   or: php-lenient-parse [operations] "<?php code"
+    fwrite($error ? STDERR : STDOUT, <<<OUTPUT
+Usage: php-parse [operations] file1.php [file2.php ...]
+   or: php-parse [operations] "<?php code"
 Turn PHP source code into an abstract syntax tree.
 
 Operations is a list of the following options (--dump by default):
 
     -d, --dump              Dump nodes using NodeDumper
     -p, --pretty-print      Pretty print file using PrettyPrinter\Standard
+    -j, --json-dump         Print json_encode() result
         --var-dump          var_dump() nodes (for exact structure)
     -N, --resolve-names     Resolve names using NodeVisitor\NameResolver
     -c, --with-column-info  Show column-numbers for errors (if available)
@@ -127,16 +135,18 @@ Example:
 
 OUTPUT
     );
+    exit($error ? 1 : 0);
 }
 
-function parseArgs($args) {
-    $operations = array();
-    $files = array();
-    $attributes = array(
+function parseArgs($args)
+{
+    $operations = [];
+    $files = [];
+    $attributes = [
         'with-column-info' => false,
         'with-positions' => false,
         'with-recovery' => false,
-    );
+    ];
 
     array_shift($args);
     $parseOptions = true;
@@ -155,18 +165,19 @@ function parseArgs($args) {
             case '-p':
                 $operations[] = 'pretty-print';
                 break;
-            case '--serialize-xml':
-                $operations[] = 'serialize-xml';
+            case '--json-dump':
+            case '-j':
+                $operations[] = 'json-dump';
                 break;
             case '--var-dump':
                 $operations[] = 'var-dump';
                 break;
             case '--resolve-names':
-            case '-N';
+            case '-N':
                 $operations[] = 'resolve-names';
                 break;
             case '--with-column-info':
-            case '-c';
+            case '-c':
                 $attributes['with-column-info'] = true;
                 break;
             case '--with-positions':
@@ -178,7 +189,7 @@ function parseArgs($args) {
                 $attributes['with-recovery'] = true;
                 break;
             case '--help':
-            case '-h';
+            case '-h':
                 showHelp();
                 break;
             case '--':
@@ -193,5 +204,5 @@ function parseArgs($args) {
         }
     }
 
-    return array($operations, $files, $attributes);
+    return [$operations, $files, $attributes];
 }

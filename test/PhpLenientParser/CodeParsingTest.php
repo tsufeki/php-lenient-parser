@@ -13,8 +13,6 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Parser;
 
-require_once __DIR__ . '/CodeTestAbstract.php';
-
 /**
  * @coversNothing
  */

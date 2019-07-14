@@ -24,7 +24,7 @@ class ParserTest extends TestCase
     public function testParserThrowsSyntaxError()
     {
         $this->expectException(\PhpParser\Error::class);
-        $this->expectExceptionMessage('Syntax error, unexpected EOF on line 1');
+        $this->expectExceptionMessage('Syntax error, unexpected EOF');
 
         $parser = $this->getParser(new Lexer());
         $parser->parse('<?php foo');
@@ -135,6 +135,7 @@ EOC;
     {
         $parser = $this->getParser(new Lexer\Emulative());
         $stmts = $parser->parse("<?php $code;");
+        assert($stmts !== null);
         $node = $stmts[0] instanceof Stmt\Expression ? $stmts[0]->expr : $stmts[0];
         $attributes = $node->getAttributes();
         foreach ($expectedAttributes as $name => $value) {

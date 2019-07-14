@@ -23,5 +23,13 @@
             "PhpLenientParser\\": "lib/PhpLenientParser"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "PhpLenientParser\\": "test/PhpLenientParser"
+        },
+        "files": [
+            "test/PhpLenientParser/functions.php"
+        ]
+    },
     "bin": ["bin/php-lenient-parse"]
 }

@@ -1,7 +1,9 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__);
+    ->in(__DIR__)
+    ->name('*.php')
+    ->name('php-lenient-parse');
 
 return PhpCsFixer\Config::create()
     ->setRules([

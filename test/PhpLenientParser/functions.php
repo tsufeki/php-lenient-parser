@@ -2,8 +2,6 @@
 
 namespace PhpLenientParser;
 
-require __DIR__ . '/../vendor/autoload.php';
-
 function canonicalize($str)
 {
     // normalize EOL style
@@ -24,6 +22,7 @@ function canonicalize($str)
 function filesInDir($directory, $fileExtension)
 {
     $directory = realpath($directory);
+    assert($directory !== false);
     $it = new \RecursiveDirectoryIterator($directory);
     $it = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::LEAVES_ONLY);
     $it = new \RegexIterator($it, '(\.' . preg_quote($fileExtension) . '$)');

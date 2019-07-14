@@ -4,8 +4,6 @@ namespace PhpLenientParser;
 
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/CodeTestParser.php';
-
 abstract class CodeTestAbstract extends TestCase
 {
     protected function getTests(string $directory, string $fileExtension, int $chunksPerTest = 2): array

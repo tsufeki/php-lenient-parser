@@ -10,7 +10,7 @@ use PhpParser\Parser\Tokens;
 
 class Type
 {
-    const BUILTIN_TYPES = [
+    private const BUILTIN_TYPES = [
         'bool' => true,
         'int' => true,
         'float' => true,

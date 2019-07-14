@@ -83,7 +83,7 @@ use PhpParser\Parser\Tokens;
 
 class LenientParserFactory
 {
-    const ONLY_PHP7 = 3;
+    public const ONLY_PHP7 = 3;
 
     /**
      * Creates a Parser instance, according to the provided kind.

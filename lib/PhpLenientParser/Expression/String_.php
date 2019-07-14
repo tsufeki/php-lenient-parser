@@ -8,7 +8,7 @@ use PhpParser\Node\Scalar;
 
 class String_ extends AbstractPrefix
 {
-    const ESCAPES = [
+    private const ESCAPES = [
         'n' => "\n",
         'r' => "\r",
         't' => "\t",
