@@ -54,22 +54,23 @@ class Array_ extends AbstractPrefix
             $first = $parser->lookAhead();
             $key = null;
             $ref = $parser->eatIf(ord('&')) !== null;
+            $unpack = !$ref && $parser->eatIf(Tokens::T_ELLIPSIS) !== null;
             $expr = $parser->getExpressionParser()->parse($parser);
             if ($expr === null && !$parser->isNext(ord(','), Tokens::T_DOUBLE_ARROW, $this->endToken)) {
                 break;
             }
 
-            if ($parser->eatIf(Tokens::T_DOUBLE_ARROW) !== null) {
+            if (!$ref && !$unpack && $parser->eatIf(Tokens::T_DOUBLE_ARROW) !== null) {
                 $key = $expr;
                 $ref = $parser->eatIf(ord('&')) !== null;
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
             }
 
-            if ($key === null && $expr === null) {
+            if ($key === null && $expr === null && !$ref && !$unpack) {
                 $items[] = null;
             } else {
                 $expr = $expr ?? $parser->getExpressionParser()->makeErrorNode($parser->last());
-                $item = new Node\Expr\ArrayItem($expr, $key, $ref);
+                $item = new Node\Expr\ArrayItem($expr, $key, $ref, [], $unpack);
                 $parser->setAttributes($item, $first, $parser->last());
                 $items[] = $item;
             }
