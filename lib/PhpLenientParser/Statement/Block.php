@@ -17,10 +17,11 @@ class Block implements StatementInterface
         if (!empty($comments)) {
             if (empty($stmts)) {
                 $nop = new Node\Stmt\Nop();
-                $parser->setAttributes($nop, $token, $token);
+                $parser->setAttributes($nop, $token, $parser->last());
                 $stmts[] = $nop;
             } else {
                 $comments = array_merge($comments, $stmts[0]->getAttribute('comments') ?? []);
+                $parser->setAttributes($stmts[0], $token, $parser->last());
                 $stmts[0]->setAttribute('comments', $comments);
             }
         }

@@ -58,6 +58,14 @@ class Switch_ implements StatementInterface
             }
 
             $stmts = $parser->getStatementParser()->parseList($parser, ...$delimiters);
+            if (!$parser->isNext($delimiter)) {
+                // Trailing comments go to the next case
+                $lastStmt = $stmts[count($stmts) - 1] ?? null;
+                if ($lastStmt instanceof Node\Stmt\Nop) {
+                    array_pop($stmts);
+                }
+            }
+
             $case = new Node\Stmt\Case_($condition, $stmts);
             $parser->setAttributes($case, $token, $parser->last());
             $cases[] = $case;
