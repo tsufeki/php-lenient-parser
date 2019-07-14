@@ -149,6 +149,7 @@ class LenientParserFactory
         $expressionParser->addInfix(new Infix(Tokens::T_POW_EQUAL, 230, Expr\AssignOp\Pow::class, true, 40));
         $expressionParser->addInfix(new Infix(Tokens::T_SL_EQUAL, 230, Expr\AssignOp\ShiftLeft::class, true, 40));
         $expressionParser->addInfix(new Infix(Tokens::T_SR_EQUAL, 230, Expr\AssignOp\ShiftRight::class, true, 40));
+        $expressionParser->addInfix(new Infix(Tokens::T_COALESCE_EQUAL, 230, Expr\AssignOp\Coalesce::class, true, 40));
 
         $expressionParser->addInfix(new Ternary(ord('?'), ord(':'), 50, Expr\Ternary::class));
         $expressionParser->addInfix(new Infix(Tokens::T_COALESCE, 60, Expr\BinaryOp\Coalesce::class, true));
