@@ -6,6 +6,7 @@ use PhpLenientParser\Expression\AggregatePrefix;
 use PhpLenientParser\Expression\ArgumentList;
 use PhpLenientParser\Expression\Array_;
 use PhpLenientParser\Expression\ArrayIndex;
+use PhpLenientParser\Expression\ArrowFunction;
 use PhpLenientParser\Expression\Assign;
 use PhpLenientParser\Expression\ClassNameReference;
 use PhpLenientParser\Expression\Closure;
@@ -263,9 +264,11 @@ class LenientParserFactory
         $expressionParser->addPrefix(new Isset_());
 
         $expressionParser->addPrefix(new Closure(Tokens::T_FUNCTION, $type, $parameters, $variable));
+        $expressionParser->addPrefix(new ArrowFunction(Tokens::T_FN, $type, $parameters));
         $expressionParser->addPrefix(new AggregatePrefix(
             new NamePrefix(Tokens::T_STATIC, $name, $functionCall, $scope),
-            new Closure(Tokens::T_STATIC, $type, $parameters, $variable)
+            new Closure(Tokens::T_STATIC, $type, $parameters, $variable),
+            new ArrowFunction(Tokens::T_STATIC, $type, $parameters)
         ));
 
         $expressionParser->addPrefix(new Parens(ord('('), ord(')')));
