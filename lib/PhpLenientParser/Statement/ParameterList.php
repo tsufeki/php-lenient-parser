@@ -62,6 +62,10 @@ class ParameterList
                 $param = new Node\Param($var, $expr, $type, $ref, $variadic);
                 $parser->setAttributes($param, $first, $parser->last());
                 $params[] = $param;
+
+                if ($param->variadic && $param->default !== null) {
+                    $parser->addError('Variadic parameter cannot have a default value', $param->default->getAttributes());
+                }
             }
 
             if ($parser->eatIf(ord(',')) === null) {

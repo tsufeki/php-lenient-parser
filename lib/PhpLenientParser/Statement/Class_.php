@@ -51,8 +51,18 @@ class Class_ implements StatementInterface
 
         $token = $parser->lookAhead();
         $flags = 0;
-        $flags |= $parser->eatIf(Tokens::T_ABSTRACT) !== null ? Node\Stmt\Class_::MODIFIER_ABSTRACT : 0;
-        $flags |= $parser->eatIf(Tokens::T_FINAL) !== null ? Node\Stmt\Class_::MODIFIER_FINAL : 0;
+        while (in_array($parser->lookAhead()->type, [Tokens::T_ABSTRACT, Tokens::T_FINAL], true)) {
+            if ($flags !== 0) {
+                $parser->unexpected($parser->lookAhead(), Tokens::T_CLASS);
+            }
+
+            if ($parser->eatIf(Tokens::T_ABSTRACT) !== null) {
+                $flags = Node\Stmt\Class_::MODIFIER_ABSTRACT;
+            } elseif ($parser->eatIf(Tokens::T_FINAL) !== null) {
+                $flags = Node\Stmt\Class_::MODIFIER_FINAL;
+            }
+        }
+
         $parser->eat();
         $id = $this->identifierParser->parse($parser);
 
@@ -100,7 +110,7 @@ class Class_ implements StatementInterface
     private function isClass(ParserStateInterface $parser): bool
     {
         $i = 0;
-        if (in_array($parser->lookAhead($i)->type, [Tokens::T_ABSTRACT, Tokens::T_FINAL])) {
+        while (in_array($parser->lookAhead($i)->type, [Tokens::T_ABSTRACT, Tokens::T_FINAL], true)) {
             $i++;
         }
         if ($parser->lookAhead($i)->type !== Tokens::T_CLASS) {

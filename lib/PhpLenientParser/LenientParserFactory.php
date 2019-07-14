@@ -304,24 +304,13 @@ class LenientParserFactory
 
         $statementParser->addStatement(new Function_($parameters, $type, $identifier));
 
+        $classMemberStatements = new StatementParser();
+        $classMemberStatements->addStatement(new Property($variable, $type));
+        $classMemberStatements->addStatement(new ClassConst($identifier));
+        $classMemberStatements->addStatement(new Method($parameters, $type, $identifier));
+
         $classStatements = new StatementParser();
-
-        $classStatements->addStatement(
-            new MemberModifier(Tokens::T_PUBLIC, Stmt\Class_::MODIFIER_PUBLIC, $classStatements));
-        $classStatements->addStatement(
-            new MemberModifier(Tokens::T_PROTECTED, Stmt\Class_::MODIFIER_PROTECTED, $classStatements));
-        $classStatements->addStatement(
-            new MemberModifier(Tokens::T_PRIVATE, Stmt\Class_::MODIFIER_PRIVATE, $classStatements));
-        $classStatements->addStatement(
-            new MemberModifier(Tokens::T_STATIC, Stmt\Class_::MODIFIER_STATIC, $classStatements));
-        $classStatements->addStatement(
-            new MemberModifier(Tokens::T_ABSTRACT, Stmt\Class_::MODIFIER_ABSTRACT, $classStatements));
-        $classStatements->addStatement(
-            new MemberModifier(Tokens::T_FINAL, Stmt\Class_::MODIFIER_FINAL, $classStatements));
-
-        $classStatements->addStatement(new Property($variable, $type));
-        $classStatements->addStatement(new ClassConst($identifier));
-        $classStatements->addStatement(new Method($parameters, $type, $identifier));
+        $classStatements->addStatement(new MemberModifier($classMemberStatements));
         $classStatements->addStatement(new TraitUse($name, $identifier));
 
         $statementParser->addStatement(new Trait_($identifier, $classStatements));

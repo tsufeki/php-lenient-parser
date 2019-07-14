@@ -48,6 +48,10 @@ class Try_ implements StatementInterface
         $node = new Node\Stmt\TryCatch($stmts, $catches, $finally);
         $parser->setAttributes($node, $token, $parser->last());
 
+        if ($catches === [] && $finally === null) {
+            $parser->addError('Cannot use try without catch or finally', $node->getAttributes());
+        }
+
         return $node;
     }
 
