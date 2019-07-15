@@ -37,9 +37,7 @@ class ClassConst implements StatementInterface
                 $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
             }
 
-            $const = new Node\Const_($id, $expr);
-            $parser->setAttributes($const, $first, $parser->last());
-            $consts[] = $const;
+            $consts[] = new Node\Const_($id, $expr, $parser->getAttributes($first, $parser->last()));
 
             if ($parser->isNext(ord(';')) || !$parser->assert(ord(','))) {
                 break;
@@ -47,10 +45,8 @@ class ClassConst implements StatementInterface
         }
 
         $parser->assert(ord(';'));
-        $node = new Node\Stmt\ClassConst($consts);
-        $parser->setAttributes($node, $token, $parser->last());
 
-        return $node;
+        return new Node\Stmt\ClassConst($consts, 0, $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

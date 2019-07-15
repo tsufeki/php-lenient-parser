@@ -18,17 +18,15 @@ abstract class AbstractStatementParser implements StatementParserInterface
         $lookAhead = $parser->lookAhead();
         if (in_array($lookAhead->type, $delimiters)) {
             if (!empty($lookAhead->startAttributes['comments'])) {
-                $node = new Node\Stmt\Nop();
-
-                $parser->setAttributes($node, $lookAhead, $lookAhead);
-                if ($node->hasAttribute('endFilePos')) {
-                    $node->setAttribute('endFilePos', $node->getAttribute('startFilePos') - 1);
+                $attrs = $parser->getAttributes($lookAhead, $lookAhead);
+                if (isset($attrs['startFilePos'])) {
+                    $attrs['endFilePos'] = $attrs['startFilePos'] - 1;
                 }
-                if ($node->hasAttribute('endTokenPos')) {
-                    $node->setAttribute('endTokenPos', $node->getAttribute('startTokenPos') - 1);
+                if (isset($attrs['startTokenPos'])) {
+                    $attrs['endTokenPos'] = $attrs['startTokenPos'] - 1;
                 }
 
-                $stmts[] = $node;
+                $stmts[] = new Node\Stmt\Nop($attrs);
             }
         }
 

@@ -20,13 +20,10 @@ class HereDoc extends Encapsed
         preg_match('/\\A[bB]?<<<[ \\t]*([\'"]?)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)[\'"]?/', $token->value, $matches);
 
         if ($matches[1] === '\'') {
-            $node = $this->parseNowDoc($parser);
+            $node = $this->parseNowDoc($parser, ['docLabel' => $matches[2], 'kind' => Node\Scalar\String_::KIND_NOWDOC]);
         } else {
-            $node = $this->parseHereDoc($parser);
+            $node = $this->parseHereDoc($parser, ['docLabel' => $matches[2], 'kind' => Node\Scalar\String_::KIND_HEREDOC]);
         }
-
-        $parser->setAttributes($node, $token, $parser->last());
-        $node->setAttribute('docLabel', $matches[2]);
 
         return $node;
     }
@@ -36,32 +33,28 @@ class HereDoc extends Encapsed
         return Tokens::T_END_HEREDOC;
     }
 
-    private function parseNowDoc(ParserStateInterface $parser): Node\Scalar\String_
+    private function parseNowDoc(ParserStateInterface $parser, array $attrs): Node\Scalar\String_
     {
         $token = $parser->eat();
         $value = '';
         if (!$parser->isNext($this->getEndToken())) {
-            $token = $parser->eat();
-            $value = $token->value;
+            $value = $parser->eat()->value;
             $value = preg_replace('/(\\r\\n|\\n|\\r)\z/', '', $value) ?? $value;
         }
 
         $parser->assert($this->getEndToken());
-        $indent = $this->getIndent($parser);
+        $indent = $attrs['docIndentation'] = $this->getIndent($parser);
         $value = $this->stripIndent($value, $indent, true, true, $parser, $token);
 
-        $node = new Node\Scalar\String_($value);
-        $node->setAttribute('kind', Node\Scalar\String_::KIND_NOWDOC);
-        $node->setAttribute('docIndentation', $indent);
-
-        return $node;
+        return new Node\Scalar\String_($value, $parser->getAttributes($token, $parser->last(), $attrs));
     }
 
-    private function parseHereDoc(ParserStateInterface $parser): Node\Expr
+    private function parseHereDoc(ParserStateInterface $parser, array $attrs): Node\Expr
     {
+        $token = $parser->lookAhead();
         /** @var Node\Scalar\Encapsed $encapsed */
         $encapsed = parent::parse($parser);
-        $indent = $this->getIndent($parser);
+        $indent = $attrs['docIndentation'] = $this->getIndent($parser);
 
         $parts = [];
         foreach ($encapsed->parts as $i => $part) {
@@ -87,15 +80,14 @@ class HereDoc extends Encapsed
             }
         }
 
+        $attrs = $parser->getAttributes($token, $parser->last(), $attrs);
         if (count($parts) === 0) {
-            $node = new Node\Scalar\String_('');
+            $node = new Node\Scalar\String_('', $attrs);
         } elseif (count($parts) === 1 && $parts[0] instanceof Node\Scalar\EncapsedStringPart) {
-            $node = new Node\Scalar\String_($parts[0]->value);
+            $node = new Node\Scalar\String_($parts[0]->value, $attrs);
         } else {
-            $node = new Node\Scalar\Encapsed($parts);
+            $node = new Node\Scalar\Encapsed($parts, $attrs);
         }
-        $node->setAttribute('kind', Node\Scalar\String_::KIND_HEREDOC);
-        $node->setAttribute('docIndentation', $indent);
 
         return $node;
     }
@@ -174,9 +166,6 @@ class HereDoc extends Encapsed
         $token = $parser->eat();
         $value = $token->value;
 
-        $node = new Node\Scalar\EncapsedStringPart($value);
-        $parser->setAttributes($node, $token, $token);
-
-        return $node;
+        return new Node\Scalar\EncapsedStringPart($value, $parser->getAttributes($token, $token));
     }
 }

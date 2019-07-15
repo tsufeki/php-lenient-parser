@@ -36,9 +36,7 @@ class Isset_ extends AbstractPrefix
         }
 
         $parser->assert(ord(')'));
-        $node = new Node\Expr\Isset_($args);
-        $parser->setAttributes($node, $token, $parser->last());
 
-        return $node;
+        return new Node\Expr\Isset_($args, $parser->getAttributes($token, $parser->last()));
     }
 }

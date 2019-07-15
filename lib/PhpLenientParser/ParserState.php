@@ -7,7 +7,6 @@ use PhpLenientParser\Statement\StatementParserInterface;
 use PhpParser\Error;
 use PhpParser\ErrorHandler;
 use PhpParser\Lexer;
-use PhpParser\Node;
 use PhpParser\Parser\Tokens;
 
 class ParserState implements ParserStateInterface
@@ -158,11 +157,11 @@ class ParserState implements ParserStateInterface
         $this->errorHandler->handleError(new Error($message, $attributes));
     }
 
-    public function setAttributes(Node $node, $start, $end): void
+    public function getAttributes($start, $end, array $extraAttributes = []): array
     {
         $startAttrs = $start->getAttributes();
         $endAttrs = $end->getAttributes();
-        $attrs = $node->getAttributes();
+        $attrs = $extraAttributes;
 
         foreach (['startLine', 'startTokenPos', 'startFilePos'] as $attr) {
             if (isset($startAttrs[$attr])) {
@@ -180,7 +179,7 @@ class ParserState implements ParserStateInterface
             $attrs['comments'] = $startAttrs['comments'];
         }
 
-        $node->setAttributes($attrs);
+        return $attrs;
     }
 
     public function getExpressionParser(): ExpressionParserInterface

@@ -37,9 +37,7 @@ class Use_ implements StatementInterface
         if ($name === null || $parser->eatIf(ord('{')) === null) {
             while ($name !== null) {
                 $alias = $this->parseAlias($parser);
-                $use = new Node\Stmt\UseUse($name, $alias, Node\Stmt\Use_::TYPE_UNKNOWN);
-                $parser->setAttributes($use, $name, $parser->last());
-                $uses[] = $use;
+                $uses[] = new Node\Stmt\UseUse($name, $alias, Node\Stmt\Use_::TYPE_UNKNOWN, $parser->getAttributes($name, $parser->last()));
 
                 $name = null;
                 if ($parser->eatIf(ord(',')) !== null && !$parser->isNext(ord(';'))) {
@@ -47,7 +45,8 @@ class Use_ implements StatementInterface
                 }
             }
 
-            $node = new Node\Stmt\Use_($uses, $type);
+            $parser->assert(ord(';'));
+            $node = new Node\Stmt\Use_($uses, $type, $parser->getAttributes($token, $parser->last()));
         } else {
             $prefix = $name;
             $type = $type === Node\Stmt\Use_::TYPE_NORMAL ? Node\Stmt\Use_::TYPE_UNKNOWN : $type;
@@ -63,9 +62,7 @@ class Use_ implements StatementInterface
                 }
 
                 $alias = $this->parseAlias($parser);
-                $use = new Node\Stmt\UseUse($name, $alias, $innerType);
-                $parser->setAttributes($use, $name, $parser->last());
-                $uses[] = $use;
+                $uses[] = new Node\Stmt\UseUse($name, $alias, $innerType, $parser->getAttributes($name, $parser->last()));
 
                 if ($parser->eatIf(ord(',')) === null) {
                     break;
@@ -73,11 +70,9 @@ class Use_ implements StatementInterface
             }
 
             $parser->assert(ord('}'));
-            $node = new Node\Stmt\GroupUse($prefix, $uses, $type);
+            $parser->assert(ord(';'));
+            $node = new Node\Stmt\GroupUse($prefix, $uses, $type, $parser->getAttributes($token, $parser->last()));
         }
-
-        $parser->assert(ord(';'));
-        $parser->setAttributes($node, $token, $parser->last());
 
         return $node;
     }

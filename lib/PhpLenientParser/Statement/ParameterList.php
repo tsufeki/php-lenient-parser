@@ -54,14 +54,18 @@ class ParameterList
 
             if ($var === null && ($type !== null || $expr !== null || $ref || $variadic)) {
                 $errorNode = $parser->getExpressionParser()->makeErrorNode($varLast);
-                $var = new Node\Expr\Variable($errorNode);
-                $parser->setAttributes($var, $errorNode, $errorNode);
+                $var = new Node\Expr\Variable($errorNode, $parser->getAttributes($errorNode, $errorNode));
             }
 
             if ($var !== null) {
-                $param = new Node\Param($var, $expr, $type, $ref, $variadic);
-                $parser->setAttributes($param, $first, $parser->last());
-                $params[] = $param;
+                $params[] = $param = new Node\Param(
+                    $var,
+                    $expr,
+                    $type,
+                    $ref,
+                    $variadic,
+                    $parser->getAttributes($first, $parser->last())
+                );
 
                 if ($param->variadic && $param->default !== null) {
                     $parser->addError('Variadic parameter cannot have a default value', $param->default->getAttributes());

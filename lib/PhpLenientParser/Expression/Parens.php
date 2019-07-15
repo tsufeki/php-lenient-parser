@@ -29,8 +29,6 @@ class Parens implements PrefixInterface
         $expr = $parser->getExpressionParser()->parseOrError($parser);
         $parser->assert($this->closeToken);
 
-        // $parser->setAttributes($expr, $open, $parser->last());
-
         return $expr;
     }
 

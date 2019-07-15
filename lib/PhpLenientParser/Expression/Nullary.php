@@ -23,8 +23,7 @@ class Nullary extends AbstractPrefix
         $token = $parser->eat();
         $class = $this->nodeClass;
         /** @var Node\Expr */
-        $node = new $class();
-        $parser->setAttributes($node, $token, $token);
+        $node = new $class($parser->getAttributes($token, $token));
 
         return $node;
     }

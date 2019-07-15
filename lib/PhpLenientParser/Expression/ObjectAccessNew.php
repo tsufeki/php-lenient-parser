@@ -62,9 +62,6 @@ class ObjectAccessNew extends AbstractInfix
             $name = $parser->getExpressionParser()->makeErrorNode($parser->last());
         }
 
-        $node = new Node\Expr\PropertyFetch($left, $name);
-        $parser->setAttributes($node, $left, $parser->last());
-
-        return $node;
+        return new Node\Expr\PropertyFetch($left, $name, $parser->getAttributes($left, $parser->last()));
     }
 }

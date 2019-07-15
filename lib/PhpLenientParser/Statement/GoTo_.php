@@ -30,10 +30,8 @@ class GoTo_ implements StatementInterface
             $label = $this->identifierParser->makeEmpty($parser);
         }
         $parser->assert(ord(';'));
-        $node = new Node\Stmt\Goto_($label);
-        $parser->setAttributes($node, $token, $parser->last());
 
-        return $node;
+        return new Node\Stmt\Goto_($label, $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

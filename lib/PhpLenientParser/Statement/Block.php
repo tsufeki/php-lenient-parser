@@ -16,9 +16,7 @@ class Block implements StatementInterface
         $comments = $token->startAttributes['comments'] ?? [];
         if (!empty($comments)) {
             if (empty($stmts)) {
-                $nop = new Node\Stmt\Nop();
-                $parser->setAttributes($nop, $token, $parser->last());
-                $stmts[] = $nop;
+                $stmts[] = new Node\Stmt\Nop($parser->getAttributes($token, $parser->last()));
             } else {
                 $comments = array_merge($comments, $stmts[0]->getAttribute('comments') ?? []);
                 $stmts[0]->setAttribute('comments', $comments);

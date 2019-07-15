@@ -12,9 +12,7 @@ class Nop implements StatementInterface
         $token = $parser->eat();
         $stmts = [];
         if (!empty($token->startAttributes['comments'])) {
-            $node = new Node\Stmt\Nop();
-            $parser->setAttributes($node, $token, $token);
-            $stmts[] = $node;
+            $stmts[] = new Node\Stmt\Nop($parser->getAttributes($token, $token));
         }
 
         return $stmts;

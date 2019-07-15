@@ -26,10 +26,7 @@ class Switch_ implements StatementInterface
             $parser->assert(ord('}'));
         }
 
-        $node = new Node\Stmt\Switch_($condition, $cases);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        return new Node\Stmt\Switch_($condition, $cases, $parser->getAttributes($token, $parser->last()));
     }
 
     /**
@@ -66,9 +63,7 @@ class Switch_ implements StatementInterface
                 }
             }
 
-            $case = new Node\Stmt\Case_($condition, $stmts);
-            $parser->setAttributes($case, $token, $parser->last());
-            $cases[] = $case;
+            $cases[] = new Node\Stmt\Case_($condition, $stmts, $parser->getAttributes($token, $parser->last()));
         }
 
         return $cases;

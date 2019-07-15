@@ -65,17 +65,14 @@ class Closure extends AbstractPrefix
             $parser->assert(ord('}'));
         }
 
-        $node = new Node\Expr\Closure([
+        return $node = new Node\Expr\Closure([
             'static' => $static,
             'byRef' => $ref,
             'params' => $params,
             'uses' => $uses,
             'returnType' => $returnType,
             'stmts' => $stmts,
-        ]);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        ], $parser->getAttributes($token, $parser->last()));
     }
 
     private function isClosure(ParserStateInterface $parser): bool
@@ -115,10 +112,8 @@ class Closure extends AbstractPrefix
             }
             $var = $this->variableParser->parse($parser);
             assert($var instanceof Node\Expr\Variable);
-            $use = new Node\Expr\ClosureUse($var, $ref);
-            $parser->setAttributes($use, $first, $parser->last());
+            $uses[] = new Node\Expr\ClosureUse($var, $ref, $parser->getAttributes($first, $parser->last()));
             $parser->eatIf(ord(','));
-            $uses[] = $use;
         }
 
         $parser->assert(ord(')'));

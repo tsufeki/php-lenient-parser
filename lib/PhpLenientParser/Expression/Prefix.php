@@ -29,8 +29,7 @@ class Prefix extends AbstractPrefix
         $token = $parser->eat();
         $expr = $parser->getExpressionParser()->parseOrError($parser, $this->precedence);
         /** @var Node\Expr */
-        $node = new $this->nodeClass($expr);
-        $parser->setAttributes($node, $token, $parser->last());
+        $node = new $this->nodeClass($expr, $parser->getAttributes($token, $parser->last()));
 
         return $node;
     }

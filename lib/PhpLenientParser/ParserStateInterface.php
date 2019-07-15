@@ -44,12 +44,12 @@ interface ParserStateInterface
     public function addError(string $message, array $attributes = []): void;
 
     /**
-     * Set set location-related attributes on node so it encompases $start and $end.
+     * Get location-related attributes for node so it encompases $start and $end.
      *
      * @param Node|Token $start
      * @param Node|Token $end
      */
-    public function setAttributes(Node $node, $start, $end): void;
+    public function getAttributes($start, $end, array $extraAttributes = []): array;
 
     public function getExpressionParser(): ExpressionParserInterface;
 

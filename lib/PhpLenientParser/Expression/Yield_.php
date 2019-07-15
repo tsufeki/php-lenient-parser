@@ -30,9 +30,6 @@ class Yield_ extends AbstractPrefix
             $expr = $parser->getExpressionParser()->parseOrError($parser, $this->precedence);
         }
 
-        $node = new Node\Expr\Yield_($expr, $key);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        return new Node\Expr\Yield_($expr, $key, $parser->getAttributes($token, $parser->last()));
     }
 }

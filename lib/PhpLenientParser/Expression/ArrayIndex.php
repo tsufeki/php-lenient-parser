@@ -24,9 +24,6 @@ class ArrayIndex extends AbstractInfix
         $right = $parser->getExpressionParser()->parse($parser);
         $parser->assert($this->closeToken);
 
-        $node = new Node\Expr\ArrayDimFetch($left, $right);
-        $parser->setAttributes($node, $left, $parser->last());
-
-        return $node;
+        return new Node\Expr\ArrayDimFetch($left, $right, $parser->getAttributes($left, $parser->last()));
     }
 }

@@ -47,11 +47,7 @@ class Namespace_ implements StatementInterface
             $last = $stmts[count($stmts) - 1] ?? $parser->last();
         }
 
-        $node = new Node\Stmt\Namespace_($name, $stmts);
-        $node->setAttribute('kind', $kind);
-        $parser->setAttributes($node, $token, $last);
-
-        return $node;
+        return new Node\Stmt\Namespace_($name, $stmts, $parser->getAttributes($token, $last, ['kind' => $kind]));
     }
 
     public function getToken(): ?int

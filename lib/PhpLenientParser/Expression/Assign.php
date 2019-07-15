@@ -39,8 +39,7 @@ class Assign extends AbstractInfix
 
         $class = $isRef ? Node\Expr\AssignRef::class : Node\Expr\Assign::class;
         /** @var Node\Expr */
-        $node = new $class($left, $right);
-        $parser->setAttributes($node, $left, $parser->last());
+        $node = new $class($left, $right, $parser->getAttributes($left, $parser->last()));
 
         return $node;
     }

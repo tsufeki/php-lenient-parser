@@ -37,13 +37,12 @@ class IndirectVariable extends AbstractPrefix
                 $name = $this->parse($parser);
                 break;
             default:
+                $parser->unexpected($parser->lookAhead(), $this->variableParser->getToken(), ord('{'), $this->getToken());
                 $name = $parser->getExpressionParser()->makeErrorNode($token);
         }
 
         assert($name !== null);
-        $node = new Node\Expr\Variable($name);
-        $parser->setAttributes($node, $token, $parser->last());
 
-        return $node;
+        return new Node\Expr\Variable($name, $parser->getAttributes($token, $parser->last()));
     }
 }

@@ -29,10 +29,8 @@ class Label implements StatementInterface
         $id = $this->identifierParser->parse($parser);
         assert($id !== null);
         $parser->eat();
-        $node = new Node\Stmt\Label($id);
-        $parser->setAttributes($node, $token, $parser->last());
 
-        return $node;
+        return new Node\Stmt\Label($id, $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

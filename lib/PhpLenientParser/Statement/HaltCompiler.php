@@ -13,10 +13,8 @@ class HaltCompiler implements StatementInterface
         $token = $parser->eat();
         $rest = $token->startAttributes['rest'] ?? '';
         unset($token->startAttributes['rest']);
-        $node = new Node\Stmt\HaltCompiler($rest);
-        $parser->setAttributes($node, $token, $token);
 
-        return $node;
+        return new Node\Stmt\HaltCompiler($rest, $parser->getAttributes($token, $token));
     }
 
     public function getToken(): ?int

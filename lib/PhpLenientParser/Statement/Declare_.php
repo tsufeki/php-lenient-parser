@@ -33,9 +33,7 @@ class Declare_ implements StatementInterface
                 }
 
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
-                $item = new Node\Stmt\DeclareDeclare($id, $expr);
-                $parser->setAttributes($item, $first, $parser->last());
-                $items[] = $item;
+                $items[] = new Node\Stmt\DeclareDeclare($id, $expr, $parser->getAttributes($first, $parser->last()));
 
                 if ($parser->isNext(ord(')')) || !$parser->assert(ord(','))) {
                     break;
@@ -55,10 +53,7 @@ class Declare_ implements StatementInterface
             $stmts = $parser->getStatementParser()->parse($parser) ?? [];
         }
 
-        $node = new Node\Stmt\Declare_($items, $stmts);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        return new Node\Stmt\Declare_($items, $stmts, $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

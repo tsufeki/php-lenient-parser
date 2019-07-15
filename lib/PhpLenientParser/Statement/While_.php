@@ -25,10 +25,7 @@ class While_ implements StatementInterface
             $stmts = $parser->getStatementParser()->parse($parser) ?: [];
         }
 
-        $node = new Node\Stmt\While_($condition, $stmts);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        return new Node\Stmt\While_($condition, $stmts, $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

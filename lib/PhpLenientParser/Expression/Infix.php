@@ -38,8 +38,7 @@ class Infix extends AbstractInfix
         $right = $parser->getExpressionParser()->parseOrError($parser, $this->rightPrecedence);
 
         /** @var Node\Expr */
-        $node = new $this->nodeClass($left, $right);
-        $parser->setAttributes($node, $left, $parser->last());
+        $node = new $this->nodeClass($left, $right, $parser->getAttributes($left, $parser->last()));
 
         return $node;
     }

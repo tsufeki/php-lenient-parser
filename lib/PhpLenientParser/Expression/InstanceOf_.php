@@ -23,9 +23,6 @@ class InstanceOf_ extends AbstractInfix
         $token = $parser->eat();
         $right = $this->classRefParser->parseOrError($parser);
 
-        $node = new Node\Expr\Instanceof_($left, $right);
-        $parser->setAttributes($node, $left, $parser->last());
-
-        return $node;
+        return new Node\Expr\Instanceof_($left, $right, $parser->getAttributes($left, $parser->last()));
     }
 }

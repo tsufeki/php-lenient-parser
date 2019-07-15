@@ -38,10 +38,8 @@ class Simple implements StatementInterface
         }
         $parser->assert(ord(';'));
 
-        $nodeClass = $this->nodeClass;
         /** @var Node\Stmt */
-        $node = new $nodeClass($expr);
-        $parser->setAttributes($node, $token, $parser->last());
+        $node = new $this->nodeClass($expr, $parser->getAttributes($token, $parser->last()));
 
         return $node;
     }

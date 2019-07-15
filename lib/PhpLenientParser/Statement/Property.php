@@ -39,9 +39,7 @@ class Property implements StatementInterface
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
             }
 
-            $prop = new Node\Stmt\PropertyProperty($var, $expr);
-            $parser->setAttributes($prop, $first, $parser->last());
-            $props[] = $prop;
+            $props[] = new Node\Stmt\PropertyProperty($var, $expr, $parser->getAttributes($first, $parser->last()));
 
             if ($parser->isNext(ord(';')) || !$parser->assert(ord(','))) {
                 break;
@@ -53,10 +51,7 @@ class Property implements StatementInterface
         }
         $parser->assert(ord(';'));
 
-        $node = new Node\Stmt\Property(0, $props, [], $type);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        return new Node\Stmt\Property(0, $props, $parser->getAttributes($token, $parser->last()), $type);
     }
 
     public function getToken(): ?int

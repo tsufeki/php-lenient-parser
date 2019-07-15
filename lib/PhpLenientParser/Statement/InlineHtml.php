@@ -12,10 +12,8 @@ class InlineHtml implements StatementInterface
     {
         $token = $parser->eat();
         $hasLeadingNewline = $token->startAttributes['hasLeadingNewline'] ?? false;
-        $node = new Node\Stmt\InlineHTML($token->value, ['hasLeadingNewline' => $hasLeadingNewline]);
-        $parser->setAttributes($node, $token, $token);
 
-        return $node;
+        return new Node\Stmt\InlineHTML($token->value, $parser->getAttributes($token, $token, ['hasLeadingNewline' => $hasLeadingNewline]));
     }
 
     public function getToken(): ?int

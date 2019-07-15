@@ -36,9 +36,7 @@ class Static_ implements StatementInterface
                 $expr = $parser->getExpressionParser()->parseOrError($parser);
             }
 
-            $svar = new Node\Stmt\StaticVar($var, $expr);
-            $parser->setAttributes($svar, $var, $parser->last());
-            $vars[] = $svar;
+            $vars[] = new Node\Stmt\StaticVar($var, $expr, $parser->getAttributes($var, $parser->last()));
 
             if ($parser->isNext(ord(';')) || !$parser->assert(ord(','))) {
                 break;
@@ -46,10 +44,8 @@ class Static_ implements StatementInterface
         }
 
         $parser->assert(ord(';'));
-        $node = new Node\Stmt\Static_($vars);
-        $parser->setAttributes($node, $token, $parser->last());
 
-        return $node;
+        return new Node\Stmt\Static_($vars, $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

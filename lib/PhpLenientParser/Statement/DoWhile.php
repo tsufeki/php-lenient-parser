@@ -24,13 +24,11 @@ class DoWhile implements StatementInterface
             $condition = $parser->getExpressionParser()->makeErrorNode($parser->last());
         }
 
-        $node = new Node\Stmt\Do_(
+        return new Node\Stmt\Do_(
             $condition,
-            $stmts
+            $stmts,
+            $parser->getAttributes($token, $parser->last())
         );
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
     }
 
     public function getToken(): ?int

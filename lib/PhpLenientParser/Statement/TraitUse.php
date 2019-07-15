@@ -69,9 +69,7 @@ class TraitUse implements StatementInterface
                     $newMethod = $this->identifierParser->parse($parser);
                     $parser->assert(ord(';'));
 
-                    $adaptation = new Node\Stmt\TraitUseAdaptation\Alias($name, $method, $modifier, $newMethod);
-                    $parser->setAttributes($adaptation, $first, $parser->last());
-                    $adaptations[] = $adaptation;
+                    $adaptations[] = new Node\Stmt\TraitUseAdaptation\Alias($name, $method, $modifier, $newMethod, $parser->getAttributes($first, $parser->last()));
                 } elseif ($name !== null) {
                     $parser->assert(Tokens::T_INSTEADOF);
                     $insteadofs = [];
@@ -83,9 +81,7 @@ class TraitUse implements StatementInterface
                     } while ($insteadof !== null && $parser->eatIf(ord(',')) !== null);
                     $parser->assert(ord(';'));
 
-                    $adaptation = new Node\Stmt\TraitUseAdaptation\Precedence($name, $method, $insteadofs);
-                    $parser->setAttributes($adaptation, $first, $parser->last());
-                    $adaptations[] = $adaptation;
+                    $adaptations[] = new Node\Stmt\TraitUseAdaptation\Precedence($name, $method, $insteadofs, $parser->getAttributes($first, $parser->last()));
                 } else {
                     break;
                 }
@@ -93,10 +89,7 @@ class TraitUse implements StatementInterface
             $parser->assert(ord('}'));
         }
 
-        $node = new Node\Stmt\TraitUse($traits, $adaptations);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        return new Node\Stmt\TraitUse($traits, $adaptations, $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

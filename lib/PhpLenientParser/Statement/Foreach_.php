@@ -44,14 +44,11 @@ class Foreach_ implements StatementInterface
             $stmts = $parser->getStatementParser()->parse($parser) ?: [];
         }
 
-        $node = new Node\Stmt\Foreach_($expr, $var, [
+        return new Node\Stmt\Foreach_($expr, $var, [
             'keyVar' => $key,
             'byRef' => $ref,
             'stmts' => $stmts,
-        ]);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        ], $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

@@ -41,12 +41,10 @@ class Try_ implements StatementInterface
 
         $finally = null;
         if (null !== ($first = $parser->eatIf(Tokens::T_FINALLY))) {
-            $finally = new Node\Stmt\Finally_($this->parseBlock($parser));
-            $parser->setAttributes($finally, $first, $parser->last());
+            $finally = new Node\Stmt\Finally_($this->parseBlock($parser), $parser->getAttributes($first, $parser->last()));
         }
 
-        $node = new Node\Stmt\TryCatch($stmts, $catches, $finally);
-        $parser->setAttributes($node, $token, $parser->last());
+        $node = new Node\Stmt\TryCatch($stmts, $catches, $finally, $parser->getAttributes($token, $parser->last()));
 
         if ($catches === [] && $finally === null) {
             $parser->addError('Cannot use try without catch or finally', $node->getAttributes());
@@ -91,16 +89,13 @@ class Try_ implements StatementInterface
             assert($var instanceof Node\Expr\Variable);
         } else {
             $errorNode = $parser->getExpressionParser()->makeErrorNode($parser->last());
-            $var = new Node\Expr\Variable($errorNode);
-            $parser->setAttributes($var, $errorNode, $errorNode);
+            $var = new Node\Expr\Variable($errorNode, $parser->getAttributes($errorNode, $errorNode));
         }
 
         $parser->assert(ord(')'));
         $stmts = $this->parseBlock($parser);
-        $node = new Node\Stmt\Catch_($types, $var, $stmts);
-        $parser->setAttributes($node, $token, $parser->last());
 
-        return $node;
+        return new Node\Stmt\Catch_($types, $var, $stmts, $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

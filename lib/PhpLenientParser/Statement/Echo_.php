@@ -13,10 +13,8 @@ class Echo_ implements StatementInterface
         $token = $parser->eat();
         $expressions = $parser->getExpressionParser()->parseList($parser);
         $parser->assert(ord(';'));
-        $node = new Node\Stmt\Echo_($expressions);
-        $parser->setAttributes($node, $token, $parser->last());
 
-        return $node;
+        return new Node\Stmt\Echo_($expressions, $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

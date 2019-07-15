@@ -94,10 +94,8 @@ class Identifier
 
         if ($this->isIdentifierToken($token->type)) {
             $parser->eat();
-            $id = new Node\Identifier($token->value);
-            $parser->setAttributes($id, $token, $token);
 
-            return $id;
+            return new Node\Identifier($token->value, $parser->getAttributes($token, $token));
         }
 
         return null;

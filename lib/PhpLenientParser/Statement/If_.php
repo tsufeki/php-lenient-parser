@@ -16,16 +16,13 @@ class If_ implements StatementInterface
         $elseIfs = [];
         while (null !== ($first = $parser->eatIf(Tokens::T_ELSEIF))) {
             list($condition, $stmts, $colon) = $this->parseConditionBlock($parser);
-            $elseIf = new Node\Stmt\ElseIf_($condition, $stmts);
-            $parser->setAttributes($elseIf, $first, $parser->last());
-            $elseIfs[] = $elseIf;
+            $elseIfs[] = new Node\Stmt\ElseIf_($condition, $stmts, $parser->getAttributes($first, $parser->last()));
         }
 
         $else = null;
         if (null !== ($first = $parser->eatIf(Tokens::T_ELSE))) {
             list($stmts, $colon) = $this->parseBlock($parser);
-            $else = new Node\Stmt\Else_($stmts);
-            $parser->setAttributes($else, $first, $parser->last());
+            $else = new Node\Stmt\Else_($stmts, $parser->getAttributes($first, $parser->last()));
         }
 
         if ($colon) {
@@ -33,14 +30,11 @@ class If_ implements StatementInterface
             $parser->assert(ord(';'));
         }
 
-        $node = new Node\Stmt\If_($ifCondition, [
+        return new Node\Stmt\If_($ifCondition, [
             'stmts' => $ifStmts,
             'elseifs' => $elseIfs,
             'else' => $else,
-        ]);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        ], $parser->getAttributes($token, $parser->last()));
     }
 
     /**

@@ -29,10 +29,8 @@ class ArgumentList
                 }
             }
 
-            $arg = new Node\Arg($expr, $ref, $unpack);
-            $parser->setAttributes($arg, $first, $parser->last());
+            $args[] = new Node\Arg($expr, $ref, $unpack, $parser->getAttributes($first, $parser->last()));
             $parser->eatIf(ord(','));
-            $args[] = $arg;
         }
 
         $parser->assert(ord(')'));

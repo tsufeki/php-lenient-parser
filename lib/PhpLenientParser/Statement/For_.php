@@ -29,15 +29,12 @@ class For_ implements StatementInterface
             $stmts = $parser->getStatementParser()->parse($parser) ?: [];
         }
 
-        $node = new Node\Stmt\For_([
+        return new Node\Stmt\For_([
             'init' => $init,
             'cond' => $cond,
             'loop' => $loop,
             'stmts' => $stmts,
-        ]);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        ], $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

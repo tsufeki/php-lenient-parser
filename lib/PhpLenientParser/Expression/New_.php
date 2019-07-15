@@ -56,9 +56,6 @@ class New_ extends AbstractPrefix
             $class = $this->classParser->parseBody($parser, $classToken);
         }
 
-        $node = new Node\Expr\New_($class, $args);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        return new Node\Expr\New_($class, $args, $parser->getAttributes($token, $parser->last()));
     }
 }

@@ -14,19 +14,15 @@ class Variable extends AbstractPrefix
     {
         $token = $parser->eat();
         $name = substr($token->value, 1) ?: $parser->getExpressionParser()->makeErrorNode($token);
-        $node = new Node\Expr\Variable($name);
-        $parser->setAttributes($node, $token, $token);
 
-        return $node;
+        return new Node\Expr\Variable($name, $parser->getAttributes($token, $token));
     }
 
     public function parseIdentifier(ParserStateInterface $parser): Node\VarLikeIdentifier
     {
         $var = $this->parse($parser);
         assert($var instanceof Node\Expr\Variable && is_string($var->name));
-        $node = new Node\VarLikeIdentifier($var->name);
-        $parser->setAttributes($node, $var, $var);
 
-        return $node;
+        return new Node\VarLikeIdentifier($var->name, $parser->getAttributes($var, $var));
     }
 }

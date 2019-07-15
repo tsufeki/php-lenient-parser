@@ -48,17 +48,15 @@ class ScopeNew extends AbstractInfix
                 $name = $var->name;
                 break;
             default:
+                $parser->unexpected($parser->lookAhead(), $this->variableParser->getToken(), $this->indirectVariableParser->getToken());
                 $name = $parser->getExpressionParser()->makeErrorNode($parser->last());
         }
 
         if (is_string($name)) {
-            $name = new Node\VarLikeIdentifier($name);
             assert($var !== null);
-            $parser->setAttributes($name, $var, $var);
+            $name = new Node\VarLikeIdentifier($name, $parser->getAttributes($var, $var));
         }
-        $node = new Node\Expr\StaticPropertyFetch($left, $name);
-        $parser->setAttributes($node, $left, $parser->last());
 
-        return $node;
+        return new Node\Expr\StaticPropertyFetch($left, $name, $parser->getAttributes($left, $parser->last()));
     }
 }

@@ -25,8 +25,7 @@ class Postfix extends AbstractInfix
     {
         $token = $parser->eat();
         /** @var Node\Expr */
-        $node = new $this->nodeClass($left);
-        $parser->setAttributes($node, $left, $token);
+        $node = new $this->nodeClass($left, $parser->getAttributes($left, $token));
 
         return $node;
     }

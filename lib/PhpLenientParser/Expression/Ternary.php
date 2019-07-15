@@ -32,9 +32,6 @@ class Ternary extends AbstractInfix
             $right = $parser->getExpressionParser()->makeErrorNode($middle ?: $token);
         }
 
-        $node = new Node\Expr\Ternary($left, $middle, $right);
-        $parser->setAttributes($node, $left, $parser->last());
-
-        return $node;
+        return new Node\Expr\Ternary($left, $middle, $right, $parser->getAttributes($left, $parser->last()));
     }
 }

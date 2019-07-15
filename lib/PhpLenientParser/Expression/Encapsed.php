@@ -56,8 +56,11 @@ class Encapsed extends AbstractPrefix
         }
 
         /** @var Node\Expr */
-        $node = new $this->nodeClass($parts, ['kind' => Node\Scalar\String_::KIND_DOUBLE_QUOTED]);
-        $parser->setAttributes($node, $first, $parser->last());
+        $node = new $this->nodeClass($parts, $parser->getAttributes(
+            $first,
+            $parser->last(),
+            ['kind' => Node\Scalar\String_::KIND_DOUBLE_QUOTED]
+        ));
 
         return $node;
     }
@@ -73,10 +76,8 @@ class Encapsed extends AbstractPrefix
         $value = $token->value;
         $value = String_::replaceEscapes($value);
         $value = String_::replaceQuoteEscapes($value, chr($this->getToken()));
-        $node = new Node\Scalar\EncapsedStringPart($value);
-        $parser->setAttributes($node, $token, $token);
 
-        return $node;
+        return new Node\Scalar\EncapsedStringPart($value, $parser->getAttributes($token, $token));
     }
 
     protected function parseVariable(ParserStateInterface $parser): Node\Expr
@@ -91,19 +92,15 @@ class Encapsed extends AbstractPrefix
                 if ($id === null) {
                     $id = $parser->getExpressionParser()->makeErrorNode($parser->last());
                 }
-                $node = new Node\Expr\PropertyFetch($var, $id);
-                $parser->setAttributes($node, $var, $parser->last());
 
-                return $node;
+                return new Node\Expr\PropertyFetch($var, $id, $parser->getAttributes($var, $parser->last()));
 
             case ord('['):
                 $parser->eat();
                 $offset = $this->parseOffset($parser);
                 $parser->assert(ord(']'));
-                $node = new Node\Expr\ArrayDimFetch($var, $offset);
-                $parser->setAttributes($node, $var, $parser->last());
 
-                return $node;
+                return new Node\Expr\ArrayDimFetch($var, $offset, $parser->getAttributes($var, $parser->last()));
 
             default:
                 return $var;
@@ -115,10 +112,8 @@ class Encapsed extends AbstractPrefix
         switch ($parser->lookAhead()->type) {
             case Tokens::T_STRING:
                 $token = $parser->eat();
-                $node = new Node\Scalar\String_($token->value);
-                $parser->setAttributes($node, $token, $token);
 
-                return $node;
+                return new Node\Scalar\String_($token->value, $parser->getAttributes($token, $token));
 
             case $this->variableParser->getToken():
                 return $this->variableParser->parse($parser);
@@ -127,20 +122,16 @@ class Encapsed extends AbstractPrefix
                 if ($parser->lookAhead(1)->type === Tokens::T_NUM_STRING) {
                     $token = $parser->eat();
                     $last = $parser->eat();
-                    $node = $this->parseNumString('-' . $last->value);
-                    $parser->setAttributes($node, $token, $last);
 
-                    return $node;
+                    return $this->parseNumString('-' . $last->value, $parser->getAttributes($token, $last));
                 }
 
                 return null;
 
             case Tokens::T_NUM_STRING:
                 $token = $parser->eat();
-                $node = $this->parseNumString($token->value);
-                $parser->setAttributes($node, $token, $token);
 
-                return $node;
+                return $this->parseNumString($token->value, $parser->getAttributes($token, $token));
 
             default:
                 return null;
@@ -150,18 +141,18 @@ class Encapsed extends AbstractPrefix
     /**
      * @return Node\Scalar\LNumber|Node\Scalar\String_
      */
-    protected function parseNumString(string $numString): Node\Scalar
+    protected function parseNumString(string $numString, array $attrs): Node\Scalar
     {
         if (!preg_match('/^(?:0|-?[1-9][0-9]*)$/', $numString)) {
-            return new Node\Scalar\String_($numString);
+            return new Node\Scalar\String_($numString, $attrs);
         }
 
         $number = +$numString;
         if (!is_int($number)) {
-            return new Node\Scalar\String_($numString);
+            return new Node\Scalar\String_($numString, $attrs);
         }
 
-        return new Node\Scalar\LNumber($number);
+        return new Node\Scalar\LNumber($number, $attrs);
     }
 
     protected function parseCurly(ParserStateInterface $parser): Node\Expr
@@ -179,8 +170,7 @@ class Encapsed extends AbstractPrefix
         $expr = null;
 
         if ($parser->isNext(Tokens::T_STRING_VARNAME)) {
-            $expr = new Node\Expr\Variable($parser->eat()->value);
-            $parser->setAttributes($expr, $parser->last(), $parser->last());
+            $expr = new Node\Expr\Variable($parser->eat()->value, $parser->getAttributes($parser->last(), $parser->last()));
 
             if ($parser->isNext(ord('['))) {
                 $parser->eat();
@@ -194,7 +184,7 @@ class Encapsed extends AbstractPrefix
         }
 
         $parser->assert(ord('}'));
-        $parser->setAttributes($expr, $token, $parser->last());
+        $expr->setAttributes($parser->getAttributes($token, $parser->last()));
 
         return $expr;
     }

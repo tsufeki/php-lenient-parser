@@ -66,7 +66,7 @@ class MemberModifier implements StatementInterface
         }
 
         $node->flags |= $flags;
-        $parser->setAttributes($node, $first, $node);
+        $node->setAttributes($parser->getAttributes($first, $node, $node->getAttributes()));
 
         return $node;
     }

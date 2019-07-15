@@ -70,9 +70,7 @@ class Array_ extends AbstractPrefix
                 $items[] = null;
             } else {
                 $expr = $expr ?? $parser->getExpressionParser()->makeErrorNode($parser->last());
-                $item = new Node\Expr\ArrayItem($expr, $key, $ref, [], $unpack);
-                $parser->setAttributes($item, $first, $parser->last());
-                $items[] = $item;
+                $items[] = new Node\Expr\ArrayItem($expr, $key, $ref, $parser->getAttributes($first, $parser->last()), $unpack);
             }
             $parser->eatIf(ord(','));
         }
@@ -80,11 +78,7 @@ class Array_ extends AbstractPrefix
         $parser->assert($this->endToken);
         $class = $this->nodeClass;
         /** @var Node\Expr */
-        $node = new $class($items);
-        $parser->setAttributes($node, $token, $parser->last());
-        if ($this->kind) {
-            $node->setAttribute('kind', $this->kind);
-        }
+        $node = new $class($items, $parser->getAttributes($token, $parser->last(), $this->kind ? ['kind' => $this->kind] : []));
 
         return $node;
     }

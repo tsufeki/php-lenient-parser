@@ -73,24 +73,21 @@ class Scope extends AbstractInfix
 
         if ($parser->isNext(ord('('))) {
             $args = $this->argsParser->parse($parser);
-            $name = $id ?: ($var ?: ($expr ?: $parser->getExpressionParser()->makeErrorNode($parser->last())));
-            $node = new Node\Expr\StaticCall($left, $name, $args);
+            $name = $id ?? $var ?? $expr ?? $parser->getExpressionParser()->makeErrorNode($parser->last());
+            $node = new Node\Expr\StaticCall($left, $name, $args, $parser->getAttributes($left, $parser->last()));
         } elseif ($expr !== null) {
-            $node = new Node\Expr\StaticCall($left, $expr, []);
+            $node = new Node\Expr\StaticCall($left, $expr, [], $parser->getAttributes($left, $parser->last()));
         } elseif ($var !== null) {
             assert($var instanceof Node\Expr\Variable);
             $name = $var->name;
             if (is_string($name)) {
-                $name = new Node\VarLikeIdentifier($name);
-                $parser->setAttributes($name, $var, $var);
+                $name = new Node\VarLikeIdentifier($name, $parser->getAttributes($var, $var));
             }
-            $node = new Node\Expr\StaticPropertyFetch($left, $name);
+            $node = new Node\Expr\StaticPropertyFetch($left, $name, $parser->getAttributes($left, $parser->last()));
         } else {
-            $name = $id ?: $parser->getExpressionParser()->makeErrorNode($parser->last());
-            $node = new Node\Expr\ClassConstFetch($left, $name);
+            $name = $id ?? $parser->getExpressionParser()->makeErrorNode($parser->last());
+            $node = new Node\Expr\ClassConstFetch($left, $name, $parser->getAttributes($left, $parser->last()));
         }
-
-        $parser->setAttributes($node, $left, $parser->last());
 
         return $node;
     }

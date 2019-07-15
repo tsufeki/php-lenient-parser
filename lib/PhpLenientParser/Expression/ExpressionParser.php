@@ -48,7 +48,7 @@ class ExpressionParser implements ExpressionParserInterface
 
                 $left = $infix->parse($parser, $left);
                 if ($firstToken !== null && $left !== null) {
-                    $parser->setAttributes($left, $firstToken, $left);
+                    $left->setAttributes($parser->getAttributes($firstToken, $left, $left->getAttributes()));
                 }
 
                 $leftPrecedence = $infix->getPrecedence();

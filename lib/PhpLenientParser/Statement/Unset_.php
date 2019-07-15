@@ -15,10 +15,8 @@ class Unset_ implements StatementInterface
         $expressions = $parser->getExpressionParser()->parseList($parser);
         $parser->assert(ord(')'));
         $parser->assert(ord(';'));
-        $node = new Node\Stmt\Unset_($expressions);
-        $parser->setAttributes($node, $token, $parser->last());
 
-        return $node;
+        return new Node\Stmt\Unset_($expressions, $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

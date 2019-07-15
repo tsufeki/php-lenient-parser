@@ -41,10 +41,7 @@ class Trait_ implements StatementInterface
             $parser->assert(ord('}'));
         }
 
-        $node = new Node\Stmt\Trait_($id, ['stmts' => $stmts]);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        return new Node\Stmt\Trait_($id, ['stmts' => $stmts], $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

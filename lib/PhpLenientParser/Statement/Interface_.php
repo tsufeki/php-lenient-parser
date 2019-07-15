@@ -61,10 +61,10 @@ class Interface_ implements StatementInterface
             $parser->assert(ord('}'));
         }
 
-        $node = new Node\Stmt\Interface_($id, ['extends' => $extends, 'stmts' => $stmts]);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        return new Node\Stmt\Interface_($id, [
+            'extends' => $extends,
+            'stmts' => $stmts,
+        ], $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

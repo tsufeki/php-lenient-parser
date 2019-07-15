@@ -57,8 +57,7 @@ class Type
         }
 
         if ($type !== null && $nullable !== null) {
-            $type = new Node\NullableType($type);
-            $parser->setAttributes($type, $nullable, $parser->last());
+            $type = new Node\NullableType($type, $parser->getAttributes($nullable, $parser->last()));
         }
 
         return $type;

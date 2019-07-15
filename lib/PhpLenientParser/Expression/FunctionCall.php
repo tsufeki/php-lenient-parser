@@ -24,9 +24,7 @@ class FunctionCall extends AbstractInfix
     public function parse(ParserStateInterface $parser, $left): ?Node\Expr
     {
         $args = $this->argsParser->parse($parser);
-        $node = new Node\Expr\FuncCall($left, $args);
-        $parser->setAttributes($node, $left, $parser->last());
 
-        return $node;
+        return new Node\Expr\FuncCall($left, $args, $parser->getAttributes($left, $parser->last()));
     }
 }

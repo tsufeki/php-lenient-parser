@@ -36,10 +36,11 @@ class String_ extends AbstractPrefix
             $value = self::replaceQuoteEscapes($value, '"');
         }
 
-        $node = new Node\Scalar\String_($value, ['kind' => $kind]);
-        $parser->setAttributes($node, $token, $token);
-
-        return $node;
+        return new Node\Scalar\String_($value, $parser->getAttributes(
+            $token,
+            $token,
+            ['kind' => $kind]
+        ));
     }
 
     public static function replaceQuoteEscapes(string $string, string $quote): string

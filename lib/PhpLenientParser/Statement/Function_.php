@@ -60,15 +60,12 @@ class Function_ implements StatementInterface
             $parser->assert(ord('}'));
         }
 
-        $node = new Node\Stmt\Function_($id, [
+        return new Node\Stmt\Function_($id, [
             'byRef' => $ref,
             'params' => $params,
             'returnType' => $returnType,
             'stmts' => $stmts,
-        ]);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        ], $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

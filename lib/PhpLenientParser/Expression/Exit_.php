@@ -24,9 +24,6 @@ class Exit_ extends AbstractPrefix
             $parser->assert(ord(')'));
         }
 
-        $node = new Node\Expr\Exit_($expr, ['kind' => $kind]);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        return new Node\Expr\Exit_($expr, $parser->getAttributes($token, $parser->last(), ['kind' => $kind]));
     }
 }

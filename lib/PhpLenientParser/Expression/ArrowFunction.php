@@ -58,16 +58,13 @@ class ArrowFunction extends AbstractPrefix
             $expr = $parser->getExpressionParser()->makeErrorNode($parser->last());
         }
 
-        $node = new Node\Expr\ArrowFunction([
+        return new Node\Expr\ArrowFunction([
             'static' => $static,
             'byRef' => $ref,
             'params' => $params,
             'returnType' => $returnType,
             'expr' => $expr,
-        ]);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        ], $parser->getAttributes($token, $parser->last()));
     }
 
     private function isArrow(ParserStateInterface $parser): bool

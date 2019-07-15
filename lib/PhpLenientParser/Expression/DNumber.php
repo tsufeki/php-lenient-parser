@@ -11,10 +11,8 @@ class DNumber extends AbstractPrefix
     {
         $token = $parser->eat();
         $value = $this->parseDNumber($token->value);
-        $node = new Node\Scalar\DNumber($value);
-        $parser->setAttributes($node, $token, $token);
 
-        return $node;
+        return new Node\Scalar\DNumber($value, $parser->getAttributes($token, $token));
     }
 
     private function parseDNumber(string $string): float

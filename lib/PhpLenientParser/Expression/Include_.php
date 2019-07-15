@@ -31,9 +31,7 @@ class Include_ extends AbstractPrefix
         }
 
         $expr = $parser->getExpressionParser()->parseOrError($parser);
-        $node = new Node\Expr\Include_($expr, $kind);
-        $parser->setAttributes($node, $token, $parser->last());
 
-        return $node;
+        return new Node\Expr\Include_($expr, $kind, $parser->getAttributes($token, $parser->last()));
     }
 }

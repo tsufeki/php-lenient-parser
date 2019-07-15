@@ -52,10 +52,7 @@ class NamePrefix extends AbstractPrefix
             case ord('('):
                 return $this->functionCallParser->parse($parser, $name);
             default:
-                $node = new Node\Expr\ConstFetch($name);
-                $parser->setAttributes($node, $name, $name);
-
-                return $node;
+                return new Node\Expr\ConstFetch($name, $parser->getAttributes($name, $name));
         }
     }
 }

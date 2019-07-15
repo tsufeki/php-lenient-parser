@@ -96,15 +96,12 @@ class Class_ implements StatementInterface
             $parser->assert(ord('}'));
         }
 
-        $node = new Node\Stmt\Class_($id, [
+        return new Node\Stmt\Class_($id, [
             'flags' => $flags,
             'extends' => $extends,
             'implements' => $implements,
             'stmts' => $stmts,
-        ]);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        ], $parser->getAttributes($token, $parser->last()));
     }
 
     private function isClass(ParserStateInterface $parser): bool

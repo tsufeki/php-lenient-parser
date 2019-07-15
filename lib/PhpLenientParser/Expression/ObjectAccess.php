@@ -71,12 +71,10 @@ class ObjectAccess extends AbstractInfix
 
         if ($parser->isNext(ord('('))) {
             $args = $this->argsParser->parse($parser);
-            $node = new Node\Expr\MethodCall($left, $name, $args);
+            $node = new Node\Expr\MethodCall($left, $name, $args, $parser->getAttributes($left, $parser->last()));
         } else {
-            $node = new Node\Expr\PropertyFetch($left, $name);
+            $node = new Node\Expr\PropertyFetch($left, $name, $parser->getAttributes($left, $parser->last()));
         }
-
-        $parser->setAttributes($node, $left, $parser->last());
 
         return $node;
     }

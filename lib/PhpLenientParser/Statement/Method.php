@@ -64,16 +64,13 @@ class Method implements StatementInterface
             $parser->unexpected($parser->lookAhead(), ord('{'), ord(';'));
         }
 
-        $node = new Node\Stmt\ClassMethod($id, [
+        return new Node\Stmt\ClassMethod($id, [
             'flags' => 0,
             'byRef' => $ref,
             'params' => $params,
             'returnType' => $returnType,
             'stmts' => $stmts,
-        ]);
-        $parser->setAttributes($node, $token, $parser->last());
-
-        return $node;
+        ], $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

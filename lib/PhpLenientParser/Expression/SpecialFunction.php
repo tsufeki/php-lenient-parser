@@ -42,10 +42,8 @@ class SpecialFunction extends AbstractPrefix
             $parser->assert(ord(')'));
         }
 
-        $nodeClass = $this->nodeClass;
         /** @var Node\Expr */
-        $node = new $nodeClass($expr);
-        $parser->setAttributes($node, $token, $parser->last());
+        $node = new $this->nodeClass($expr, $parser->getAttributes($token, $parser->last()));
 
         return $node;
     }

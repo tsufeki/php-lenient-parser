@@ -49,10 +49,8 @@ class Global_ implements StatementInterface
         }
 
         $parser->assert(ord(';'));
-        $node = new Node\Stmt\Global_($vars);
-        $parser->setAttributes($node, $token, $parser->last());
 
-        return $node;
+        return new Node\Stmt\Global_($vars, $parser->getAttributes($token, $parser->last()));
     }
 
     public function getToken(): ?int

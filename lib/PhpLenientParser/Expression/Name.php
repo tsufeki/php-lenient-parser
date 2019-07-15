@@ -51,10 +51,8 @@ class Name
                     return null;
                 }
                 $parser->eat();
-                $name = new Node\Name([$first->value]);
-                $parser->setAttributes($name, $first, $first);
 
-                return $name;
+                return new Node\Name([$first->value], $parser->getAttributes($first, $first));
             default:
                 return null;
         }
@@ -78,10 +76,10 @@ class Name
             $parts = [''];
         }
 
-        $name = $fullyQualified ? new Node\Name\FullyQualified($parts)
-            : ($relative ? new Node\Name\Relative($parts)
-            : new Node\Name($parts));
-        $parser->setAttributes($name, $first, $parser->last());
+        $attrs = $parser->getAttributes($first, $parser->last());
+        $name = $fullyQualified ? new Node\Name\FullyQualified($parts, $attrs)
+            : ($relative ? new Node\Name\Relative($parts, $attrs)
+            : new Node\Name($parts, $attrs));
 
         if ($parts === ['']) {
             $name->parts = [];
