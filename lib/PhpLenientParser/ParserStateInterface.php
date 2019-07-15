@@ -9,7 +9,7 @@ use PhpParser\Node;
 interface ParserStateInterface
 {
     /**
-     * @return mixed
+     * @return mixed|null
      */
     public function getOption(string $option);
 

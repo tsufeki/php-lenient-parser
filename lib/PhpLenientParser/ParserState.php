@@ -38,9 +38,9 @@ class ParserState implements ParserStateInterface
     private $statementParser;
 
     /**
-     * @var \SplQueue
+     * @var Token[]
      */
-    private $lookAheadQueue;
+    private $lookAheadQueue = [];
 
     /**
      * @var Token|null
@@ -59,24 +59,23 @@ class ParserState implements ParserStateInterface
         $this->options = $options;
         $this->expressionParser = $expressionParser;
         $this->statementParser = $statementParser;
-        $this->lookAheadQueue = new \SplQueue();
     }
 
     public function getOption(string $option)
     {
-        return isset($this->options[$option]) ? $this->options[$option] : false;
+        return $this->options[$option] ?? null;
     }
 
     public function lookAhead(int $count = 0): Token
     {
-        $toRead = $count + 1 - $this->lookAheadQueue->count();
+        $toRead = $count + 1 - count($this->lookAheadQueue);
         for ($i = 0; $i < $toRead; $i++) {
             $token = new Token();
             $token->type = $this->lexer->getNextToken($token->value, $token->startAttributes, $token->endAttributes);
             if ($token->type === Tokens::T_HALT_COMPILER) {
                 $this->handleHaltCompiler($token);
             }
-            $this->lookAheadQueue->enqueue($token);
+            $this->lookAheadQueue[] = $token;
         }
 
         return $this->lookAheadQueue[$count];
@@ -89,11 +88,10 @@ class ParserState implements ParserStateInterface
 
     public function eat(): Token
     {
-        $token = $this->lookAhead();
-        $this->last = $token;
-        $this->lookAheadQueue->dequeue();
+        $this->last = $this->lookAhead();
+        array_shift($this->lookAheadQueue);
 
-        return $token;
+        return $this->last;
     }
 
     public function eatIf(int $tokenType = null): ?Token
@@ -104,7 +102,10 @@ class ParserState implements ParserStateInterface
             return null;
         }
 
-        return $this->eat();
+        $this->last = $token;
+        array_shift($this->lookAheadQueue);
+
+        return $token;
     }
 
     public function assert(int $tokenType): bool
@@ -118,7 +119,7 @@ class ParserState implements ParserStateInterface
         }
 
         $this->last = $token;
-        $this->lookAheadQueue->dequeue();
+        array_shift($this->lookAheadQueue);
 
         return true;
     }
@@ -161,22 +162,25 @@ class ParserState implements ParserStateInterface
     {
         $startAttrs = $start->getAttributes();
         $endAttrs = $end->getAttributes();
+        $attrs = $node->getAttributes();
 
         foreach (['startLine', 'startTokenPos', 'startFilePos'] as $attr) {
             if (isset($startAttrs[$attr])) {
-                $node->setAttribute($attr, $startAttrs[$attr]);
+                $attrs[$attr] = $startAttrs[$attr];
             }
         }
 
         foreach (['endLine', 'endTokenPos', 'endFilePos'] as $attr) {
             if (isset($endAttrs[$attr])) {
-                $node->setAttribute($attr, $endAttrs[$attr]);
+                $attrs[$attr] = $endAttrs[$attr];
             }
         }
 
         if (/*$start instanceof Token && */isset($startAttrs['comments'])) {
-            $node->setAttribute('comments', $startAttrs['comments']);
+            $attrs['comments'] = $startAttrs['comments'];
         }
+
+        $node->setAttributes($attrs);
     }
 
     public function getExpressionParser(): ExpressionParserInterface
