@@ -42,7 +42,7 @@ class IndirectVariable extends AbstractPrefix
 
         assert($name !== null);
         $node = new Node\Expr\Variable($name);
-        $parser->setAttributes($node, $token, $name);
+        $parser->setAttributes($node, $token, $parser->last());
 
         return $node;
     }

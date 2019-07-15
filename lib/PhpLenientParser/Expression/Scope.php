@@ -82,8 +82,8 @@ class Scope extends AbstractInfix
             $name = $var->name;
             if (is_string($name)) {
                 $name = new Node\VarLikeIdentifier($name);
+                $parser->setAttributes($name, $var, $var);
             }
-            $parser->setAttributes($name, $var, $var);
             $node = new Node\Expr\StaticPropertyFetch($left, $name);
         } else {
             $name = $id ?: $parser->getExpressionParser()->makeErrorNode($parser->last());

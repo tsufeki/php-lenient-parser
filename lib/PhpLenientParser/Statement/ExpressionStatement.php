@@ -9,12 +9,13 @@ class ExpressionStatement implements StatementInterface
 {
     public function parse(ParserStateInterface $parser)
     {
+        $token = $parser->lookAhead();
         $expr = $parser->getExpressionParser()->parse($parser);
         $stmt = null;
         if ($expr !== null) {
             $parser->assert(ord(';'));
             $stmt = new Node\Stmt\Expression($expr);
-            $parser->setAttributes($stmt, $expr, $expr);
+            $parser->setAttributes($stmt, $token, $parser->last());
         }
 
         return $stmt;

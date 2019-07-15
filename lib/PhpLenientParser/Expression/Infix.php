@@ -39,7 +39,7 @@ class Infix extends AbstractInfix
 
         /** @var Node\Expr */
         $node = new $this->nodeClass($left, $right);
-        $parser->setAttributes($node, $left, $right);
+        $parser->setAttributes($node, $left, $parser->last());
 
         return $node;
     }

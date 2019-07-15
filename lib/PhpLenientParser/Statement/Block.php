@@ -21,7 +21,6 @@ class Block implements StatementInterface
                 $stmts[] = $nop;
             } else {
                 $comments = array_merge($comments, $stmts[0]->getAttribute('comments') ?? []);
-                $parser->setAttributes($stmts[0], $token, $parser->last());
                 $stmts[0]->setAttribute('comments', $comments);
             }
         }

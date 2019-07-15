@@ -37,7 +37,7 @@ interface ParserStateInterface
     /**
      * Add an error for token.
      */
-    public function unexpected(Token $token, ?int $expected = null): void;
+    public function unexpected(Token $token, int ...$expected): void;
 
     public function last(): Token;
 

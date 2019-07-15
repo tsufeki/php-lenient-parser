@@ -22,10 +22,10 @@ abstract class AbstractStatementParser implements StatementParserInterface
 
                 $parser->setAttributes($node, $lookAhead, $lookAhead);
                 if ($node->hasAttribute('endFilePos')) {
-                    $node->setAttribute('endFilePos', $node->getAttribute('endFilePos') - 1);
+                    $node->setAttribute('endFilePos', $node->getAttribute('startFilePos') - 1);
                 }
                 if ($node->hasAttribute('endTokenPos')) {
-                    $node->setAttribute('endTokenPos', $node->getAttribute('endTokenPos') - 1);
+                    $node->setAttribute('endTokenPos', $node->getAttribute('startTokenPos') - 1);
                 }
 
                 $stmts[] = $node;

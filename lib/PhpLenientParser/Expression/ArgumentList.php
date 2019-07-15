@@ -30,7 +30,7 @@ class ArgumentList
             }
 
             $arg = new Node\Arg($expr, $ref, $unpack);
-            $parser->setAttributes($arg, $first, $expr);
+            $parser->setAttributes($arg, $first, $parser->last());
             $parser->eatIf(ord(','));
             $args[] = $arg;
         }

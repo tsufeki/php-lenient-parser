@@ -3,6 +3,7 @@
 namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
+use PhpLenientParser\Token;
 use PhpParser\Node;
 
 class ExpressionParser implements ExpressionParserInterface
@@ -26,10 +27,10 @@ class ExpressionParser implements ExpressionParserInterface
 
         $left = $this->prefix[$token->type]->parse($parser);
 
-        return $this->parseInfix($parser, $left, $precedence);
+        return $this->parseInfix($parser, $left, $precedence, $token);
     }
 
-    public function parseInfix(ParserStateInterface $parser, ?Node\Expr $left, int $precedence = 0): ?Node\Expr
+    public function parseInfix(ParserStateInterface $parser, ?Node\Expr $left, int $precedence = 0, ?Token $firstToken = null): ?Node\Expr
     {
         if ($left === null) {
             return null;
@@ -44,7 +45,12 @@ class ExpressionParser implements ExpressionParserInterface
                 if ($leftPrecedence === $infix->getPrecedence() && $leftAssociativity === InfixInterface::NOT_ASSOCIATIVE) {
                     $parser->unexpected($token);
                 }
+
                 $left = $infix->parse($parser, $left);
+                if ($firstToken !== null && $left !== null) {
+                    $parser->setAttributes($left, $firstToken, $left);
+                }
+
                 $leftPrecedence = $infix->getPrecedence();
                 $leftAssociativity = $infix->getAssociativity();
             } else {
@@ -79,6 +85,7 @@ class ExpressionParser implements ExpressionParserInterface
     {
         $expr = $this->parse($parser, $precedence);
         if ($expr === null) {
+            $parser->unexpected($parser->lookAhead());
             $expr = $this->makeErrorNode($parser->last());
         }
 

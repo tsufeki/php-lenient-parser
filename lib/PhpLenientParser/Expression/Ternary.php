@@ -33,7 +33,7 @@ class Ternary extends AbstractInfix
         }
 
         $node = new Node\Expr\Ternary($left, $middle, $right);
-        $parser->setAttributes($node, $left, $right);
+        $parser->setAttributes($node, $left, $parser->last());
 
         return $node;
     }

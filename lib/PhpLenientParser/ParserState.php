@@ -123,13 +123,15 @@ class ParserState implements ParserStateInterface
         return true;
     }
 
-    public function unexpected(Token $token, ?int $expected = null): void
+    public function unexpected(Token $token, int ...$expected): void
     {
-        if ($expected !== null) {
+        if ($expected !== []) {
             $msg = sprintf(
                 'Syntax error, unexpected %s, expecting %s',
                 $token->getName(),
-                Token::getNameFromType($expected)
+                implode(' or ', array_map(function (int $e) {
+                    return Token::getNameFromType($e);
+                }, $expected))
             );
         } else {
             $msg = sprintf(

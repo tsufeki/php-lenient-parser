@@ -58,6 +58,7 @@ class ClassNameReference
     {
         $expr = $this->parse($parser);
         if ($expr === null) {
+            $parser->unexpected($parser->lookAhead());
             $expr = $this->expressionParser->makeErrorNode($parser->last());
         }
 

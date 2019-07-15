@@ -54,11 +54,14 @@ class Method implements StatementInterface
             $returnType = $this->typeParser->parse($parser);
         }
 
-        $stmts = null;
-        if ($parser->isNext(ord('{'))) {
-            $stmts = $parser->getStatementParser()->parse($parser);
+        if ($parser->eatIf(ord('{')) !== null) {
+            $stmts = $parser->getStatementParser()->parseList($parser, ord('}'));
+            $parser->assert(ord('}'));
+        } elseif ($parser->eatIf(ord(';')) !== null) {
+            $stmts = null;
         } else {
-            $parser->eatIf(ord(';'));
+            $stmts = null;
+            $parser->unexpected($parser->lookAhead(), ord('{'), ord(';'));
         }
 
         $node = new Node\Stmt\ClassMethod($id, [

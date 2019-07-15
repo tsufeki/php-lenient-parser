@@ -4,6 +4,7 @@ namespace PhpLenientParser\Expression;
 
 use PhpLenientParser\ParserStateInterface;
 use PhpParser\Node;
+use PhpParser\Parser\Tokens;
 
 class ObjectAccessNew extends AbstractInfix
 {
@@ -57,6 +58,7 @@ class ObjectAccessNew extends AbstractInfix
         }
 
         if ($name === null) {
+            $parser->unexpected($parser->lookAhead(), Tokens::T_STRING, Tokens::T_VARIABLE, ord('{'), ord('$'));
             $name = $parser->getExpressionParser()->makeErrorNode($parser->last());
         }
 

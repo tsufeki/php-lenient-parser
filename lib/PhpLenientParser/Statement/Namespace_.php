@@ -39,15 +39,17 @@ class Namespace_ implements StatementInterface
             $kind = Node\Stmt\Namespace_::KIND_BRACED;
             $stmts = $this->innerStatementsParser->parseList($parser, ord('}'));
             $parser->assert(ord('}'));
+            $last = $parser->last();
         } else {
             $kind = Node\Stmt\Namespace_::KIND_SEMICOLON;
             $parser->assert(ord(';'));
             $stmts = $this->innerStatementsParser->parseList($parser, Tokens::T_NAMESPACE);
+            $last = $stmts[count($stmts) - 1] ?? $parser->last();
         }
 
         $node = new Node\Stmt\Namespace_($name, $stmts);
         $node->setAttribute('kind', $kind);
-        $parser->setAttributes($node, $token, $parser->last());
+        $parser->setAttributes($node, $token, $last);
 
         return $node;
     }

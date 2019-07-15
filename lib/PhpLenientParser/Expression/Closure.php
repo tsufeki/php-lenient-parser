@@ -60,8 +60,9 @@ class Closure extends AbstractPrefix
         }
 
         $stmts = [];
-        if ($parser->isNext(ord('{'))) {
-            $stmts = $parser->getStatementParser()->parse($parser);
+        if ($parser->assert(ord('{'))) {
+            $stmts = $parser->getStatementParser()->parseList($parser, ord('}'));
+            $parser->assert(ord('}'));
         }
 
         $node = new Node\Expr\Closure([
