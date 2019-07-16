@@ -61,6 +61,9 @@ class Interface_ implements StatementInterface
             $parser->assert(ord('}'));
         }
 
+        $this->identifierParser->checkClassName($parser, $id);
+        $this->identifierParser->checkClassName($parser, $extends, 'interface');
+
         return new Node\Stmt\Interface_($id, [
             'extends' => $extends,
             'stmts' => $stmts,

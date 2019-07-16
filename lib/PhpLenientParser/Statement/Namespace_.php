@@ -47,6 +47,10 @@ class Namespace_ implements StatementInterface
             $last = $stmts[count($stmts) - 1] ?? $parser->last();
         }
 
+        if ($name !== null && $name->isSpecialClassName()) {
+            $parser->addError("Cannot use '$name' as namespace name", $name->getAttributes());
+        }
+
         return new Node\Stmt\Namespace_($name, $stmts, $parser->getAttributes($token, $last, ['kind' => $kind]));
     }
 

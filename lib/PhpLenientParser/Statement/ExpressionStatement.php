@@ -13,7 +13,9 @@ class ExpressionStatement implements StatementInterface
         $expr = $parser->getExpressionParser()->parse($parser);
         $stmt = null;
         if ($expr !== null) {
-            $parser->assert(ord(';'));
+            if ($parser->eatIf(ord(';')) === null) {
+                $parser->unexpected($parser->lookAhead());
+            }
             $stmt = new Node\Stmt\Expression($expr, $parser->getAttributes($token, $parser->last()));
         }
 

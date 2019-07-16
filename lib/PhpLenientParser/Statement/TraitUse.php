@@ -35,6 +35,7 @@ class TraitUse implements StatementInterface
             $trait = $this->nameParser->parse($parser);
             if ($trait !== null) {
                 $traits[] = $trait;
+                $this->identifierParser->checkClassName($parser, $trait, 'trait');
             }
         } while ($trait !== null && $parser->eatIf(ord(',')) !== null);
 

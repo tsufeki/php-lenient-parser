@@ -110,4 +110,20 @@ class Identifier
     {
         return new Node\Identifier('', $parser->getExpressionParser()->makeErrorNode($parser->last())->getAttributes());
     }
+
+    /**
+     * @param Node\Name|Node\Identifier|(Node\Name|Node\Identifier)[]|null $names
+     */
+    public function checkClassName(ParserStateInterface $parser, $names, string $what = 'class'): void
+    {
+        if ($names === null) {
+            return;
+        }
+
+        foreach (is_array($names) ? $names : [$names] as $name) {
+            if ($name->isSpecialClassName()) {
+                $parser->addError("Cannot use '$name' as $what name as it is reserved", $name->getAttributes());
+            }
+        }
+    }
 }

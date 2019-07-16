@@ -10,19 +10,23 @@ class LNumber extends AbstractPrefix
     public function parse(ParserStateInterface $parser): ?Node\Expr
     {
         $token = $parser->eat();
-        list($value, $kind) = $this->parseLNumber($token->value);
+        list($value, $kind, $error) = $this->parseLNumber($token->value);
+        if ($error !== null) {
+            $parser->addError($error, $token->getAttributes());
+        }
 
         return new Node\Scalar\LNumber($value, $parser->getAttributes($token, $token, ['kind' => $kind]));
     }
 
     /**
-     * @return int[]
+     * @return array{0: int, 1: int, 2: ?string}
      */
     private function parseLNumber(string $string): array
     {
         $string = str_replace('_', '', $string);
         $kind = null;
         $value = 0;
+        $error = null;
 
         if ('0' !== $string[0] || '0' === $string) {
             $kind = Node\Scalar\LNumber::KIND_DEC;
@@ -35,11 +39,17 @@ class LNumber extends AbstractPrefix
             $value = bindec($string);
         } else {
             $kind = Node\Scalar\LNumber::KIND_OCT;
-            $value = intval($string, 8);
+
+            if (strpbrk($string, '89') === false) {
+                $value = intval($string, 8);
+            } else {
+                $error = 'Invalid numeric literal';
+                $value = 0;
+            }
         }
 
         assert(is_int($value));
 
-        return [$value, $kind];
+        return [$value, $kind, $error];
     }
 }

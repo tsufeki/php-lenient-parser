@@ -36,7 +36,7 @@ class Use_ implements StatementInterface
         $name = $this->parseName($parser, true);
         if ($name === null || $parser->eatIf(ord('{')) === null) {
             while ($name !== null) {
-                $alias = $this->parseAlias($parser);
+                $alias = $this->parseAlias($parser, $name);
                 $uses[] = new Node\Stmt\UseUse($name, $alias, Node\Stmt\Use_::TYPE_UNKNOWN, $parser->getAttributes($name, $parser->last()));
 
                 $name = null;
@@ -61,7 +61,7 @@ class Use_ implements StatementInterface
                     break;
                 }
 
-                $alias = $this->parseAlias($parser);
+                $alias = $this->parseAlias($parser, $name);
                 $uses[] = new Node\Stmt\UseUse($name, $alias, $innerType, $parser->getAttributes($name, $parser->last()));
 
                 if ($parser->eatIf(ord(',')) === null) {
@@ -97,11 +97,15 @@ class Use_ implements StatementInterface
         return $this->nameParser->parse($parser, Name::NORMAL, $trailingSep);
     }
 
-    private function parseAlias(ParserStateInterface $parser): ?Node\Identifier
+    private function parseAlias(ParserStateInterface $parser, Node\Name $origName): ?Node\Identifier
     {
         $alias = null;
         if ($parser->eatIf(Tokens::T_AS) !== null && $parser->isNext(Tokens::T_STRING)) {
             $alias = $this->identifierParser->parse($parser);
+        }
+
+        if ($alias !== null && $alias->isSpecialClassName()) {
+            $parser->addError("Cannot use $origName as $alias because '$alias' is a special class name", $alias->getAttributes());
         }
 
         return $alias;
